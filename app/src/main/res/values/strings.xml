@@ -20,5 +20,8 @@
     <string name="desc_ustuste">Üst üste saat · 2x2</string>
     <string name="desc_kurabiye">Kurabiye hava · 2x2</string>
     <string name="desc_analog">Analog saat · 2x2</string>
+    <string name="desc_analogsade">Analog (sadece saat) · 2x2</string>
+    <string name="desc_yuvhava">Yuvarlak hava · 2x2</string>
+    <string name="desc_yuvgun">Yuvarlak gün · 2x2</string>
     <string name="desc_panel">Şeffaf panel · 5x2</string>
 </resources>

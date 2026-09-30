@@ -20,32 +20,40 @@ class W_Gosterge : BaseWidget()
 class W_Ustuste : BaseWidget()
 class W_Kurabiye : BaseWidget()
 class W_Analog : BaseWidget()
+class W_Analogsade : BaseWidget()
+class W_Yuvhava : BaseWidget()
+class W_Yuvgun : BaseWidget()
 class W_Panel : BaseWidget()
 
-class Entry(val cls: Class<out BaseWidget>, val label: String, val layout: Int)
+class Entry(val cls: Class<out BaseWidget>, val label: String, val layout: Int, val size: String, val preview: Int)
 
 object Registry {
+    val SIZE_TITLES = mapOf("w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "l" to "Büyük · 5x2")
     val ALL = listOf(
-        Entry(W_Klasik::class.java, "Klasik", R.layout.w_wide0),
-        Entry(W_Merkez::class.java, "Merkez", R.layout.w_wide1),
-        Entry(W_Buyuksaat::class.java, "Büyük saat", R.layout.w_wide2),
-        Entry(W_Saatlik::class.java, "Hava + saatlik", R.layout.w_wide3),
-        Entry(W_Minimal::class.java, "Minimal", R.layout.w_wide4),
-        Entry(W_Yanyana::class.java, "Yan yana", R.layout.w_wide5),
-        Entry(W_Bento::class.java, "Bento", R.layout.w_wide6),
-        Entry(W_Tasan::class.java, "Taşan ikon", R.layout.w_wide7),
-        Entry(W_Pixel::class.java, "Pixel tahmin", R.layout.w_wide8),
-        Entry(W_Eskiz::class.java, "Eskiz not", R.layout.w_wide9),
-        Entry(W_Ince::class.java, "İnce", R.layout.w_compact),
-        Entry(W_Bakista::class.java, "Bir bakışta", R.layout.w_compact1),
-        Entry(W_Hap::class.java, "Hap saat", R.layout.w_compact2),
-        Entry(W_Cift::class.java, "Çift saat", R.layout.w_compact3),
-        Entry(W_Kare::class.java, "Kare", R.layout.w_square),
-        Entry(W_Kadran::class.java, "Yuvarlak kadran", R.layout.w_square1),
-        Entry(W_Gosterge::class.java, "Derece göstergesi", R.layout.w_square2),
-        Entry(W_Ustuste::class.java, "Üst üste saat", R.layout.w_square3),
-        Entry(W_Kurabiye::class.java, "Kurabiye hava", R.layout.w_square4),
-        Entry(W_Analog::class.java, "Analog saat", R.layout.w_square5),
-        Entry(W_Panel::class.java, "Şeffaf panel", R.layout.w_glass)
+        Entry(W_Klasik::class.java, "Klasik", R.layout.w_wide0, "w", R.drawable.prev_klasik),
+        Entry(W_Merkez::class.java, "Merkez", R.layout.w_wide1, "w", R.drawable.prev_merkez),
+        Entry(W_Buyuksaat::class.java, "Büyük saat", R.layout.w_wide2, "w", R.drawable.prev_buyuksaat),
+        Entry(W_Saatlik::class.java, "Hava + saatlik", R.layout.w_wide3, "w", R.drawable.prev_saatlik),
+        Entry(W_Minimal::class.java, "Minimal", R.layout.w_wide4, "w", R.drawable.prev_minimal),
+        Entry(W_Yanyana::class.java, "Yan yana", R.layout.w_wide5, "w", R.drawable.prev_yanyana),
+        Entry(W_Bento::class.java, "Bento", R.layout.w_wide6, "w", R.drawable.prev_bento),
+        Entry(W_Tasan::class.java, "Taşan ikon", R.layout.w_wide7, "w", R.drawable.prev_tasan),
+        Entry(W_Pixel::class.java, "Pixel tahmin", R.layout.w_wide8, "w", R.drawable.prev_pixel),
+        Entry(W_Eskiz::class.java, "Eskiz not", R.layout.w_wide9, "w", R.drawable.prev_eskiz),
+        Entry(W_Ince::class.java, "İnce", R.layout.w_compact, "c", R.drawable.prev_ince),
+        Entry(W_Bakista::class.java, "Bir bakışta", R.layout.w_compact1, "c", R.drawable.prev_bakista),
+        Entry(W_Hap::class.java, "Hap saat", R.layout.w_compact2, "c", R.drawable.prev_hap),
+        Entry(W_Cift::class.java, "Çift saat", R.layout.w_compact3, "c", R.drawable.prev_cift),
+        Entry(W_Kare::class.java, "Kare", R.layout.w_square, "s", R.drawable.prev_kare),
+        Entry(W_Kadran::class.java, "Yuvarlak kadran", R.layout.w_square1, "s", R.drawable.prev_kadran),
+        Entry(W_Gosterge::class.java, "Derece göstergesi", R.layout.w_square2, "s", R.drawable.prev_gosterge),
+        Entry(W_Ustuste::class.java, "Üst üste saat", R.layout.w_square3, "s", R.drawable.prev_ustuste),
+        Entry(W_Kurabiye::class.java, "Kurabiye hava", R.layout.w_square4, "s", R.drawable.prev_kurabiye),
+        Entry(W_Analog::class.java, "Analog saat", R.layout.w_square5, "s", R.drawable.prev_analog),
+        Entry(W_Analogsade::class.java, "Analog (sadece saat)", R.layout.w_square6, "s", R.drawable.prev_analogsade),
+        Entry(W_Yuvhava::class.java, "Yuvarlak hava", R.layout.w_square7, "s", R.drawable.prev_yuvhava),
+        Entry(W_Yuvgun::class.java, "Yuvarlak gün", R.layout.w_square8, "s", R.drawable.prev_yuvgun),
+        Entry(W_Panel::class.java, "Şeffaf panel", R.layout.w_glass, "l", R.drawable.prev_panel)
     )
+    fun ofClass(name: String?): Entry? = ALL.firstOrNull { it.cls.name == name }
 }

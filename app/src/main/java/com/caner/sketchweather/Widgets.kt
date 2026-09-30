@@ -72,11 +72,15 @@ object Widgets {
         R.layout.w_square4 to Spec(30f, 40f, 11f, "EEE"),
         R.layout.w_wide9 to Spec(62f, 30f, 17f, "EEEE, d MMMM"),
         R.layout.w_square5 to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_square6 to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_square7 to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_square8 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
     )
     private val PALETTE_LAYOUTS = setOf(
         R.layout.w_wide6, R.layout.w_wide7, R.layout.w_wide8, R.layout.w_compact1, R.layout.w_compact2,
-        R.layout.w_square1, R.layout.w_square2, R.layout.w_square3, R.layout.w_square4, R.layout.w_square5
+        R.layout.w_square1, R.layout.w_square2, R.layout.w_square3, R.layout.w_square4, R.layout.w_square5,
+        R.layout.w_square6, R.layout.w_square7, R.layout.w_square8
     )
 
     private val DAY_IDS = arrayOf(
@@ -134,14 +138,18 @@ object Widgets {
     fun renderAll(c: Context, w: Weather?) {
         val mgr = AppWidgetManager.getInstance(c)
         var any = false
+        val p = WeatherRepo.prefs(c)
         for (e in Registry.ALL) {
-            val ids = mgr.getAppWidgetIds(ComponentName(c, e.cls))
-            if (ids.isEmpty()) continue
-            any = true
-            try {
-                mgr.updateAppWidget(ids, build(c, e.layout, w))
-            } catch (ex: Exception) {
-                // bir stil hata verse de diğerleri çizilsin
+            for (id in mgr.getAppWidgetIds(ComponentName(c, e.cls))) {
+                any = true
+                // Uygulamadan stil değiştirildiyse onu kullan
+                val ov = Registry.ALL.getOrNull(p.getInt("ov_$id", -1))
+                val layout = if (ov != null && ov.size == e.size) ov.layout else e.layout
+                try {
+                    mgr.updateAppWidget(id, build(c, layout, w))
+                } catch (ex: Exception) {
+                    // bir stil hata verse de diğerleri çizilsin
+                }
             }
         }
         if (any) scheduleTick(c)
@@ -243,15 +251,12 @@ object Widgets {
         return b
     }
 
-    /** Analog saat: kadran, akrep/yelkovan, altta hava ikonu ve derece. */
-    private fun analog(c: Context, pal: Pal, w: Weather?, tf: Typeface): Bitmap {
-        val n = 600
-        val b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+    private fun face(pal: Pal, n: Int, cv: Canvas, ticks: Boolean) {
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
         val cx = n / 2f
         p.color = pal.container
         cv.drawCircle(cx, cx, cx - 4, p)
+        if (!ticks) return
         p.strokeCap = Paint.Cap.ROUND
         for (k in 0 until 60) {
             val a = Math.toRadians(k * 6.0 - 90)
@@ -263,17 +268,44 @@ object Widgets {
             cv.drawLine((cx + r1 * Math.cos(a)).toFloat(), (cx + r1 * Math.sin(a)).toFloat(),
                 (cx + r2 * Math.cos(a)).toFloat(), (cx + r2 * Math.sin(a)).toFloat(), p)
         }
-        if (w != null) {
-            try {
-                val ic = android.graphics.BitmapFactory.decodeResource(c.resources, Style.icon(c, w.code, w.isDay))
-                cv.drawBitmap(ic, null, RectF(cx - 70, n * 0.58f, cx + 70, n * 0.58f + 140), p)
-            } catch (e: Exception) { }
-            val tp = Paint(Paint.ANTI_ALIAS_FLAG).apply { typeface = tf; textSize = 54f; color = pal.onCont; textAlign = Paint.Align.CENTER }
-            cv.drawText("${w.temp}°", cx, n * 0.36f, tp)
-        }
+    }
+
+    private fun txt(tf: Typeface, size: Float, col: Int) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        typeface = tf; textSize = size; color = col; textAlign = Paint.Align.CENTER
+    }
+
+    private fun drawIcon(c: Context, cv: Canvas, res: Int, cx: Float, cy: Float, size: Float) {
+        try {
+            val ic = android.graphics.BitmapFactory.decodeResource(c.resources, res)
+            cv.drawBitmap(ic, null, RectF(cx - size / 2, cy - size / 2, cx + size / 2, cy + size / 2), Paint(Paint.FILTER_BITMAP_FLAG))
+        } catch (e: Exception) { }
+    }
+
+    /** Analog saat. withWeather: üstte ikon+derece; her iki durumda altta dijital saat. */
+    private fun analog(c: Context, pal: Pal, w: Weather?, tf: Typeface, withWeather: Boolean): Bitmap {
+        val n = 600
+        val b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888)
+        val cv = Canvas(b)
+        val cx = n / 2f
+        face(pal, n, cv, true)
         val cal = java.util.Calendar.getInstance()
+        val digital = String.format(Locale.US, "%02d:%02d", cal.get(java.util.Calendar.HOUR_OF_DAY), cal.get(java.util.Calendar.MINUTE))
+        if (withWeather && w != null) {
+            drawIcon(c, cv, Style.icon(c, w.code, w.isDay), cx - 44, n * 0.30f, 84f)
+            cv.drawText("${w.temp}°", cx + 34, n * 0.30f + 20, txt(tf, 56f, pal.onCont))
+        } else {
+            val day = SimpleDateFormat("EEE d", Locale("tr", "TR")).format(Date())
+            cv.drawText(day, cx, n * 0.33f, txt(tf, 44f, pal.onContSub))
+        }
+        // dijital saat, altta yuvarlak bir kutuda
+        val dp = txt(tf, 50f, pal.onCont)
+        val tw = dp.measureText(digital)
+        val bp = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = pal.containerHigh }
+        cv.drawRoundRect(RectF(cx - tw / 2 - 22, n * 0.66f, cx + tw / 2 + 22, n * 0.66f + 74), 37f, 37f, bp)
+        cv.drawText(digital, cx, n * 0.66f + 55, dp)
         val m = cal.get(java.util.Calendar.MINUTE)
         val h = cal.get(java.util.Calendar.HOUR) + m / 60f
+        val p = Paint(Paint.ANTI_ALIAS_FLAG).apply { strokeCap = Paint.Cap.ROUND }
         fun hand(angDeg: Double, len: Float, width: Float, col: Int) {
             val a = Math.toRadians(angDeg - 90)
             p.color = col; p.strokeWidth = width
@@ -283,6 +315,68 @@ object Widgets {
         hand(m * 6.0, cx * 0.74f, 14f, pal.accent)
         p.color = pal.accent
         cv.drawCircle(cx, cx, 18f, p)
+        return b
+    }
+
+    /** Yuvarlak hava: büyük ikon, derece, en yüksek/düşük ve hissedilen; kenarda nem yayı. */
+    private fun roundWeather(c: Context, pal: Pal, w: Weather?, tf: Typeface): Bitmap {
+        val n = 600
+        val b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888)
+        val cv = Canvas(b)
+        val cx = n / 2f
+        face(pal, n, cv, false)
+        val hum = (w?.humidity ?: 0).coerceIn(0, 100)
+        val r = RectF(34f, 34f, n - 34f, n - 34f)
+        val p = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = 16f; strokeCap = Paint.Cap.ROUND }
+        p.color = pal.containerHigh; cv.drawArc(r, 120f, 300f, false, p)
+        p.color = pal.accent; cv.drawArc(r, 120f, 300f * hum / 100f, false, p)
+        if (w == null) {
+            cv.drawText("--°", cx, cx + 20, txt(tf, 90f, pal.onCont))
+            return b
+        }
+        drawIcon(c, cv, Style.icon(c, w.code, w.isDay), cx, n * 0.27f, 150f)
+        cv.drawText("${w.temp}°", cx + 8, n * 0.60f, txt(tf, 110f, pal.onCont))
+        val d = w.days.firstOrNull()
+        if (d != null) cv.drawText("Y ${d.max}°  ·  D ${d.min}°", cx, n * 0.71f, txt(tf, 36f, pal.onContSub))
+        w.feels?.let { cv.drawText("Hissedilen $it°", cx, n * 0.79f, txt(tf, 32f, pal.onContSub)) }
+        cv.drawText("%$hum", cx, n * 0.92f, txt(tf, 30f, pal.accent))
+        return b
+    }
+
+    /** Yuvarlak gün: güneşin gökyüzündeki yolu, doğuş/batış saatleri ve kalan süre. */
+    private fun roundSun(c: Context, pal: Pal, w: Weather?, tf: Typeface): Bitmap {
+        val n = 600
+        val b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888)
+        val cv = Canvas(b)
+        val cx = n / 2f
+        face(pal, n, cv, false)
+        val cal = java.util.Calendar.getInstance()
+        val nowM = cal.get(java.util.Calendar.HOUR_OF_DAY) * 60 + cal.get(java.util.Calendar.MINUTE)
+        val rise = hm(w?.sunrise) ?: 7 * 60
+        val set = hm(w?.sunset) ?: 19 * 60
+        val frac = ((nowM - rise).toFloat() / (set - rise).coerceAtLeast(1)).coerceIn(0f, 1f)
+        val hy = n * 0.56f
+        val R = n * 0.34f
+        val p = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = 8f; strokeCap = Paint.Cap.ROUND }
+        p.color = pal.containerHigh
+        p.pathEffect = android.graphics.DashPathEffect(floatArrayOf(4f, 18f), 0f)
+        cv.drawArc(RectF(cx - R, hy - R, cx + R, hy + R), 180f, 180f, false, p)
+        p.pathEffect = null; p.color = pal.accent; p.strokeWidth = 12f
+        cv.drawArc(RectF(cx - R, hy - R, cx + R, hy + R), 180f, 180f * frac, false, p)
+        p.color = pal.onContSub; p.strokeWidth = 5f
+        cv.drawLine(cx - R - 30, hy, cx + R + 30, hy, p)
+        val ang = Math.toRadians(180.0 + 180.0 * frac)
+        val sx = (cx + R * Math.cos(ang)).toFloat()
+        val sy = (hy + R * Math.sin(ang)).toFloat()
+        val day = nowM in rise..set
+        val sun = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = if (day) 0xFFFFB42A.toInt() else pal.onContSub }
+        cv.drawCircle(sx, sy, 28f, sun)
+        cv.drawText(w?.sunrise ?: "--:--", cx - R + 10, hy + 58, txt(tf, 36f, pal.onCont))
+        cv.drawText(w?.sunset ?: "--:--", cx + R - 10, hy + 58, txt(tf, 36f, pal.onCont))
+        val left = if (day) set - nowM else ((rise + 24 * 60 - nowM) % (24 * 60))
+        val label = if (day) "Gün batımına" else "Gün doğumuna"
+        cv.drawText(label, cx, n * 0.80f, txt(tf, 30f, pal.onContSub))
+        cv.drawText("${left / 60} sa ${left % 60} dk", cx, n * 0.87f, txt(tf, 38f, pal.onCont))
         return b
     }
 
@@ -378,9 +472,10 @@ object Widgets {
                 tint(v, R.id.cbg1, pal.container)
                 tempCol = pal.onCont; v.setTextColor(R.id.hl, pal.onContSub)
             }
-            R.layout.w_square5 -> {
-                v.setImageViewBitmap(R.id.dial, analog(c, pal, w, textTf))
-            }
+            R.layout.w_square5 -> v.setImageViewBitmap(R.id.dial, analog(c, pal, w, textTf, true))
+            R.layout.w_square6 -> v.setImageViewBitmap(R.id.dial, analog(c, pal, w, textTf, false))
+            R.layout.w_square7 -> v.setImageViewBitmap(R.id.dial, roundWeather(c, pal, w, textTf))
+            R.layout.w_square8 -> v.setImageViewBitmap(R.id.dial, roundSun(c, pal, w, textTf))
             R.layout.w_wide9 -> {
                 val ink = 0xFF2C2A48.toInt()
                 clockCol = ink; dateCol = 0xFF55536E.toInt(); tempCol = ink; feelsCol = 0xFF55536E.toInt()

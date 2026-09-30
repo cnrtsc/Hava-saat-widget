@@ -23,6 +23,8 @@ class MainActivity : Activity() {
 
     private lateinit var info: TextView
     private lateinit var locStatus: TextView
+    private lateinit var myWidgets: LinearLayout
+    private var padPx = 0
 
     private val fg = Color.rgb(236, 240, 245)
     private val muted = Color.rgb(150, 160, 175)
@@ -60,6 +62,28 @@ class MainActivity : Activity() {
             setTextColor(fg)
             typeface = Style.clockTypeface(this@MainActivity, 1)
         })
+
+        // Galeri: tüm stiller önizlemeleriyle, dokununca ana ekrana eklenir
+        root.addView(header("WİDGET GALERİSİ · ekle", pad))
+        root.addView(TextView(this).apply {
+            text = "Önizlemeye dokun; widget doğrudan ana ekrana eklensin."
+            setTextColor(muted)
+        })
+        for ((size, title) in Registry.SIZE_TITLES) {
+            root.addView(TextView(this).apply {
+                text = title
+                textSize = 15f
+                setTextColor(fg)
+                setPadding(0, pad / 2, 0, pad / 4)
+            })
+            root.addView(gallery(size, null, pad))
+        }
+
+        // Ekli widget'lar: stil değiştirme
+        myWidgets = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        root.addView(header("WİDGET'LARIM · stil değiştir", pad))
+        root.addView(myWidgets)
+        fillMyWidgets(pad)
 
         // Konum
         root.addView(header("KONUM", pad))
@@ -275,4 +299,82 @@ class MainActivity : Activity() {
         return g
     }
 
+
+    override fun onResume() {
+        super.onResume()
+        if (::myWidgets.isInitialized) fillMyWidgets(padPx)
+    }
+
+    /** Aynı boydaki stillerin yatay önizleme şeridi. wid null ise ekler, değilse o widget'ın stilini değiştirir. */
+    private fun gallery(size: String, wid: Int?, pad: Int): android.widget.HorizontalScrollView {
+        val dp = resources.displayMetrics.density
+        val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        val p = WeatherRepo.prefs(this)
+        val current = if (wid != null) {
+            val own = Registry.ofClass(android.appwidget.AppWidgetManager.getInstance(this).getAppWidgetInfo(wid)?.provider?.className)
+            Registry.ALL.getOrNull(p.getInt("ov_$wid", -1))?.takeIf { it.size == size } ?: own
+        } else null
+        Registry.ALL.forEachIndexed { idx, e ->
+            if (e.size != size) return@forEachIndexed
+            val w = ((if (size == "s") 120 else 230) * dp).toInt()
+            val cell = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                setPadding((6 * dp).toInt(), (6 * dp).toInt(), (6 * dp).toInt(), (6 * dp).toInt())
+                if (e == current) setBackgroundColor(Color.rgb(52, 60, 78))
+            }
+            cell.addView(android.widget.ImageView(this).apply {
+                setImageResource(e.preview)
+                adjustViewBounds = true
+                layoutParams = LinearLayout.LayoutParams(w, LinearLayout.LayoutParams.WRAP_CONTENT)
+            })
+            cell.addView(TextView(this).apply {
+                text = if (e == current) "✓ ${e.label}" else e.label
+                setTextColor(fg)
+                textSize = 13f
+                setPadding(0, (4 * dp).toInt(), 0, 0)
+            })
+            cell.setOnClickListener {
+                if (wid == null) pin(e) else {
+                    p.edit().putInt("ov_$wid", idx).apply()
+                    refreshWidget()
+                    fillMyWidgets(pad)
+                }
+            }
+            row.addView(cell)
+        }
+        return android.widget.HorizontalScrollView(this).apply { addView(row) }
+    }
+
+    private fun pin(e: Entry) {
+        val mgr = android.appwidget.AppWidgetManager.getInstance(this)
+        val ok = Build.VERSION.SDK_INT >= 26 && mgr.isRequestPinAppWidgetSupported &&
+            mgr.requestPinAppWidget(android.content.ComponentName(this, e.cls), null, null)
+        if (!ok) android.widget.Toast.makeText(
+            this, "Telefon doğrudan eklemeyi desteklemiyor. Ana ekranda uzun bas → Widget'lar → Hava & Saat → ${e.label}",
+            android.widget.Toast.LENGTH_LONG
+        ).show()
+    }
+
+    private fun fillMyWidgets(pad: Int) {
+        padPx = pad
+        myWidgets.removeAllViews()
+        val mgr = android.appwidget.AppWidgetManager.getInstance(this)
+        var count = 0
+        for (e in Registry.ALL) {
+            for (wid in mgr.getAppWidgetIds(android.content.ComponentName(this, e.cls))) {
+                count++
+                myWidgets.addView(TextView(this).apply {
+                    text = "${Registry.SIZE_TITLES[e.size]} widget #$count"
+                    textSize = 15f
+                    setTextColor(fg)
+                    setPadding(0, pad / 2, 0, pad / 4)
+                })
+                myWidgets.addView(gallery(e.size, wid, pad))
+            }
+        }
+        if (count == 0) myWidgets.addView(TextView(this).apply {
+            text = "Henüz ana ekranda widget yok. Yukarıdaki galeriden ekleyebilirsin."
+            setTextColor(muted)
+        })
+    }
 }
