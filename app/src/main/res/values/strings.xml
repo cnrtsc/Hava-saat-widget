@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Hava &amp; Saat</string>
+    <string name="desc_saatbilgi">Analog saat + bilgi · 4x2</string>
+    <string name="desc_saatbilgi5">Analog saat + bilgi (geniş) · 5x2</string>
     <string name="desc_klasik">Klasik · 4x2</string>
     <string name="desc_merkez">Merkez · 4x2</string>
     <string name="desc_buyuksaat">Büyük saat · 4x2</string>

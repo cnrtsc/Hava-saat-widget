@@ -73,6 +73,7 @@ object Widgets {
         R.layout.w_wide9 to Spec(62f, 30f, 17f, "EEEE, d MMMM"),
         R.layout.w_square5 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_square6 to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_combo to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_square7 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_square8 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
@@ -80,7 +81,7 @@ object Widgets {
     private val PALETTE_LAYOUTS = setOf(
         R.layout.w_wide6, R.layout.w_wide7, R.layout.w_wide8, R.layout.w_compact1, R.layout.w_compact2,
         R.layout.w_square1, R.layout.w_square2, R.layout.w_square3, R.layout.w_square4, R.layout.w_square5,
-        R.layout.w_square6, R.layout.w_square7, R.layout.w_square8
+        R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo
     )
 
     private val DAY_IDS = arrayOf(
@@ -145,8 +146,15 @@ object Widgets {
                 // Uygulamadan stil değiştirildiyse onu kullan
                 val ov = Registry.ALL.getOrNull(p.getInt("ov_$id", -1))
                 val layout = if (ov != null && ov.size == e.size) ov.layout else e.layout
+                val o = mgr.getAppWidgetOptions(id)
+                var wdp = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
+                var hdp = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
+                if (wdp <= 0 || hdp <= 0) {
+                    wdp = when (e.size) { "s" -> 160; "l" -> 360; else -> 320 }
+                    hdp = when (e.size) { "s" -> 160; "c" -> 70; else -> 170 }
+                }
                 try {
-                    mgr.updateAppWidget(id, build(c, layout, w))
+                    mgr.updateAppWidget(id, build(c, layout, w, wdp, hdp))
                 } catch (ex: Exception) {
                     // bir stil hata verse de diğerleri çizilsin
                 }
@@ -380,7 +388,7 @@ object Widgets {
         return b
     }
 
-    private fun build(c: Context, layout: Int, w: Weather?): RemoteViews {
+    private fun build(c: Context, layout: Int, w: Weather?, wdp: Int = 320, hdp: Int = 170): RemoteViews {
         val v = RemoteViews(c.packageName, layout)
         val spec = SPECS[layout] ?: SPECS.getValue(R.layout.w_wide0)
         val pal = Palette.get(c)
@@ -472,8 +480,9 @@ object Widgets {
                 tint(v, R.id.cbg1, pal.container)
                 tempCol = pal.onCont; v.setTextColor(R.id.hl, pal.onContSub)
             }
-            R.layout.w_square5 -> v.setImageViewBitmap(R.id.dial, analog(c, pal, w, textTf, true))
-            R.layout.w_square6 -> v.setImageViewBitmap(R.id.dial, analog(c, pal, w, textTf, false))
+            R.layout.w_square5 -> v.setImageViewBitmap(R.id.dial, Combo.render(c, w, wdp, hdp, 1))
+            R.layout.w_square6 -> v.setImageViewBitmap(R.id.dial, Combo.render(c, w, wdp, hdp, 2))
+            R.layout.w_combo -> v.setImageViewBitmap(R.id.dial, Combo.render(c, w, wdp, hdp, 0))
             R.layout.w_square7 -> v.setImageViewBitmap(R.id.dial, roundWeather(c, pal, w, textTf))
             R.layout.w_square8 -> v.setImageViewBitmap(R.id.dial, roundSun(c, pal, w, textTf))
             R.layout.w_wide9 -> {

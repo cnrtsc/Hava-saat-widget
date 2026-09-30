@@ -85,6 +85,50 @@ class MainActivity : Activity() {
         root.addView(myWidgets)
         fillMyWidgets(pad)
 
+        // Analog saat + bilgi ayarları
+        root.addView(header("ANALOG SAAT + BİLGİ", pad))
+        root.addView(sub("Kadran"))
+        root.addView(radioList(Combo.FACE_NAMES, Combo.face(this), 15f) { i -> p.edit().putInt("face", i).apply() })
+        root.addView(sub("Dijital saat"))
+        root.addView(radioList(Combo.DIGITAL_NAMES, Combo.digital(this), 15f) { i -> p.edit().putInt("digital", i).apply() })
+        root.addView(sub("Kadran ve panel rengi"))
+        root.addView(radioList(Combo.COLOR_NAMES, Combo.color(this), 15f) { i -> p.edit().putInt("faceColor", i).apply() })
+        root.addView(sub("Yan panel"))
+        root.addView(radioList(Combo.PANEL_NAMES, Combo.panel(this), 15f) { i -> p.edit().putInt("panel", i).apply() })
+        val opLabel = sub("Arka plan saydamlığı: %${Combo.opacity(this)} dolu")
+        root.addView(opLabel)
+        root.addView(android.widget.SeekBar(this).apply {
+            max = 100
+            progress = Combo.opacity(this@MainActivity)
+            setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(sb: android.widget.SeekBar?, v: Int, fromUser: Boolean) {
+                    opLabel.text = "Arka plan saydamlığı: %$v dolu" + if (v == 0) " (tamamen şeffaf)" else ""
+                }
+                override fun onStartTrackingTouch(sb: android.widget.SeekBar?) {}
+                override fun onStopTrackingTouch(sb: android.widget.SeekBar?) {
+                    p.edit().putInt("opacity", sb?.progress ?: 100).apply()
+                    refreshWidget()
+                }
+            })
+        })
+        root.addView(android.widget.CheckBox(this).apply {
+            text = "İnce çerçeve"
+            setTextColor(fg)
+            isChecked = Combo.rim(this@MainActivity)
+            setOnCheckedChangeListener { _, v -> p.edit().putBoolean("rim", v).apply(); refreshWidget() }
+        })
+        root.addView(sub("Panelde gösterilecekler"))
+        Combo.SHOW_KEYS.forEachIndexed { i, key ->
+            root.addView(android.widget.CheckBox(this).apply {
+                text = Combo.SHOW_NAMES[i]
+                setTextColor(fg)
+                isChecked = Combo.show(this@MainActivity, key)
+                setOnCheckedChangeListener { _, v -> p.edit().putBoolean("show_$key", v).apply(); refreshWidget() }
+            })
+        }
+        root.addView(sub("Sonraki günler"))
+        root.addView(radioList(Combo.DAY_NAMES, Combo.days(this), 15f) { i -> p.edit().putInt("days", i).apply() })
+
         // Konum
         root.addView(header("KONUM", pad))
         info = TextView(this).apply {
@@ -376,5 +420,12 @@ class MainActivity : Activity() {
             text = "Henüz ana ekranda widget yok. Yukarıdaki galeriden ekleyebilirsin."
             setTextColor(muted)
         })
+    }
+
+    private fun sub(t: String): TextView = TextView(this).apply {
+        text = t
+        textSize = 14f
+        setTextColor(muted)
+        setPadding(0, (12 * resources.displayMetrics.density).toInt(), 0, 0)
     }
 }

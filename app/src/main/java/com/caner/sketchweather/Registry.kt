@@ -1,5 +1,7 @@
 package com.caner.sketchweather
 
+class W_Saatbilgi : BaseWidget()
+class W_Saatbilgi5 : BaseWidget()
 class W_Klasik : BaseWidget()
 class W_Merkez : BaseWidget()
 class W_Buyuksaat : BaseWidget()
@@ -30,6 +32,8 @@ class Entry(val cls: Class<out BaseWidget>, val label: String, val layout: Int, 
 object Registry {
     val SIZE_TITLES = mapOf("w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "l" to "Büyük · 5x2")
     val ALL = listOf(
+        Entry(W_Saatbilgi::class.java, "Analog saat + bilgi", R.layout.w_combo, "w", R.drawable.prev_saatbilgi),
+        Entry(W_Saatbilgi5::class.java, "Analog saat + bilgi (geniş)", R.layout.w_combo, "l", R.drawable.prev_saatbilgi5),
         Entry(W_Klasik::class.java, "Klasik", R.layout.w_wide0, "w", R.drawable.prev_klasik),
         Entry(W_Merkez::class.java, "Merkez", R.layout.w_wide1, "w", R.drawable.prev_merkez),
         Entry(W_Buyuksaat::class.java, "Büyük saat", R.layout.w_wide2, "w", R.drawable.prev_buyuksaat),
