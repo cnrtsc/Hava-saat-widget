@@ -46,6 +46,7 @@ class EditActivity : Activity() {
         R.layout.w_duo -> "duo"
         R.layout.w_bentox, R.layout.w_bentosq -> "bento"
         R.layout.w_skycard -> "sky"
+        R.layout.w_pills -> "pills"
         R.layout.w_th_dot, R.layout.w_th_flip, R.layout.w_th_swiss, R.layout.w_th_prog, R.layout.w_th_term, R.layout.w_th_paper, R.layout.w_th_sector, R.layout.w_th_neu -> "theme"
         R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim -> "mod"
         R.layout.w_strip, R.layout.w_graph -> "round"
@@ -152,6 +153,20 @@ class EditActivity : Activity() {
                 }
                 if ((0 until 4).any { i -> read { Bento.tile(this, i) } == 1 }) clockSection()
                 paletteSection(); fontSection(true); iconSection()
+            }
+            "pills" -> {
+                val s = Ui.section(this, "Kapsüller", "Her kapsülde ne görüneceğini seç. \"Yok\" seçersen o kapsül gizlenir.")
+                for (i in 0 until 4) {
+                    s.addView(Ui.label(this, "${i + 1}. kapsül"))
+                    s.addView(Ui.chips(this, Pills.CONTENT, read { Pills.pill(this, i) }) { putI("pill$i", it); build() })
+                }
+                s.addView(Ui.check(this, "Hava kapsülü havaya göre renklensin", read { Pills.weatherTint(this) }) { putB("pillTint", it) })
+                s.addView(Ui.check(this, "İnce çerçeve", read { Combo.rim(this) }) { putB("rim", it) })
+                s.addView(Ui.slider(this, { "Kapsül doluluğu: %$it" + if (it == 0) " (şeffaf)" else "" }, read { Style.opacity(this) }) { putI("opacity", it) })
+                s.addView(Ui.label(this, "Yazı rengi"))
+                s.addView(Ui.chips(this, Style.TEXT_COLOR_NAMES, read { Style.textColorIdx(this) }) { putI("textColor", it); build() })
+                root.addView(s)
+                fontSection(true); iconSection()
             }
             "sky" -> {
                 val s = Ui.section(this, "Alt şerit", "Alttaki üç kutuda ne görüneceğini seç.")

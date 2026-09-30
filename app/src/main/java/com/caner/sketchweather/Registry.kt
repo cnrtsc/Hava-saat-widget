@@ -45,6 +45,7 @@ class W_Saat24 : BaseWidget()
 class W_Neumorfik : BaseWidget()
 class W_Grafik : BaseWidget()
 class W_Gunseridi : BaseWidget()
+class W_Hapdizisi : BaseWidget()
 class W_Pil : BaseWidget()
 class W_Ay : BaseWidget()
 class W_Takvim : BaseWidget()
@@ -100,6 +101,7 @@ object Registry {
         Entry(W_Neumorfik::class.java, "Neumorfik", R.layout.w_th_neu, "s", R.drawable.prev_neumorfik),
         Entry(W_Grafik::class.java, "Sıcaklık grafiği", R.layout.w_graph, "w", R.drawable.prev_grafik),
         Entry(W_Gunseridi::class.java, "Gün şeridi", R.layout.w_strip, "c", R.drawable.prev_gunseridi),
+        Entry(W_Hapdizisi::class.java, "Hap dizisi", R.layout.w_pills, "c", R.drawable.prev_hapdizisi),
         Entry(W_Pil::class.java, "Pil", R.layout.w_mod_pil, "s", R.drawable.prev_pil),
         Entry(W_Ay::class.java, "Ay evresi", R.layout.w_mod_ay, "s", R.drawable.prev_ay),
         Entry(W_Takvim::class.java, "Takvim", R.layout.w_mod_takvim, "s", R.drawable.prev_takvim),

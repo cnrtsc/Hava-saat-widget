@@ -88,6 +88,7 @@ object Widgets {
         R.layout.w_bentox to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_bentosq to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_skycard to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_pills to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_th_dot to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_th_flip to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_th_swiss to Spec(30f, 30f, 11f, "EEE"),
@@ -106,7 +107,7 @@ object Widgets {
         R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo,
         R.layout.w_roundw0, R.layout.w_roundw1, R.layout.w_roundw2, R.layout.w_lock, R.layout.w_lockc,
         R.layout.w_duo, R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim, R.layout.w_strip, R.layout.w_graph,
-        R.layout.w_bentox, R.layout.w_bentosq, R.layout.w_skycard,
+        R.layout.w_bentox, R.layout.w_bentosq, R.layout.w_skycard, R.layout.w_pills,
         R.layout.w_th_dot, R.layout.w_th_flip, R.layout.w_th_swiss, R.layout.w_th_prog, R.layout.w_th_term, R.layout.w_th_paper, R.layout.w_th_sector, R.layout.w_th_neu
     )
 
@@ -560,6 +561,7 @@ object Widgets {
             R.layout.w_bentox -> v.setImageViewBitmap(R.id.dial, Bento.render(c, w, wdp, hdp, false))
             R.layout.w_bentosq -> v.setImageViewBitmap(R.id.dial, Bento.render(c, w, wdp, hdp, true))
             R.layout.w_skycard -> v.setImageViewBitmap(R.id.dial, SkyCard.render(c, w, wdp, hdp))
+            R.layout.w_pills -> v.setImageViewBitmap(R.id.dial, Pills.render(c, w, wdp, hdp))
             R.layout.w_th_dot -> v.setImageViewBitmap(R.id.dial, Themes.render(c, w, wdp, hdp, Themes.DOT))
             R.layout.w_th_flip -> v.setImageViewBitmap(R.id.dial, Themes.render(c, w, wdp, hdp, Themes.FLIP))
             R.layout.w_th_swiss -> v.setImageViewBitmap(R.id.dial, Themes.render(c, w, wdp, hdp, Themes.SWISS))

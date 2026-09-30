@@ -45,6 +45,7 @@
     <string name="desc_neumorfik">Neumorfik · 2x2</string>
     <string name="desc_grafik">Sıcaklık grafiği · 4x2</string>
     <string name="desc_gunseridi">Gün şeridi · 4x1</string>
+    <string name="desc_hapdizisi">Hap dizisi · 4x1</string>
     <string name="desc_pil">Pil · 2x2</string>
     <string name="desc_ay">Ay evresi · 2x2</string>
     <string name="desc_takvim">Takvim · 2x2</string>

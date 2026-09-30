@@ -211,6 +211,10 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gunseridi" />
         </receiver>
+        <receiver android:name=".W_Hapdizisi" android:exported="true" android:label="Hap dizisi">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hapdizisi" />
+        </receiver>
         <receiver android:name=".W_Pil" android:exported="true" android:label="Pil">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pil" />
