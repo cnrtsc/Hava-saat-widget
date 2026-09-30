@@ -67,6 +67,14 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bento" />
         </receiver>
+        <receiver android:name=".W_Bentoozel" android:exported="true" android:label="Bento · özel">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bentoozel" />
+        </receiver>
+        <receiver android:name=".W_Bentokare" android:exported="true" android:label="Bento kare">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bentokare" />
+        </receiver>
         <receiver android:name=".W_Tasan" android:exported="true" android:label="Taşan ikon">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_tasan" />

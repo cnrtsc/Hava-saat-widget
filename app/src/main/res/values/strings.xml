@@ -9,6 +9,8 @@
     <string name="desc_minimal">Minimal · 4x2</string>
     <string name="desc_yanyana">Yan yana · 4x2</string>
     <string name="desc_bento">Bento · 4x2</string>
+    <string name="desc_bentoozel">Bento · özel · 4x2</string>
+    <string name="desc_bentokare">Bento kare · 2x2</string>
     <string name="desc_tasan">Taşan ikon · 4x2</string>
     <string name="desc_pixel">Pixel tahmin · 4x2</string>
     <string name="desc_eskiz">Eskiz not · 4x2</string>

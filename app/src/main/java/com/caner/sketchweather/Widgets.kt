@@ -85,6 +85,8 @@ object Widgets {
         R.layout.w_mod_takvim to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_strip to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_graph to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_bentox to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_bentosq to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_square7 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_square8 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
@@ -94,7 +96,8 @@ object Widgets {
         R.layout.w_square1, R.layout.w_square2, R.layout.w_square3, R.layout.w_square4, R.layout.w_square5,
         R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo,
         R.layout.w_roundw0, R.layout.w_roundw1, R.layout.w_roundw2, R.layout.w_lock, R.layout.w_lockc,
-        R.layout.w_duo, R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim, R.layout.w_strip, R.layout.w_graph
+        R.layout.w_duo, R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim, R.layout.w_strip, R.layout.w_graph,
+        R.layout.w_bentox, R.layout.w_bentosq
     )
 
     private val DAY_IDS = arrayOf(
@@ -544,6 +547,8 @@ object Widgets {
             R.layout.w_mod_takvim -> v.setImageViewBitmap(R.id.dial, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slot", 8))))
             R.layout.w_strip -> v.setImageViewBitmap(R.id.dial, Extra.strip(c, w, wdp, hdp))
             R.layout.w_graph -> v.setImageViewBitmap(R.id.dial, Extra.graph(c, w, wdp, hdp))
+            R.layout.w_bentox -> v.setImageViewBitmap(R.id.dial, Bento.render(c, w, wdp, hdp, false))
+            R.layout.w_bentosq -> v.setImageViewBitmap(R.id.dial, Bento.render(c, w, wdp, hdp, true))
             R.layout.w_square7 -> v.setImageViewBitmap(R.id.dial, roundWeather(c, pal, w, textTf))
             R.layout.w_square8 -> v.setImageViewBitmap(R.id.dial, roundSun(c, pal, w, textTf))
             R.layout.w_wide9 -> {
@@ -583,6 +588,8 @@ object Widgets {
 
         // Hareketli ikon
         v.setInt(R.id.icon_flip, "setFlipInterval", Style.animInterval(c))
+        // Bazı ana ekranlar otomatik geçişi durdurduğu için her dakika kareyi kendimiz değiştiriyoruz
+        if (Style.anim(c) > 0) v.setDisplayedChild(R.id.icon_flip, java.util.Calendar.getInstance().get(java.util.Calendar.MINUTE) % 3)
 
         val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         val alarms = Intent(AlarmClock.ACTION_SHOW_ALARMS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

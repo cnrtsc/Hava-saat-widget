@@ -11,9 +11,9 @@ class Pal(
 )
 
 object Palette {
-    val NAMES = arrayOf("Otomatik (duvar kağıdından)", "Şeftali", "Okyanus", "Orman", "Lavanta", "Gül", "Grafit")
-    private val PRESET_HUE = floatArrayOf(25f, 25f, 205f, 140f, 265f, 340f, 220f)
-    private val PRESET_SAT = floatArrayOf(.6f, .6f, .6f, .45f, .5f, .55f, .08f)
+    val NAMES = arrayOf("Otomatik (duvar kağıdından)", "Şeftali", "Okyanus", "Orman", "Lavanta", "Gül", "Grafit", "Havaya göre")
+    private val PRESET_HUE = floatArrayOf(25f, 25f, 205f, 140f, 265f, 340f, 220f, 0f)
+    private val PRESET_SAT = floatArrayOf(.6f, .6f, .6f, .45f, .5f, .55f, .08f, 0f)
 
     fun choice(c: Context): Int = Cfg.int(c, "palette", 0).coerceIn(0, NAMES.size - 1)
 
@@ -38,6 +38,15 @@ object Palette {
 
     private fun seed(c: Context): Pair<Float, Float> {
         val i = choice(c)
+        if (i == 7) {
+            val w = WeatherRepo.last
+            if (w != null) {
+                val hsv = FloatArray(3)
+                Color.colorToHSV(WeatherRepo.conditionColor(w).first, hsv)
+                return Pair(hsv[0], hsv[1].coerceIn(.1f, .7f))
+            }
+            return Pair(PRESET_HUE[1], PRESET_SAT[1])
+        }
         if (i > 0) return Pair(PRESET_HUE[i], PRESET_SAT[i])
         try {
             val wc = WallpaperManager.getInstance(c).getWallpaperColors(WallpaperManager.FLAG_SYSTEM)

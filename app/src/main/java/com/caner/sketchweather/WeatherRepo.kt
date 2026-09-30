@@ -19,7 +19,8 @@ data class Weather(
     val temp: Int, val code: Int, val isDay: Boolean,
     val feels: Int?, val humidity: Int?, val wind: Int?,
     val days: List<Day>, val hours: List<Hour>,
-    val sunrise: String?, val sunset: String?
+    val sunrise: String?, val sunset: String?,
+    val rainChance: Int? = null, val uv: Int? = null, val aqi: Int? = null
 )
 data class Place(val name: String, val lat: Double, val lon: Double)
 
@@ -112,12 +113,17 @@ object WeatherRepo {
             Locale.US,
             "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f" +
                 "&current=temperature_2m,weather_code,is_day,apparent_temperature,relative_humidity_2m,wind_speed_10m" +
-                "&hourly=temperature_2m,weather_code,is_day&forecast_hours=13" +
-                "&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset" +
+                "&hourly=temperature_2m,weather_code,is_day,precipitation_probability&forecast_hours=13" +
+                "&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,uv_index_max" +
                 "&timezone=auto&forecast_days=6",
             lat, lon
         )
-        val json = get(url)
+        var json = get(url)
+        try {
+            val aq = get(String.format(Locale.US, "https://air-quality-api.open-meteo.com/v1/air-quality?latitude=%.4f&longitude=%.4f&current=european_aqi", lat, lon))
+            val aqi = JSONObject(aq).optJSONObject("current")?.optDouble("european_aqi", -1.0) ?: -1.0
+            if (aqi >= 0) json = JSONObject(json).put("aqi", aqi).toString()
+        } catch (e: Exception) { }
         val w = parse(json)
         p.edit().putString("cache", json).putLong("fetched", System.currentTimeMillis()).apply()
         return w
@@ -125,7 +131,7 @@ object WeatherRepo {
 
     fun cached(c: Context): Weather? {
         val s = prefs(c).getString("cache", null) ?: return null
-        return try { parse(s) } catch (e: Exception) { null }
+        return try { parse(s).also { last = it } } catch (e: Exception) { null }
     }
 
     private fun r(x: Double): Int = Math.round(x).toInt()
@@ -161,8 +167,48 @@ object WeatherRepo {
             if (cur.has("wind_speed_10m")) r(cur.getDouble("wind_speed_10m")) else null,
             days, hours,
             d.optJSONArray("sunrise")?.optString(0)?.takeIf { it.length >= 16 }?.substring(11, 16),
-            d.optJSONArray("sunset")?.optString(0)?.takeIf { it.length >= 16 }?.substring(11, 16)
-        )
+            d.optJSONArray("sunset")?.optString(0)?.takeIf { it.length >= 16 }?.substring(11, 16),
+            rainNext(o, d),
+            d.optJSONArray("uv_index_max")?.let { if (it.length() > 0 && !it.isNull(0)) r(it.getDouble(0)) else null },
+            if (o.has("aqi")) r(o.getDouble("aqi")) else null
+        ).also { last = it }
+    }
+
+    @Volatile var last: Weather? = null
+
+    private fun rainNext(o: JSONObject, d: JSONObject): Int? {
+        val hp = o.optJSONObject("hourly")?.optJSONArray("precipitation_probability")
+        if (hp != null && hp.length() > 0) {
+            var m = 0
+            for (i in 0 until minOf(6, hp.length())) if (!hp.isNull(i)) m = maxOf(m, hp.getInt(i))
+            return m
+        }
+        val dp = d.optJSONArray("precipitation_probability_max") ?: return null
+        return if (dp.length() > 0 && !dp.isNull(0)) dp.getInt(0) else null
+    }
+
+    fun aqiLabel(a: Int): String = when {
+        a <= 20 -> "Çok iyi"; a <= 40 -> "İyi"; a <= 60 -> "Orta"; a <= 80 -> "Kötü"; else -> "Çok kötü"
+    }
+
+    fun uvLabel(u: Int): String = when {
+        u <= 2 -> "Düşük"; u <= 5 -> "Orta"; u <= 7 -> "Yüksek"; u <= 10 -> "Çok yüksek"; else -> "Aşırı"
+    }
+
+    /** Havaya göre kutu rengi (arka plan, yazı koyu mu?) */
+    fun conditionColor(w: Weather?): Pair<Int, Boolean> {
+        if (w == null) return Pair(0xFF5A6B85.toInt(), false)
+        return when (iconIndex(w.code, w.isDay)) {
+            0 -> Pair(0xFFF4A340.toInt(), false)
+            1 -> Pair(0xFF28386E.toInt(), false)
+            2 -> Pair(0xFF5F9BDA.toInt(), false)
+            3 -> Pair(0xFF34457A.toInt(), false)
+            4 -> Pair(0xFF7D8BA0.toInt(), false)
+            5 -> Pair(0xFFA7B0BC.toInt(), true)
+            6, 7 -> Pair(0xFF3C6EC4.toInt(), false)
+            8 -> Pair(0xFFCFE2F5.toInt(), true)
+            else -> Pair(0xFF5B4A8E.toInt(), false)
+        }
     }
 
     fun geocode(q: String): Place? {

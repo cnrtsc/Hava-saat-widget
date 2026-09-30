@@ -61,7 +61,8 @@ object RoundW {
         cv.drawText(city, cx + d * .03f, cy - d * .355f, cp)
         cv.drawText(SimpleDateFormat("d MMMM EEEE", tr).format(Date()), cx, cy - d * .285f, Combo.text(tf, d * .042f, lk.sub, lk))
         // ikon + derece + durum
-        if (w != null) Combo.icon(c, cv, Style.icon(c, w.code, w.isDay), cx - d * .17f, cy - d * .07f, d * .30f)
+        val bob = if (Style.anim(c) > 0) (if (java.util.Calendar.getInstance().get(java.util.Calendar.MINUTE) % 2 == 0) -d * .012f else d * .012f) else 0f
+        if (w != null) Combo.icon(c, cv, Style.icon(c, w.code, w.isDay), cx - d * .17f, cy - d * .07f + bob, d * .30f)
         val tt = if (w != null) "${w.temp}°" else "--°"
         cv.drawText(tt, cx + d * .0f, cy + d * .03f, Combo.text(cf, d * .23f, lk.ink, lk, Paint.Align.LEFT))
         cv.drawText(if (w != null) WeatherRepo.label(w.code) else "Yükleniyor…", cx + d * .17f, cy + d * .10f, Combo.text(tf, d * .046f, lk.ink, lk))

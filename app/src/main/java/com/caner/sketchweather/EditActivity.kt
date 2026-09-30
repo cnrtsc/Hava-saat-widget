@@ -44,6 +44,7 @@ class EditActivity : Activity() {
         R.layout.w_square1, R.layout.w_square2 -> "round"
         R.layout.w_lock, R.layout.w_lockc -> "lock"
         R.layout.w_duo -> "duo"
+        R.layout.w_bentox, R.layout.w_bentosq -> "bento"
         R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim -> "mod"
         R.layout.w_strip, R.layout.w_graph -> "round"
         R.layout.w_wide6, R.layout.w_wide7, R.layout.w_wide8, R.layout.w_compact1, R.layout.w_compact2,
@@ -125,6 +126,30 @@ class EditActivity : Activity() {
                 root.addView(s)
                 if (read { Mod.slot(this, "slotL", 0) == 0 || Mod.slot(this, "slotR", 2) == 0 }) clockSection()
                 lookSection(true, false); iconSection()
+            }
+            "bento" -> {
+                val sq = layout() == R.layout.w_bentosq
+                val s = Ui.section(this, "Kutular", "Her kutuda ne görüneceğini sen seç.")
+                if (!sq) {
+                    s.addView(Ui.label(this, "Yerleşim"))
+                    s.addView(Ui.chips(this, Bento.ARRANGE, read { Bento.arrange(this, false) }) { putI("arrange", it); build() })
+                }
+                val names = if (sq || read { Bento.arrange(this, false) } == 2) arrayOf("Sol üst", "Sağ üst", "Sol alt", "Sağ alt")
+                    else arrayOf("Büyük kutu", "Üst kutu", "Daire", "Küçük kutu")
+                for (i in 0 until 4) {
+                    s.addView(Ui.label(this, names[i]))
+                    s.addView(Ui.chips(this, Bento.CONTENT, read { Bento.tile(this, i) }) { putI("tile$i", it); build() })
+                }
+                s.addView(Ui.check(this, "Hava kutusu havaya göre renklensin", read { Bento.weatherColor(this) }) { putB("weatherTint", it) })
+                root.addView(s)
+                if ((0 until 4).any { i -> read { Bento.tile(this, i) } == 0 }) {
+                    val cs = Ui.section(this, "Saat kutusu")
+                    cs.addView(Ui.chips(this, Bento.ALIGN, read { Bento.align(this) }) { putI("tileAlign", it); build() })
+                    cs.addView(Ui.chips(this, Bento.CLOCK_STYLE, read { Bento.clockStyle(this) }) { putI("tileClock", it); build() })
+                    root.addView(cs)
+                }
+                if ((0 until 4).any { i -> read { Bento.tile(this, i) } == 1 }) clockSection()
+                paletteSection(); fontSection(true); iconSection()
             }
             "mod" -> {
                 val def = when (layout()) { R.layout.w_mod_pil -> 6; R.layout.w_mod_ay -> 7; else -> 8 }

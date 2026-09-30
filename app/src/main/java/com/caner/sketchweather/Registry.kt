@@ -9,6 +9,8 @@ class W_Saatlik : BaseWidget()
 class W_Minimal : BaseWidget()
 class W_Yanyana : BaseWidget()
 class W_Bento : BaseWidget()
+class W_Bentoozel : BaseWidget()
+class W_Bentokare : BaseWidget()
 class W_Tasan : BaseWidget()
 class W_Pixel : BaseWidget()
 class W_Eskiz : BaseWidget()
@@ -52,6 +54,8 @@ object Registry {
         Entry(W_Minimal::class.java, "Minimal", R.layout.w_wide4, "w", R.drawable.prev_minimal),
         Entry(W_Yanyana::class.java, "Yan yana", R.layout.w_wide5, "w", R.drawable.prev_yanyana),
         Entry(W_Bento::class.java, "Bento", R.layout.w_wide6, "w", R.drawable.prev_bento),
+        Entry(W_Bentoozel::class.java, "Bento · özel", R.layout.w_bentox, "w", R.drawable.prev_bentoozel),
+        Entry(W_Bentokare::class.java, "Bento kare", R.layout.w_bentosq, "s", R.drawable.prev_bentokare),
         Entry(W_Tasan::class.java, "Taşan ikon", R.layout.w_wide7, "w", R.drawable.prev_tasan),
         Entry(W_Pixel::class.java, "Pixel tahmin", R.layout.w_wide8, "w", R.drawable.prev_pixel),
         Entry(W_Eskiz::class.java, "Eskiz not", R.layout.w_wide9, "w", R.drawable.prev_eskiz),
