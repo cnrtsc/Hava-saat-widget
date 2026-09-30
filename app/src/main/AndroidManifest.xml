@@ -18,291 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".W_Klasik" android:exported="true" android:label="Klasik">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_klasik" />
-        </receiver>
-        <receiver android:name=".W_Merkez" android:exported="true" android:label="Merkez">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_merkez" />
-        </receiver>
-        <receiver android:name=".W_Buyuksaat" android:exported="true" android:label="Büyük saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_buyuksaat" />
-        </receiver>
-        <receiver android:name=".W_Saatlik" android:exported="true" android:label="Hava + saatlik">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_saatlik" />
-        </receiver>
-        <receiver android:name=".W_Minimal" android:exported="true" android:label="Minimal">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_minimal" />
-        </receiver>
-        <receiver android:name=".W_Yanyana" android:exported="true" android:label="Yan yana">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yanyana" />
-        </receiver>
-        <receiver android:name=".W_Bento" android:exported="true" android:label="Bento">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bento" />
-        </receiver>
-        <receiver android:name=".W_Tasan" android:exported="true" android:label="Taşan ikon">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_tasan" />
-        </receiver>
-        <receiver android:name=".W_Pixel" android:exported="true" android:label="Pixel tahmin">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pixel" />
-        </receiver>
-        <receiver android:name=".W_Eskiz" android:exported="true" android:label="Eskiz not">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_eskiz" />
-        </receiver>
-        <receiver android:name=".W_Ince" android:exported="true" android:label="İnce">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ince" />
-        </receiver>
-        <receiver android:name=".W_Bakista" android:exported="true" android:label="Bir bakışta">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bakista" />
-        </receiver>
-        <receiver android:name=".W_Hap" android:exported="true" android:label="Hap saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hap" />
-        </receiver>
-        <receiver android:name=".W_Cift" android:exported="true" android:label="Çift saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cift" />
-        </receiver>
-        <receiver android:name=".W_Kare" android:exported="true" android:label="Kare">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kare" />
-        </receiver>
-        <receiver android:name=".W_Kadran" android:exported="true" android:label="Yuvarlak kadran">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kadran" />
-        </receiver>
-        <receiver android:name=".W_Gosterge" android:exported="true" android:label="Derece göstergesi">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gosterge" />
-        </receiver>
-        <receiver android:name=".W_Ustuste" android:exported="true" android:label="Üst üste saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ustuste" />
-        </receiver>
-        <receiver android:name=".W_Kurabiye" android:exported="true" android:label="Kurabiye hava">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kurabiye" />
-        </receiver>
-        <receiver android:name=".W_Analog" android:exported="true" android:label="Analog saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_analog" />
-        </receiver>
-        <receiver android:name=".W_Panel" android:exported="true" android:label="Şeffaf panel">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_panel" />
-        </receiver>
-        <receiver android:name=".TimeReceiver" android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.TIME_SET" />
-                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".W_Klasik" android:exported="true" android:label="Klasik">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_klasik" />
-        </receiver>
-        <receiver android:name=".W_Merkez" android:exported="true" android:label="Merkez">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_merkez" />
-        </receiver>
-        <receiver android:name=".W_Buyuksaat" android:exported="true" android:label="Büyük saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_buyuksaat" />
-        </receiver>
-        <receiver android:name=".W_Saatlik" android:exported="true" android:label="Hava + saatlik">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_saatlik" />
-        </receiver>
-        <receiver android:name=".W_Minimal" android:exported="true" android:label="Minimal">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_minimal" />
-        </receiver>
-        <receiver android:name=".W_Yanyana" android:exported="true" android:label="Yan yana">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yanyana" />
-        </receiver>
-        <receiver android:name=".W_Bento" android:exported="true" android:label="Bento">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bento" />
-        </receiver>
-        <receiver android:name=".W_Tasan" android:exported="true" android:label="Taşan ikon">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_tasan" />
-        </receiver>
-        <receiver android:name=".W_Pixel" android:exported="true" android:label="Pixel tahmin">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pixel" />
-        </receiver>
-        <receiver android:name=".W_Eskiz" android:exported="true" android:label="Eskiz not">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_eskiz" />
-        </receiver>
-        <receiver android:name=".W_Ince" android:exported="true" android:label="İnce">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ince" />
-        </receiver>
-        <receiver android:name=".W_Bakista" android:exported="true" android:label="Bir bakışta">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bakista" />
-        </receiver>
-        <receiver android:name=".W_Hap" android:exported="true" android:label="Hap saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hap" />
-        </receiver>
-        <receiver android:name=".W_Cift" android:exported="true" android:label="Çift saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cift" />
-        </receiver>
-        <receiver android:name=".W_Kare" android:exported="true" android:label="Kare">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kare" />
-        </receiver>
-        <receiver android:name=".W_Kadran" android:exported="true" android:label="Yuvarlak kadran">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kadran" />
-        </receiver>
-        <receiver android:name=".W_Gosterge" android:exported="true" android:label="Derece göstergesi">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gosterge" />
-        </receiver>
-        <receiver android:name=".W_Ustuste" android:exported="true" android:label="Üst üste saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ustuste" />
-        </receiver>
-        <receiver android:name=".W_Kurabiye" android:exported="true" android:label="Kurabiye hava">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kurabiye" />
-        </receiver>
-        <receiver android:name=".W_Analog" android:exported="true" android:label="Analog saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_analog" />
-        </receiver>
-        <receiver android:name=".W_Panel" android:exported="true" android:label="Şeffaf panel">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_panel" />
-        </receiver>
-        <receiver android:name=".TimeReceiver" android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.TIME_SET" />
-                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".W_Klasik" android:exported="true" android:label="Klasik">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_klasik" />
-        </receiver>
-        <receiver android:name=".W_Merkez" android:exported="true" android:label="Merkez">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_merkez" />
-        </receiver>
-        <receiver android:name=".W_Buyuksaat" android:exported="true" android:label="Büyük saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_buyuksaat" />
-        </receiver>
-        <receiver android:name=".W_Saatlik" android:exported="true" android:label="Hava + saatlik">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_saatlik" />
-        </receiver>
-        <receiver android:name=".W_Minimal" android:exported="true" android:label="Minimal">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_minimal" />
-        </receiver>
-        <receiver android:name=".W_Yanyana" android:exported="true" android:label="Yan yana">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yanyana" />
-        </receiver>
-        <receiver android:name=".W_Bento" android:exported="true" android:label="Bento">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bento" />
-        </receiver>
-        <receiver android:name=".W_Tasan" android:exported="true" android:label="Taşan ikon">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_tasan" />
-        </receiver>
-        <receiver android:name=".W_Pixel" android:exported="true" android:label="Pixel tahmin">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pixel" />
-        </receiver>
-        <receiver android:name=".W_Eskiz" android:exported="true" android:label="Eskiz not">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_eskiz" />
-        </receiver>
-        <receiver android:name=".W_Ince" android:exported="true" android:label="İnce">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ince" />
-        </receiver>
-        <receiver android:name=".W_Bakista" android:exported="true" android:label="Bir bakışta">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bakista" />
-        </receiver>
-        <receiver android:name=".W_Hap" android:exported="true" android:label="Hap saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hap" />
-        </receiver>
-        <receiver android:name=".W_Cift" android:exported="true" android:label="Çift saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cift" />
-        </receiver>
-        <receiver android:name=".W_Kare" android:exported="true" android:label="Kare">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kare" />
-        </receiver>
-        <receiver android:name=".W_Kadran" android:exported="true" android:label="Yuvarlak kadran">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kadran" />
-        </receiver>
-        <receiver android:name=".W_Gosterge" android:exported="true" android:label="Derece göstergesi">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gosterge" />
-        </receiver>
-        <receiver android:name=".W_Ustuste" android:exported="true" android:label="Üst üste saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ustuste" />
-        </receiver>
-        <receiver android:name=".W_Kurabiye" android:exported="true" android:label="Kurabiye hava">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kurabiye" />
-        </receiver>
-        <receiver android:name=".W_Analog" android:exported="true" android:label="Analog saat">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_analog" />
-        </receiver>
-        <receiver android:name=".W_Analogsade" android:exported="true" android:label="Analog (sadece saat)">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_analogsade" />
-        </receiver>
-        <receiver android:name=".W_Yuvhava" android:exported="true" android:label="Yuvarlak hava">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yuvhava" />
-        </receiver>
-        <receiver android:name=".W_Yuvgun" android:exported="true" android:label="Yuvarlak gün">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yuvgun" />
-        </receiver>
-        <receiver android:name=".W_Panel" android:exported="true" android:label="Şeffaf panel">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_panel" />
-        </receiver>
-        <receiver android:name=".TimeReceiver" android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.TIME_SET" />
-                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
-            </intent-filter>
-        </receiver>
+        <activity android:name=".EditActivity" android:exported="false" />
         <receiver android:name=".W_Saatbilgi" android:exported="true" android:label="Analog saat + bilgi">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_saatbilgi" />
@@ -406,6 +122,26 @@
         <receiver android:name=".W_Panel" android:exported="true" android:label="Şeffaf panel">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_panel" />
+        </receiver>
+        <receiver android:name=".W_Yuvsade" android:exported="true" android:label="Yuvarlak hava · sade">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yuvsade" />
+        </receiver>
+        <receiver android:name=".W_Yuvdetay" android:exported="true" android:label="Yuvarlak hava · detaylı">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yuvdetay" />
+        </receiver>
+        <receiver android:name=".W_Yuv3gun" android:exported="true" android:label="Yuvarlak hava · 3 gün">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yuv3gun" />
+        </receiver>
+        <receiver android:name=".W_Kilit" android:exported="true" android:label="Kilit ekranı saati">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kilit" />
+        </receiver>
+        <receiver android:name=".W_Kilitince" android:exported="true" android:label="Kilit ekranı · ince">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kilitince" />
         </receiver>
         <receiver android:name=".TimeReceiver" android:exported="true">
             <intent-filter>

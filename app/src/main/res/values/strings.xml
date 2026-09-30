@@ -26,4 +26,9 @@
     <string name="desc_yuvhava">Yuvarlak hava · 2x2</string>
     <string name="desc_yuvgun">Yuvarlak gün · 2x2</string>
     <string name="desc_panel">Şeffaf panel · 5x2</string>
+    <string name="desc_yuvsade">Yuvarlak hava · sade · 2x2</string>
+    <string name="desc_yuvdetay">Yuvarlak hava · detaylı · 2x2</string>
+    <string name="desc_yuv3gun">Yuvarlak hava · 3 gün · 2x2</string>
+    <string name="desc_kilit">Kilit ekranı saati · 4x2</string>
+    <string name="desc_kilitince">Kilit ekranı · ince · 4x1</string>
 </resources>

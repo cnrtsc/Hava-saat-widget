@@ -74,6 +74,11 @@ object Widgets {
         R.layout.w_square5 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_square6 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_combo to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_roundw0 to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_roundw1 to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_roundw2 to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_lock to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_lockc to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_square7 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_square8 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
@@ -81,7 +86,8 @@ object Widgets {
     private val PALETTE_LAYOUTS = setOf(
         R.layout.w_wide6, R.layout.w_wide7, R.layout.w_wide8, R.layout.w_compact1, R.layout.w_compact2,
         R.layout.w_square1, R.layout.w_square2, R.layout.w_square3, R.layout.w_square4, R.layout.w_square5,
-        R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo
+        R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo,
+        R.layout.w_roundw0, R.layout.w_roundw1, R.layout.w_roundw2, R.layout.w_lock, R.layout.w_lockc
     )
 
     private val DAY_IDS = arrayOf(
@@ -144,8 +150,7 @@ object Widgets {
             for (id in mgr.getAppWidgetIds(ComponentName(c, e.cls))) {
                 any = true
                 // Uygulamadan stil değiştirildiyse onu kullan
-                val ov = Registry.ALL.getOrNull(p.getInt("ov_$id", -1))
-                val layout = if (ov != null && ov.size == e.size) ov.layout else e.layout
+                val layout = layoutFor(c, id, e)
                 val o = mgr.getAppWidgetOptions(id)
                 var wdp = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0)
                 var hdp = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
@@ -154,13 +159,25 @@ object Widgets {
                     hdp = when (e.size) { "s" -> 160; "c" -> 70; else -> 170 }
                 }
                 try {
-                    mgr.updateAppWidget(id, build(c, layout, w, wdp, hdp))
+                    mgr.updateAppWidget(id, Cfg.with(id) { build(c, layout, w, wdp, hdp) })
                 } catch (ex: Exception) {
                     // bir stil hata verse de diğerleri çizilsin
                 }
             }
         }
         if (any) scheduleTick(c)
+    }
+
+    fun layoutFor(c: Context, id: Int, e: Entry): Int {
+        val ov = Registry.ALL.getOrNull(WeatherRepo.prefs(c).getInt("ov_$id", -1))
+        return if (ov != null && ov.size == e.size) ov.layout else e.layout
+    }
+
+    /** Uygulama içi canlı önizleme için: widget'ın şu anki ayarlarıyla RemoteViews üretir. */
+    fun preview(c: Context, id: Int, wdp: Int, hdp: Int): RemoteViews? {
+        val info = AppWidgetManager.getInstance(c).getAppWidgetInfo(id) ?: return null
+        val e = Registry.ofClass(info.provider.className) ?: return null
+        return Cfg.with(id) { build(c, layoutFor(c, id, e), WeatherRepo.cached(c), wdp, hdp) }
     }
 
     /** Saati her dakika başında yeniler. */
@@ -182,7 +199,7 @@ object Widgets {
         }
     }
 
-    private fun textBitmap(c: Context, text: String, tf: Typeface, sp: Float, color: Int, shadow: Boolean): Bitmap {
+    private fun textBitmap(c: Context, text: String, tf: Typeface, sp: Float, color: Int, shadow: Boolean, fx: Int = 0): Bitmap {
         val dm = c.resources.displayMetrics
         val px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, dm)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
@@ -190,6 +207,8 @@ object Widgets {
             textSize = px
             this.color = color
             if (shadow) setShadowLayer(px * 0.07f, 0f, px * 0.03f, 0x80000000.toInt())
+            if (fx == 1) { style = Paint.Style.STROKE; strokeWidth = px * 0.028f; strokeJoin = Paint.Join.ROUND }
+            if (fx == 2) setShadowLayer(px * 0.06f, px * 0.02f, px * 0.04f, 0xA0000000.toInt())
         }
         val fm = paint.fontMetrics
         val pad = if (shadow) px * 0.12f else 2f
@@ -201,9 +220,9 @@ object Widgets {
         return bmp
     }
 
-    private fun tint(v: RemoteViews, id: Int, color: Int) {
+    private fun tint(v: RemoteViews, id: Int, color: Int, f: Float = 1f) {
         v.setInt(id, "setColorFilter", color or 0xFF000000.toInt())
-        v.setInt(id, "setImageAlpha", android.graphics.Color.alpha(color))
+        v.setInt(id, "setImageAlpha", (android.graphics.Color.alpha(color) * f).toInt())
     }
 
     private fun hm(t: String?): Int? = try {
@@ -388,10 +407,11 @@ object Widgets {
         return b
     }
 
-    private fun build(c: Context, layout: Int, w: Weather?, wdp: Int = 320, hdp: Int = 170): RemoteViews {
+    fun build(c: Context, layout: Int, w: Weather?, wdp: Int = 320, hdp: Int = 170): RemoteViews {
         val v = RemoteViews(c.packageName, layout)
         val spec = SPECS[layout] ?: SPECS.getValue(R.layout.w_wide0)
         val pal = Palette.get(c)
+        val opF = Style.opacity(c) / 100f
         val paletteStyle = layout in PALETTE_LAYOUTS
         val isGlass = layout == R.layout.w_glass
 
@@ -405,9 +425,15 @@ object Widgets {
             when (bg) {
                 1 -> { v.setImageViewResource(R.id.bg, R.drawable.bg_light); c1 = 0xFF1B1F24.toInt(); c2 = 0xFF5A636E.toInt(); shadow = false }
                 2 -> { v.setImageViewResource(R.id.bg, R.drawable.bg_none); c1 = 0xFFFFFFFF.toInt(); c2 = 0xFFE3E7EE.toInt(); shadow = true }
-                3 -> { v.setImageViewResource(R.id.bg, R.drawable.shape_round); tint(v, R.id.bg, pal.container); c1 = pal.onCont; c2 = pal.onContSub; shadow = false }
+                3 -> { v.setImageViewResource(R.id.bg, R.drawable.shape_round); tint(v, R.id.bg, pal.container, opF); c1 = pal.onCont; c2 = pal.onContSub; shadow = false }
                 else -> { v.setImageViewResource(R.id.bg, R.drawable.bg_dark); c1 = 0xFFFFFFFF.toInt(); c2 = 0xFFC9D1DC.toInt(); shadow = false }
             }
+        }
+        if (!paletteStyle && !isGlass && Style.bg(c) != 2) v.setInt(R.id.bg, "setImageAlpha", (opF * 255).toInt())
+        Style.textColor(c)?.let { tc ->
+            c1 = tc
+            c2 = android.graphics.Color.argb(205, android.graphics.Color.red(tc), android.graphics.Color.green(tc), android.graphics.Color.blue(tc))
+            if (!paletteStyle) shadow = shadow || Style.bg(c) == 2
         }
         for (id in PRIMARY) v.setTextColor(id, c1)
         for (id in SECONDARY) v.setTextColor(id, c2)
@@ -438,19 +464,19 @@ object Widgets {
 
         when (layout) {
             R.layout.w_wide6 -> {
-                tint(v, R.id.cbg1, pal.dark); tint(v, R.id.cbg2, pal.accent)
-                tint(v, R.id.cbg3, pal.container); tint(v, R.id.cbg4, pal.dark)
+                tint(v, R.id.cbg1, pal.dark, opF); tint(v, R.id.cbg2, pal.accent, opF)
+                tint(v, R.id.cbg3, pal.container, opF); tint(v, R.id.cbg4, pal.dark, opF)
                 dateCol = pal.onDarkSub; hourCol = pal.onDark; minCol = pal.accentLight
                 tempCol = pal.onAccent; feelsCol = pal.onCont
                 v.setTextColor(R.id.feels_lab, pal.onContSub)
                 v.setTextColor(R.id.hum, pal.onDark); v.setTextColor(R.id.wind, pal.onDarkSub)
             }
             R.layout.w_wide7 -> {
-                tint(v, R.id.bg, pal.container)
+                tint(v, R.id.bg, pal.container, opF)
                 dateCol = pal.onContSub; clockCol = pal.onCont; tempCol = pal.onCont
             }
             R.layout.w_wide8 -> {
-                tint(v, R.id.cbg1, pal.container); tint(v, R.id.cbg2, pal.containerHigh); tint(v, R.id.cbg3, pal.accent)
+                tint(v, R.id.cbg1, pal.container, opF); tint(v, R.id.cbg2, pal.containerHigh, opF); tint(v, R.id.cbg3, pal.accent, opF)
                 tempCol = pal.onCont
                 for (id in intArrayOf(R.id.h1_time, R.id.h2_time, R.id.h3_time, R.id.h4_time, R.id.h5_time)) v.setTextColor(id, pal.onContSub)
                 for (id in intArrayOf(R.id.h1_temp, R.id.h2_temp, R.id.h3_temp, R.id.h4_temp, R.id.h5_temp)) v.setTextColor(id, pal.onCont)
@@ -461,7 +487,7 @@ object Widgets {
                 for (id in intArrayOf(R.id.now_desc, R.id.sep, R.id.hl)) v.setTextColor(id, 0xFFE8ECF2.toInt())
             }
             R.layout.w_compact2 -> {
-                tint(v, R.id.cbg1, pal.container); tint(v, R.id.cbg2, pal.accent)
+                tint(v, R.id.cbg1, pal.container, opF); tint(v, R.id.cbg2, pal.accent, opF)
                 clockCol = pal.onCont; tempCol = pal.onAccent
             }
             R.layout.w_square1 -> {
@@ -477,12 +503,17 @@ object Widgets {
                 shadow = true; hourCol = pal.accentLight; minCol = 0xFFFFFFFF.toInt()
             }
             R.layout.w_square4 -> {
-                tint(v, R.id.cbg1, pal.container)
+                tint(v, R.id.cbg1, pal.container, opF)
                 tempCol = pal.onCont; v.setTextColor(R.id.hl, pal.onContSub)
             }
             R.layout.w_square5 -> v.setImageViewBitmap(R.id.dial, Combo.render(c, w, wdp, hdp, 1))
             R.layout.w_square6 -> v.setImageViewBitmap(R.id.dial, Combo.render(c, w, wdp, hdp, 2))
             R.layout.w_combo -> v.setImageViewBitmap(R.id.dial, Combo.render(c, w, wdp, hdp, 0))
+            R.layout.w_roundw0 -> v.setImageViewBitmap(R.id.dial, RoundW.render(c, w, wdp, hdp, 0))
+            R.layout.w_roundw1 -> v.setImageViewBitmap(R.id.dial, RoundW.render(c, w, wdp, hdp, 1))
+            R.layout.w_roundw2 -> v.setImageViewBitmap(R.id.dial, RoundW.render(c, w, wdp, hdp, 2))
+            R.layout.w_lock -> v.setImageViewBitmap(R.id.dial, Lock.render(c, w, wdp, hdp, false))
+            R.layout.w_lockc -> v.setImageViewBitmap(R.id.dial, Lock.render(c, w, wdp, hdp, true))
             R.layout.w_square7 -> v.setImageViewBitmap(R.id.dial, roundWeather(c, pal, w, textTf))
             R.layout.w_square8 -> v.setImageViewBitmap(R.id.dial, roundSun(c, pal, w, textTf))
             R.layout.w_wide9 -> {
@@ -504,10 +535,11 @@ object Widgets {
 
         val cTf = if (handFont) Style.handTypeface(c) else clockTf
         if (handFont) { tempTf = cTf; dateTf = cTf }
-        v.setImageViewBitmap(R.id.clock, textBitmap(c, "$hh:$mm", cTf, spec.clock, clockCol, shadow))
+        val fx = Style.clockFx(c)
+        v.setImageViewBitmap(R.id.clock, textBitmap(c, "$hh:$mm", cTf, spec.clock, clockCol, shadow, fx))
         home?.let { v.setImageViewBitmap(R.id.clock2, textBitmap(c, it, clockTf, spec.clock, c1, shadow)) }
-        v.setImageViewBitmap(R.id.clock_h, textBitmap(c, hh, clockTf, spec.clock, hourCol, shadow))
-        v.setImageViewBitmap(R.id.clock_m, textBitmap(c, mm, clockTf, spec.clock, minCol, shadow))
+        v.setImageViewBitmap(R.id.clock_h, textBitmap(c, hh, clockTf, spec.clock, hourCol, shadow, fx))
+        v.setImageViewBitmap(R.id.clock_m, textBitmap(c, mm, clockTf, spec.clock, minCol, shadow, fx))
         v.setImageViewBitmap(R.id.date, textBitmap(c, dateStr, dateTf, spec.date, dateCol, shadow))
         v.setImageViewBitmap(R.id.now_temp, textBitmap(c, tempStr, tempTf, spec.temp, tempCol, shadow))
         if (handFont) v.setImageViewBitmap(R.id.feels_img, textBitmap(c, "hissedilen $feelsStr", cTf, 16f, feelsCol, false))

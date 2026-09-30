@@ -6,19 +6,22 @@ import android.graphics.Typeface
 object Style {
     val FONT_NAMES = arrayOf(
         "Sistem", "Outfit", "Manrope", "Poppins", "Bebas Neue",
-        "Space Grotesk", "DM Serif", "Josefin Sans", "Urbanist", "El yazısı"
+        "Space Grotesk", "DM Serif", "Josefin Sans", "Urbanist", "El yazısı",
+        "Çift çizgi", "Neon çizgi", "Kabartma", "Mono", "Yuvarlak", "Inter"
     )
     private val CLOCK_FONTS = intArrayOf(
         0, R.font.f_outfit_c, R.font.f_manrope_c, R.font.f_poppins_c, R.font.f_bebas_c,
-        R.font.f_grotesk_c, R.font.f_serif_c, R.font.f_josefin_c, R.font.f_urbanist_c, R.font.f_hand_c
+        R.font.f_grotesk_c, R.font.f_serif_c, R.font.f_josefin_c, R.font.f_urbanist_c, R.font.f_hand_c,
+        R.font.f_train_c, R.font.f_monoton_c, R.font.f_rampart_c, R.font.f_mono_c, R.font.f_quick_c, R.font.f_inter_c
     )
     private val TEXT_FONTS = intArrayOf(
         0, R.font.f_outfit_t, R.font.f_manrope_t, R.font.f_poppins_t, R.font.f_bebas_t,
-        R.font.f_grotesk_t, R.font.f_serif_t, R.font.f_josefin_t, R.font.f_urbanist_t, R.font.f_hand_t
+        R.font.f_grotesk_t, R.font.f_serif_t, R.font.f_josefin_t, R.font.f_urbanist_t, R.font.f_hand_t,
+        R.font.f_outfit_t, R.font.f_outfit_t, R.font.f_outfit_t, R.font.f_mono_t, R.font.f_quick_t, R.font.f_inter_t
     )
     val BG_NAMES = arrayOf("Koyu", "Açık", "Şeffaf", "Renkli (palet)")
     val BGS = intArrayOf(R.drawable.bg_dark, R.drawable.bg_light, R.drawable.bg_none, R.drawable.shape_round)
-    val ICON_SET_NAMES = arrayOf("Yumuşak", "Parlak 3D", "Düz ikonik", "Gerçekçi", "Çizgi", "Neon", "Pastel", "Eskiz", "Suluboya", "Retro piksel")
+    val ICON_SET_NAMES = arrayOf("Yumuşak", "Parlak 3D", "Düz ikonik", "Gerçekçi", "Çizgi", "Neon", "Pastel", "Eskiz", "Suluboya", "Retro piksel", "Gradyan düz", "Kil 3D")
     val ICONS: Array<IntArray> = arrayOf(
         intArrayOf(R.drawable.w_sun, R.drawable.w_moon, R.drawable.w_partly, R.drawable.w_partly_night, R.drawable.w_cloud,
             R.drawable.w_fog, R.drawable.w_drizzle, R.drawable.w_rain, R.drawable.w_snow, R.drawable.w_storm),
@@ -36,7 +39,9 @@ object Style {
             R.drawable.p_fog, R.drawable.p_drizzle, R.drawable.p_rain, R.drawable.p_snow, R.drawable.p_storm),
         intArrayOf(R.drawable.s_sun, R.drawable.s_moon, R.drawable.s_partly, R.drawable.s_partly_night, R.drawable.s_cloud, R.drawable.s_fog, R.drawable.s_drizzle, R.drawable.s_rain, R.drawable.s_snow, R.drawable.s_storm),
         intArrayOf(R.drawable.c_sun, R.drawable.c_moon, R.drawable.c_partly, R.drawable.c_partly_night, R.drawable.c_cloud, R.drawable.c_fog, R.drawable.c_drizzle, R.drawable.c_rain, R.drawable.c_snow, R.drawable.c_storm),
-        intArrayOf(R.drawable.x_sun, R.drawable.x_moon, R.drawable.x_partly, R.drawable.x_partly_night, R.drawable.x_cloud, R.drawable.x_fog, R.drawable.x_drizzle, R.drawable.x_rain, R.drawable.x_snow, R.drawable.x_storm)
+        intArrayOf(R.drawable.x_sun, R.drawable.x_moon, R.drawable.x_partly, R.drawable.x_partly_night, R.drawable.x_cloud, R.drawable.x_fog, R.drawable.x_drizzle, R.drawable.x_rain, R.drawable.x_snow, R.drawable.x_storm),
+        intArrayOf(R.drawable.y_sun, R.drawable.y_moon, R.drawable.y_partly, R.drawable.y_partly_night, R.drawable.y_cloud, R.drawable.y_fog, R.drawable.y_drizzle, R.drawable.y_rain, R.drawable.y_snow, R.drawable.y_storm),
+        intArrayOf(R.drawable.k_sun, R.drawable.k_moon, R.drawable.k_partly, R.drawable.k_partly_night, R.drawable.k_cloud, R.drawable.k_fog, R.drawable.k_drizzle, R.drawable.k_rain, R.drawable.k_snow, R.drawable.k_storm)
     )
 
     fun clockTypeface(c: Context, i: Int): Typeface =
@@ -48,10 +53,21 @@ object Style {
         else c.resources.getFont(TEXT_FONTS[i])
 
     private fun get(c: Context, key: String, def: Int, size: Int): Int =
-        WeatherRepo.prefs(c).getInt(key, def).coerceIn(0, size - 1)
+        Cfg.int(c, key, def).coerceIn(0, size - 1)
 
     fun font(c: Context) = get(c, "font", 1, FONT_NAMES.size)
     fun bg(c: Context) = get(c, "bg", 2, BGS.size)
+    val TEXT_COLOR_NAMES = arrayOf("Otomatik", "Beyaz", "Siyah", "Krem", "Palet rengi", "Açık mavi", "Turuncu")
+    fun textColorIdx(c: Context) = get(c, "textColor", 0, TEXT_COLOR_NAMES.size)
+    /** 0 = otomatik (null döner) */
+    fun textColor(c: Context): Int? = when (textColorIdx(c)) {
+        1 -> 0xFFFFFFFF.toInt(); 2 -> 0xFF1A1C22.toInt(); 3 -> 0xFFF3E6CF.toInt()
+        4 -> Palette.get(c).accentLight; 5 -> 0xFFA9D4FF.toInt(); 6 -> 0xFFFFB24A.toInt()
+        else -> null
+    }
+    val FX_NAMES = arrayOf("Dolu", "Kontur (çift çizgi)", "Gölgeli")
+    fun clockFx(c: Context) = get(c, "clockFx", 0, FX_NAMES.size)
+    fun opacity(c: Context) = Cfg.int(c, "opacity", 100).coerceIn(0, 100)
     val ANIM_NAMES = arrayOf("Kapalı", "Her 30 saniyede", "Her 10 saniyede")
     fun anim(c: Context) = get(c, "anim", 1, ANIM_NAMES.size)
     fun animInterval(c: Context): Int = when (anim(c)) { 1 -> 30_000; 2 -> 10_000; else -> 86_400_000 }

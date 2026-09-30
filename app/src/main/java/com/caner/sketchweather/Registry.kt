@@ -26,6 +26,11 @@ class W_Analogsade : BaseWidget()
 class W_Yuvhava : BaseWidget()
 class W_Yuvgun : BaseWidget()
 class W_Panel : BaseWidget()
+class W_Yuvsade : BaseWidget()
+class W_Yuvdetay : BaseWidget()
+class W_Yuv3gun : BaseWidget()
+class W_Kilit : BaseWidget()
+class W_Kilitince : BaseWidget()
 
 class Entry(val cls: Class<out BaseWidget>, val label: String, val layout: Int, val size: String, val preview: Int)
 
@@ -57,7 +62,12 @@ object Registry {
         Entry(W_Analogsade::class.java, "Analog (sadece saat)", R.layout.w_square6, "s", R.drawable.prev_analogsade),
         Entry(W_Yuvhava::class.java, "Yuvarlak hava", R.layout.w_square7, "s", R.drawable.prev_yuvhava),
         Entry(W_Yuvgun::class.java, "Yuvarlak gün", R.layout.w_square8, "s", R.drawable.prev_yuvgun),
-        Entry(W_Panel::class.java, "Şeffaf panel", R.layout.w_glass, "l", R.drawable.prev_panel)
+        Entry(W_Panel::class.java, "Şeffaf panel", R.layout.w_glass, "l", R.drawable.prev_panel),
+        Entry(W_Yuvsade::class.java, "Yuvarlak hava · sade", R.layout.w_roundw0, "s", R.drawable.prev_yuvsade),
+        Entry(W_Yuvdetay::class.java, "Yuvarlak hava · detaylı", R.layout.w_roundw1, "s", R.drawable.prev_yuvdetay),
+        Entry(W_Yuv3gun::class.java, "Yuvarlak hava · 3 gün", R.layout.w_roundw2, "s", R.drawable.prev_yuv3gun),
+        Entry(W_Kilit::class.java, "Kilit ekranı saati", R.layout.w_lock, "w", R.drawable.prev_kilit),
+        Entry(W_Kilitince::class.java, "Kilit ekranı · ince", R.layout.w_lockc, "c", R.drawable.prev_kilitince)
     )
     fun ofClass(name: String?): Entry? = ALL.firstOrNull { it.cls.name == name }
 }

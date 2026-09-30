@@ -15,7 +15,7 @@ object Palette {
     private val PRESET_HUE = floatArrayOf(25f, 25f, 205f, 140f, 265f, 340f, 220f)
     private val PRESET_SAT = floatArrayOf(.6f, .6f, .6f, .45f, .5f, .55f, .08f)
 
-    fun choice(c: Context): Int = WeatherRepo.prefs(c).getInt("palette", 0).coerceIn(0, NAMES.size - 1)
+    fun choice(c: Context): Int = Cfg.int(c, "palette", 0).coerceIn(0, NAMES.size - 1)
 
     private fun hsl(h: Float, s: Float, l: Float, alpha: Int = 255): Int {
         val q = if (l < .5f) l * (1 + s) else l + s - l * s

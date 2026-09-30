@@ -29,20 +29,21 @@ object Combo {
     val SHOW_KEYS = arrayOf("loc", "date", "desc", "feels", "hl", "hum", "wind", "sun")
     val SHOW_NAMES = arrayOf("Konum", "Tarih", "Hava durumu yazısı", "Hissedilen", "En yüksek / en düşük", "Nem", "Rüzgâr", "Gün doğumu / batımı")
 
-    private fun p(c: Context) = WeatherRepo.prefs(c)
-    fun face(c: Context) = p(c).getInt("face", 0).coerceIn(0, FACE_NAMES.size - 1)
-    fun digital(c: Context) = p(c).getInt("digital", 0).coerceIn(0, DIGITAL_NAMES.size - 1)
-    fun color(c: Context) = p(c).getInt("faceColor", 0).coerceIn(0, COLOR_NAMES.size - 1)
-    fun panel(c: Context) = p(c).getInt("panel", 0).coerceIn(0, PANEL_NAMES.size - 1)
-    fun opacity(c: Context) = p(c).getInt("opacity", 100).coerceIn(0, 100)
-    fun rim(c: Context) = p(c).getBoolean("rim", false)
-    fun days(c: Context) = p(c).getInt("days", 1).coerceIn(0, DAY_COUNTS.size - 1)
-    fun show(c: Context, key: String) = p(c).getBoolean("show_$key", key != "sun")
+    val PANEL_STYLE_NAMES = arrayOf("Sade", "Detaylı (rüzgâr, nem, gün batımı)", "3 günlük", "Özel (aşağıdan seç)")
+    fun face(c: Context) = Cfg.int(c, "face", 0).coerceIn(0, FACE_NAMES.size - 1)
+    fun digital(c: Context) = Cfg.int(c, "digital", 0).coerceIn(0, DIGITAL_NAMES.size - 1)
+    fun color(c: Context) = Cfg.int(c, "faceColor", 0).coerceIn(0, COLOR_NAMES.size - 1)
+    fun panel(c: Context) = Cfg.int(c, "panel", 0).coerceIn(0, PANEL_NAMES.size - 1)
+    fun panelStyle(c: Context) = Cfg.int(c, "panelStyle", 0).coerceIn(0, PANEL_STYLE_NAMES.size - 1)
+    fun opacity(c: Context) = Style.opacity(c)
+    fun rim(c: Context) = Cfg.bool(c, "rim", false)
+    fun days(c: Context) = Cfg.int(c, "days", 1).coerceIn(0, DAY_COUNTS.size - 1)
+    fun show(c: Context, key: String) = Cfg.bool(c, "show_$key", key != "sun")
 
-    private class Look(val fill: Int, val ink: Int, val sub: Int, val accent: Int, val shadow: Boolean, val rimCol: Int)
+    class Look(val fill: Int, val ink: Int, val sub: Int, val accent: Int, val shadow: Boolean, val rimCol: Int)
 
-    private fun look(c: Context, pal: Pal): Look {
-        val a = opacity(c) / 100f
+    fun look(c: Context, pal: Pal, defOp: Int = 100): Look {
+        val a = Cfg.int(c, "opacity", defOp).coerceIn(0, 100) / 100f
         val col = color(c)
         val base = when (col) { 1 -> Color.rgb(24, 27, 34); 2 -> pal.container; else -> Color.rgb(236, 239, 243) }
         val fill = Color.argb((a * 255).toInt(), Color.red(base), Color.green(base), Color.blue(base))
@@ -51,18 +52,23 @@ object Combo {
         val sub = if (onLight) (if (col == 2) pal.onContSub else Color.rgb(88, 94, 104)) else Color.rgb(222, 228, 236)
         val accent = if (onLight) pal.accent else pal.accentLight
         val rimCol = if (onLight) Color.argb(50, 0, 0, 0) else Color.argb(90, 255, 255, 255)
+        val tc = Style.textColor(c)
+        if (tc != null) {
+            val subTc = Color.argb(200, Color.red(tc), Color.green(tc), Color.blue(tc))
+            return Look(fill, tc, subTc, accent, a < .45f, rimCol)
+        }
         return Look(fill, ink, sub, accent, a < .45f, rimCol)
     }
 
-    private fun paint(color: Int, lk: Look) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    fun paint(color: Int, lk: Look) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         this.color = color
         if (lk.shadow) setShadowLayer(6f, 0f, 2f, 0x90000000.toInt())
     }
 
-    private fun text(tf: Typeface, size: Float, color: Int, lk: Look, align: Paint.Align = Paint.Align.CENTER) =
+    fun text(tf: Typeface, size: Float, color: Int, lk: Look, align: Paint.Align = Paint.Align.CENTER) =
         paint(color, lk).apply { typeface = tf; textSize = size; textAlign = align }
 
-    private fun icon(c: Context, cv: Canvas, res: Int, cx: Float, cy: Float, size: Float) {
+    fun icon(c: Context, cv: Canvas, res: Int, cx: Float, cy: Float, size: Float) {
         try {
             val b = BitmapFactory.decodeResource(c.resources, res) ?: return
             cv.drawBitmap(b, null, RectF(cx - size / 2, cy - size / 2, cx + size / 2, cy + size / 2), Paint(Paint.FILTER_BITMAP_FLAG))
@@ -158,6 +164,12 @@ object Combo {
                 content = RectF(box.left + 12 * k, box.top + 10 * k, box.right - 12 * k, box.bottom - 10 * k)
             }
             else -> content = RectF(box.left + 4 * k, box.top, box.right, box.bottom)
+        }
+        val ps = panelStyle(c)
+        if (ps < 3) {
+            val d = min(content.width(), content.height())
+            RoundW.content(c, cv, content.centerX(), content.centerY(), if (shape == 0) min(box.width(), box.height()) else d * 1.2f, lk, w, ps, shape != 0, content)
+            return
         }
         val font = Style.font(c)
         val tf = Style.textTypeface(c, font)
