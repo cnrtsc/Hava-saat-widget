@@ -21,7 +21,7 @@ object Style {
     )
     val BG_NAMES = arrayOf("Koyu", "Açık", "Şeffaf", "Renkli (palet)")
     val BGS = intArrayOf(R.drawable.bg_dark, R.drawable.bg_light, R.drawable.bg_none, R.drawable.shape_round)
-    val ICON_SET_NAMES = arrayOf("Yumuşak", "Parlak 3D", "Düz ikonik", "Gerçekçi", "Çizgi", "Neon", "Pastel", "Eskiz", "Suluboya", "Retro piksel", "Gradyan düz", "Kil 3D")
+    val ICON_SET_NAMES = arrayOf("Yumuşak", "Parlak 3D", "Düz ikonik", "Gerçekçi", "Çizgi", "Neon", "Pastel", "Eskiz", "Suluboya", "Retro piksel", "Gradyan düz", "Kil 3D", "Beyaz dolgu", "İki renkli", "Siyah dolgu")
     val ICONS: Array<IntArray> = arrayOf(
         intArrayOf(R.drawable.w_sun, R.drawable.w_moon, R.drawable.w_partly, R.drawable.w_partly_night, R.drawable.w_cloud,
             R.drawable.w_fog, R.drawable.w_drizzle, R.drawable.w_rain, R.drawable.w_snow, R.drawable.w_storm),
@@ -41,7 +41,10 @@ object Style {
         intArrayOf(R.drawable.c_sun, R.drawable.c_moon, R.drawable.c_partly, R.drawable.c_partly_night, R.drawable.c_cloud, R.drawable.c_fog, R.drawable.c_drizzle, R.drawable.c_rain, R.drawable.c_snow, R.drawable.c_storm),
         intArrayOf(R.drawable.x_sun, R.drawable.x_moon, R.drawable.x_partly, R.drawable.x_partly_night, R.drawable.x_cloud, R.drawable.x_fog, R.drawable.x_drizzle, R.drawable.x_rain, R.drawable.x_snow, R.drawable.x_storm),
         intArrayOf(R.drawable.y_sun, R.drawable.y_moon, R.drawable.y_partly, R.drawable.y_partly_night, R.drawable.y_cloud, R.drawable.y_fog, R.drawable.y_drizzle, R.drawable.y_rain, R.drawable.y_snow, R.drawable.y_storm),
-        intArrayOf(R.drawable.k_sun, R.drawable.k_moon, R.drawable.k_partly, R.drawable.k_partly_night, R.drawable.k_cloud, R.drawable.k_fog, R.drawable.k_drizzle, R.drawable.k_rain, R.drawable.k_snow, R.drawable.k_storm)
+        intArrayOf(R.drawable.k_sun, R.drawable.k_moon, R.drawable.k_partly, R.drawable.k_partly_night, R.drawable.k_cloud, R.drawable.k_fog, R.drawable.k_drizzle, R.drawable.k_rain, R.drawable.k_snow, R.drawable.k_storm),
+        intArrayOf(R.drawable.m_sun, R.drawable.m_moon, R.drawable.m_partly, R.drawable.m_partly_night, R.drawable.m_cloud, R.drawable.m_fog, R.drawable.m_drizzle, R.drawable.m_rain, R.drawable.m_snow, R.drawable.m_storm),
+        intArrayOf(R.drawable.d_sun, R.drawable.d_moon, R.drawable.d_partly, R.drawable.d_partly_night, R.drawable.d_cloud, R.drawable.d_fog, R.drawable.d_drizzle, R.drawable.d_rain, R.drawable.d_snow, R.drawable.d_storm),
+        intArrayOf(R.drawable.b_sun, R.drawable.b_moon, R.drawable.b_partly, R.drawable.b_partly_night, R.drawable.b_cloud, R.drawable.b_fog, R.drawable.b_drizzle, R.drawable.b_rain, R.drawable.b_snow, R.drawable.b_storm)
     )
 
     fun clockTypeface(c: Context, i: Int): Typeface =

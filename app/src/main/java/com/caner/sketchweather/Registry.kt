@@ -30,6 +30,12 @@ class W_Yuvsade : BaseWidget()
 class W_Yuvdetay : BaseWidget()
 class W_Yuv3gun : BaseWidget()
 class W_Kilit : BaseWidget()
+class W_Ikili : BaseWidget()
+class W_Grafik : BaseWidget()
+class W_Gunseridi : BaseWidget()
+class W_Pil : BaseWidget()
+class W_Ay : BaseWidget()
+class W_Takvim : BaseWidget()
 class W_Kilitince : BaseWidget()
 
 class Entry(val cls: Class<out BaseWidget>, val label: String, val layout: Int, val size: String, val preview: Int)
@@ -67,6 +73,12 @@ object Registry {
         Entry(W_Yuvdetay::class.java, "Yuvarlak hava · detaylı", R.layout.w_roundw1, "s", R.drawable.prev_yuvdetay),
         Entry(W_Yuv3gun::class.java, "Yuvarlak hava · 3 gün", R.layout.w_roundw2, "s", R.drawable.prev_yuv3gun),
         Entry(W_Kilit::class.java, "Kilit ekranı saati", R.layout.w_lock, "w", R.drawable.prev_kilit),
+        Entry(W_Ikili::class.java, "İkili yuvarlak", R.layout.w_duo, "w", R.drawable.prev_ikili),
+        Entry(W_Grafik::class.java, "Sıcaklık grafiği", R.layout.w_graph, "w", R.drawable.prev_grafik),
+        Entry(W_Gunseridi::class.java, "Gün şeridi", R.layout.w_strip, "c", R.drawable.prev_gunseridi),
+        Entry(W_Pil::class.java, "Pil", R.layout.w_mod_pil, "s", R.drawable.prev_pil),
+        Entry(W_Ay::class.java, "Ay evresi", R.layout.w_mod_ay, "s", R.drawable.prev_ay),
+        Entry(W_Takvim::class.java, "Takvim", R.layout.w_mod_takvim, "s", R.drawable.prev_takvim),
         Entry(W_Kilitince::class.java, "Kilit ekranı · ince", R.layout.w_lockc, "c", R.drawable.prev_kilitince)
     )
     fun ofClass(name: String?): Entry? = ALL.firstOrNull { it.cls.name == name }

@@ -7,6 +7,18 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" android:maxSdkVersion="32" />
+    <queries>
+        <package android:name="com.hihonor.android.totemweather" />
+        <package android:name="com.huawei.android.totemweather" />
+        <package android:name="com.hihonor.weather" />
+        <package android:name="com.google.android.apps.weather" />
+        <package android:name="com.miui.weather2" />
+        <package android:name="com.sec.android.daemonapp" />
+        <package android:name="com.coloros.weather2" />
+        <package android:name="com.oplus.weather2" />
+        <package android:name="com.accuweather.android" />
+        <intent><action android:name="android.intent.action.SHOW_ALARMS" /></intent>
+    </queries>
     <application
         android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher"
@@ -138,6 +150,30 @@
         <receiver android:name=".W_Kilit" android:exported="true" android:label="Kilit ekranı saati">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kilit" />
+        </receiver>
+        <receiver android:name=".W_Ikili" android:exported="true" android:label="İkili yuvarlak">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ikili" />
+        </receiver>
+        <receiver android:name=".W_Grafik" android:exported="true" android:label="Sıcaklık grafiği">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_grafik" />
+        </receiver>
+        <receiver android:name=".W_Gunseridi" android:exported="true" android:label="Gün şeridi">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gunseridi" />
+        </receiver>
+        <receiver android:name=".W_Pil" android:exported="true" android:label="Pil">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pil" />
+        </receiver>
+        <receiver android:name=".W_Ay" android:exported="true" android:label="Ay evresi">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ay" />
+        </receiver>
+        <receiver android:name=".W_Takvim" android:exported="true" android:label="Takvim">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_takvim" />
         </receiver>
         <receiver android:name=".W_Kilitince" android:exported="true" android:label="Kilit ekranı · ince">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>

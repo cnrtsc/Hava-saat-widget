@@ -43,6 +43,9 @@ class EditActivity : Activity() {
         R.layout.w_roundw0, R.layout.w_roundw1, R.layout.w_roundw2, R.layout.w_square7, R.layout.w_square8,
         R.layout.w_square1, R.layout.w_square2 -> "round"
         R.layout.w_lock, R.layout.w_lockc -> "lock"
+        R.layout.w_duo -> "duo"
+        R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim -> "mod"
+        R.layout.w_strip, R.layout.w_graph -> "round"
         R.layout.w_wide6, R.layout.w_wide7, R.layout.w_wide8, R.layout.w_compact1, R.layout.w_compact2,
         R.layout.w_square3, R.layout.w_square4 -> "palette"
         else -> "standard"
@@ -113,6 +116,24 @@ class EditActivity : Activity() {
             "combo" -> { clockSection(); panelSection(); lookSection(true, false); iconSection() }
             "round" -> { lookSection(true, false); iconSection() }
             "lock" -> { fontSection(true); lookSection(true, true, false); iconSection() }
+            "duo" -> {
+                val s = Ui.section(this, "Daireler", "İki dairenin içinde ne görüneceğini seç.")
+                s.addView(Ui.label(this, "Sol daire"))
+                s.addView(Ui.chips(this, Mod.NAMES, read { Mod.slot(this, "slotL", 0) }) { putI("slotL", it); build() })
+                s.addView(Ui.label(this, "Sağ daire"))
+                s.addView(Ui.chips(this, Mod.NAMES, read { Mod.slot(this, "slotR", 2) }) { putI("slotR", it); build() })
+                root.addView(s)
+                if (read { Mod.slot(this, "slotL", 0) == 0 || Mod.slot(this, "slotR", 2) == 0 }) clockSection()
+                lookSection(true, false); iconSection()
+            }
+            "mod" -> {
+                val def = when (layout()) { R.layout.w_mod_pil -> 6; R.layout.w_mod_ay -> 7; else -> 8 }
+                val s = Ui.section(this, "Daire içeriği")
+                s.addView(Ui.chips(this, Mod.NAMES, read { Mod.slot(this, "slot", def) }) { putI("slot", it); build() })
+                root.addView(s)
+                if (read { Mod.slot(this, "slot", def) } == 0) clockSection()
+                lookSection(true, false); iconSection()
+            }
             "palette" -> { paletteSection(); fontSection(true); iconSection() }
             else -> { bgSection(); fontSection(true); iconSection() }
         }
@@ -243,7 +264,11 @@ class EditActivity : Activity() {
     }
 
     private fun paletteSection() {
-        val s = Ui.section(this, "Renkler")
+        val s = Ui.section(this, "Renkler ve kutular")
+        if (layout() != R.layout.w_square4) {
+            s.addView(Ui.label(this, "Kutu şekli"))
+            s.addView(Ui.chips(this, arrayOf("Tasarımdaki gibi", "Yumuşak kare", "Keskin köşe", "Hap"), read { Cfg.int(this, "boxShape", 0) }) { putI("boxShape", it); build() })
+        }
         s.addView(Ui.label(this, "Renk paleti"))
         s.addView(Ui.chips(this, Palette.NAMES, read { Palette.choice(this) }) { putI("palette", it); build() })
         s.addView(Ui.slider(this, { "Kart doluluğu: %$it" + if (it == 0) " (şeffaf)" else "" }, read { Style.opacity(this) }) { putI("opacity", it) })

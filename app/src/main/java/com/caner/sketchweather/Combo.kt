@@ -20,7 +20,7 @@ import kotlin.math.sin
 
 /** Analog saat + yan bilgi paneli; tamamı tek görsel olarak çizilir. */
 object Combo {
-    val FACE_NAMES = arrayOf("Klasik çizgiler", "Minimal", "Rakamlı", "Noktalar", "Halka")
+    val FACE_NAMES = arrayOf("Klasik çizgiler", "Minimal", "Rakamlı", "Noktalar", "Halka", "Roma rakamları", "Kalın çubuklar", "Çift halka", "Degrade halka")
     val DIGITAL_NAMES = arrayOf("Dijital saat üstte", "Dijital saat altta", "Dijital saat yok")
     val COLOR_NAMES = arrayOf("Açık", "Koyu", "Renk paleti")
     val PANEL_NAMES = arrayOf("Yuvarlak panel", "Kare panel", "Panelsiz (sadece yazı)")
@@ -75,7 +75,7 @@ object Combo {
         } catch (e: Exception) { }
     }
 
-    private fun drawClock(c: Context, cv: Canvas, cx: Float, cy: Float, r: Float, lk: Look, w: Weather?, withWeather: Boolean) {
+    fun drawClock(c: Context, cv: Canvas, cx: Float, cy: Float, r: Float, lk: Look, w: Weather?, withWeather: Boolean) {
         val fill = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = lk.fill }
         cv.drawCircle(cx, cy, r, fill)
         if (rim(c)) cv.drawCircle(cx, cy, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = r * .012f; color = lk.rimCol })
@@ -113,13 +113,48 @@ object Combo {
                 tp.color = if (k % 3 == 0) lk.accent else lk.ink
                 cv.drawCircle(cx + r * .84f * cos(a).toFloat(), cy + r * .84f * sin(a).toFloat(), if (k % 3 == 0) r * .045f else r * .028f, tp)
             }
-            else -> {
+            4 -> {
                 val rp = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = r * .05f; strokeCap = Paint.Cap.ROUND }
                 val rect = RectF(cx - r * .86f, cy - r * .86f, cx + r * .86f, cy + r * .86f)
                 rp.color = Color.argb(60, Color.red(lk.ink), Color.green(lk.ink), Color.blue(lk.ink))
                 cv.drawArc(rect, 0f, 360f, false, rp)
                 rp.color = lk.accent
                 cv.drawArc(rect, -90f, 360f * m / 60f, false, rp)
+            }
+            5 -> {
+                val romans = arrayOf("XII", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI")
+                val np = text(Style.clockTypeface(c, 6), r * .14f, lk.ink, lk)
+                for (k in 0 until 12) {
+                    val a = Math.toRadians(k * 30.0 - 90)
+                    np.textSize = if (k % 3 == 0) r * .17f else r * .11f
+                    np.color = if (k % 3 == 0) lk.ink else lk.sub
+                    cv.drawText(romans[k], cx + r * .76f * cos(a).toFloat(), cy + r * .76f * sin(a).toFloat() + np.textSize * .36f, np)
+                }
+            }
+            6 -> for (k in 0 until 12) {
+                val a = Math.toRadians(k * 30.0 - 90)
+                tp.color = if (k % 3 == 0) lk.accent else lk.ink
+                tp.strokeWidth = r * .065f
+                cv.drawLine(cx + r * .70f * cos(a).toFloat(), cy + r * .70f * sin(a).toFloat(), cx + r * .88f * cos(a).toFloat(), cy + r * .88f * sin(a).toFloat(), tp)
+            }
+            7 -> {
+                val rp = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = r * .018f; color = lk.ink }
+                cv.drawCircle(cx, cy, r * .92f, rp)
+                rp.color = Color.argb(110, Color.red(lk.ink), Color.green(lk.ink), Color.blue(lk.ink))
+                cv.drawCircle(cx, cy, r * .62f, rp)
+                for (k in 0 until 12) {
+                    val a = Math.toRadians(k * 30.0 - 90)
+                    tp.color = if (k % 3 == 0) lk.accent else lk.ink
+                    cv.drawCircle(cx + r * .77f * cos(a).toFloat(), cy + r * .77f * sin(a).toFloat(), if (k % 3 == 0) r * .04f else r * .022f, tp)
+                }
+            }
+            else -> {
+                val rp = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = r * .08f }
+                val ang = m * 6f - 90f
+                val sg = android.graphics.SweepGradient(cx, cy, intArrayOf(Color.argb(0, Color.red(lk.accent), Color.green(lk.accent), Color.blue(lk.accent)), lk.accent), floatArrayOf(0f, 1f))
+                val mx = android.graphics.Matrix(); mx.setRotate(ang, cx, cy); sg.setLocalMatrix(mx)
+                rp.shader = sg
+                cv.drawCircle(cx, cy, r * .84f, rp)
             }
         }
         // dijital saat ve (isteğe bağlı) hava

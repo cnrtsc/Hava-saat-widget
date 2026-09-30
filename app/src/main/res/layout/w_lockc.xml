@@ -12,7 +12,7 @@
     android:layout_weight="1">
 
 </LinearLayout>
-<LinearLayout android:id="@+id/days_area"
+<LinearLayout android:id="@+id/weather_area"
     android:layout_width="0dp"
     android:layout_height="match_parent"
     android:orientation="vertical"

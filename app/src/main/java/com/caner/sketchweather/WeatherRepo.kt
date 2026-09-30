@@ -44,7 +44,7 @@ object WeatherRepo {
         c.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
             c.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
-    fun useLocation(c: Context): Boolean = prefs(c).getBoolean("useLoc", false)
+    fun useLocation(c: Context): Boolean = prefs(c).getBoolean("useLoc", hasLocationPermission(c))
 
     /** Cihazın bilinen son konumunu alır; izin yoksa ya da konum yoksa null. */
     fun lastKnown(c: Context): Location? {
@@ -81,8 +81,30 @@ object WeatherRepo {
         e.apply()
     }
 
+    /** Konumu taze almaya çalışır (en fazla 8 sn); olmazsa bilinen son konum. */
+    fun freshLocation(c: Context): Location? {
+        if (!hasLocationPermission(c)) return null
+        val p = prefs(c)
+        val last = p.getLong("locAt", 0L)
+        if (System.currentTimeMillis() - last < 20 * 60 * 1000L) return lastKnown(c)
+        var got: Location? = null
+        if (android.os.Build.VERSION.SDK_INT >= 30) {
+            try {
+                val lm = c.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                val prov = if (lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) LocationManager.NETWORK_PROVIDER else LocationManager.GPS_PROVIDER
+                val latch = java.util.concurrent.CountDownLatch(1)
+                val ex = java.util.concurrent.Executors.newSingleThreadExecutor()
+                lm.getCurrentLocation(prov, null, ex) { l -> got = l; latch.countDown() }
+                latch.await(8, java.util.concurrent.TimeUnit.SECONDS)
+                ex.shutdown()
+            } catch (e: Exception) { }
+        }
+        if (got != null) p.edit().putLong("locAt", System.currentTimeMillis()).apply()
+        return got ?: lastKnown(c)
+    }
+
     fun fetch(c: Context): Weather {
-        if (useLocation(c)) lastKnown(c)?.let { saveLocation(c, it) }
+        if (useLocation(c)) freshLocation(c)?.let { saveLocation(c, it) }
         val p = prefs(c)
         val lat = p.getFloat("lat", 41.0082f)
         val lon = p.getFloat("lon", 28.9784f)
@@ -90,7 +112,7 @@ object WeatherRepo {
             Locale.US,
             "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f" +
                 "&current=temperature_2m,weather_code,is_day,apparent_temperature,relative_humidity_2m,wind_speed_10m" +
-                "&hourly=temperature_2m,weather_code,is_day&forecast_hours=6" +
+                "&hourly=temperature_2m,weather_code,is_day&forecast_hours=13" +
                 "&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset" +
                 "&timezone=auto&forecast_days=6",
             lat, lon

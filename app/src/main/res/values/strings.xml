@@ -30,5 +30,11 @@
     <string name="desc_yuvdetay">Yuvarlak hava · detaylı · 2x2</string>
     <string name="desc_yuv3gun">Yuvarlak hava · 3 gün · 2x2</string>
     <string name="desc_kilit">Kilit ekranı saati · 4x2</string>
+    <string name="desc_ikili">İkili yuvarlak · 4x2</string>
+    <string name="desc_grafik">Sıcaklık grafiği · 4x2</string>
+    <string name="desc_gunseridi">Gün şeridi · 4x1</string>
+    <string name="desc_pil">Pil · 2x2</string>
+    <string name="desc_ay">Ay evresi · 2x2</string>
+    <string name="desc_takvim">Takvim · 2x2</string>
     <string name="desc_kilitince">Kilit ekranı · ince · 4x1</string>
 </resources>

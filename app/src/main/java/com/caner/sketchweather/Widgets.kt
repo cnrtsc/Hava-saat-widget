@@ -79,6 +79,12 @@ object Widgets {
         R.layout.w_roundw2 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_lock to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_lockc to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_duo to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_mod_pil to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_mod_ay to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_mod_takvim to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_strip to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_graph to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_square7 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_square8 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
@@ -87,7 +93,8 @@ object Widgets {
         R.layout.w_wide6, R.layout.w_wide7, R.layout.w_wide8, R.layout.w_compact1, R.layout.w_compact2,
         R.layout.w_square1, R.layout.w_square2, R.layout.w_square3, R.layout.w_square4, R.layout.w_square5,
         R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo,
-        R.layout.w_roundw0, R.layout.w_roundw1, R.layout.w_roundw2, R.layout.w_lock, R.layout.w_lockc
+        R.layout.w_roundw0, R.layout.w_roundw1, R.layout.w_roundw2, R.layout.w_lock, R.layout.w_lockc,
+        R.layout.w_duo, R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim, R.layout.w_strip, R.layout.w_graph
     )
 
     private val DAY_IDS = arrayOf(
@@ -124,6 +131,22 @@ object Widgets {
         R.id.h1_time, R.id.h2_time, R.id.h3_time, R.id.h4_time, R.id.h5_time,
         R.id.q0_min, R.id.q1_min, R.id.q2_min, R.id.q3_min, R.id.q4_min
     )
+
+    private val WEATHER_APPS = listOf(
+        "com.hihonor.android.totemweather", "com.huawei.android.totemweather", "com.hihonor.weather",
+        "com.google.android.apps.weather", "com.miui.weather2", "com.sec.android.daemonapp",
+        "com.coloros.weather2", "com.oplus.weather2", "com.accuweather.android"
+    )
+
+    /** Hava alanına dokununca: telefondaki hava uygulaması; yoksa web'de hava durumu. */
+    fun weatherIntent(c: Context): Intent {
+        for (p in WEATHER_APPS) {
+            val i = try { c.packageManager.getLaunchIntentForPackage(p) } catch (e: Exception) { null }
+            if (i != null) return i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        return Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://www.google.com/search?q=hava+durumu+" + android.net.Uri.encode(WeatherRepo.city(c))))
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
 
     fun refreshIntent(c: Context): Intent = Intent(c, TimeReceiver::class.java).setAction(ACTION_REFRESH)
 
@@ -470,6 +493,7 @@ object Widgets {
                 tempCol = pal.onAccent; feelsCol = pal.onCont
                 v.setTextColor(R.id.feels_lab, pal.onContSub)
                 v.setTextColor(R.id.hum, pal.onDark); v.setTextColor(R.id.wind, pal.onDarkSub)
+                v.setTextColor(R.id.city, pal.onDark); v.setInt(R.id.pin, "setColorFilter", pal.onDarkSub)
             }
             R.layout.w_wide7 -> {
                 tint(v, R.id.bg, pal.container, opF)
@@ -514,6 +538,12 @@ object Widgets {
             R.layout.w_roundw2 -> v.setImageViewBitmap(R.id.dial, RoundW.render(c, w, wdp, hdp, 2))
             R.layout.w_lock -> v.setImageViewBitmap(R.id.dial, Lock.render(c, w, wdp, hdp, false))
             R.layout.w_lockc -> v.setImageViewBitmap(R.id.dial, Lock.render(c, w, wdp, hdp, true))
+            R.layout.w_duo -> v.setImageViewBitmap(R.id.dial, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slotL", 0), Mod.slot(c, "slotR", 2))))
+            R.layout.w_mod_pil -> v.setImageViewBitmap(R.id.dial, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slot", 6))))
+            R.layout.w_mod_ay -> v.setImageViewBitmap(R.id.dial, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slot", 7))))
+            R.layout.w_mod_takvim -> v.setImageViewBitmap(R.id.dial, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slot", 8))))
+            R.layout.w_strip -> v.setImageViewBitmap(R.id.dial, Extra.strip(c, w, wdp, hdp))
+            R.layout.w_graph -> v.setImageViewBitmap(R.id.dial, Extra.graph(c, w, wdp, hdp))
             R.layout.w_square7 -> v.setImageViewBitmap(R.id.dial, roundWeather(c, pal, w, textTf))
             R.layout.w_square8 -> v.setImageViewBitmap(R.id.dial, roundSun(c, pal, w, textTf))
             R.layout.w_wide9 -> {
@@ -527,6 +557,12 @@ object Widgets {
                 f.timeZone = java.util.TimeZone.getTimeZone(Style.homeTz(c))
                 home = f.format(now)
             }
+        }
+        val bs = Cfg.int(c, "boxShape", 0)
+        if (bs > 0 && paletteStyle && layout != R.layout.w_square4) {
+            val shapeRes = when (bs) { 1 -> R.drawable.shape_round; 2 -> R.drawable.shape_sharp; else -> R.drawable.shape_pill }
+            for (id in intArrayOf(R.id.cbg1, R.id.cbg2, R.id.cbg3, R.id.cbg4)) v.setImageViewResource(id, shapeRes)
+            if (layout == R.layout.w_wide7) v.setImageViewResource(R.id.bg, shapeRes)
         }
         if (layout == R.layout.w_wide7 || layout == R.layout.w_wide8) {
             v.setTextColor(R.id.city, pal.onCont); v.setInt(R.id.pin, "setColorFilter", pal.onCont)
@@ -551,7 +587,7 @@ object Widgets {
         val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         val alarms = Intent(AlarmClock.ACTION_SHOW_ALARMS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         v.setOnClickPendingIntent(R.id.clock_area, PendingIntent.getActivity(c, 1, alarms, flags))
-        v.setOnClickPendingIntent(R.id.weather_area, PendingIntent.getBroadcast(c, 2, refreshIntent(c), flags))
+        v.setOnClickPendingIntent(R.id.weather_area, PendingIntent.getActivity(c, 2, weatherIntent(c), flags))
         val settings = Intent(c, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         v.setOnClickPendingIntent(R.id.days_area, PendingIntent.getActivity(c, 3, settings, flags))
         v.setOnClickPendingIntent(R.id.city_row, PendingIntent.getActivity(c, 4, settings, flags))
