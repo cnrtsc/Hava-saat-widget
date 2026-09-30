@@ -1,4 +1,24 @@
 <resources>
     <string name="app_name">Hava &amp; Saat</string>
-    <string name="widget_name">Hava &amp; Saat</string>
+    <string name="desc_klasik">Klasik · 4x2</string>
+    <string name="desc_merkez">Merkez · 4x2</string>
+    <string name="desc_buyuksaat">Büyük saat · 4x2</string>
+    <string name="desc_saatlik">Hava + saatlik · 4x2</string>
+    <string name="desc_minimal">Minimal · 4x2</string>
+    <string name="desc_yanyana">Yan yana · 4x2</string>
+    <string name="desc_bento">Bento · 4x2</string>
+    <string name="desc_tasan">Taşan ikon · 4x2</string>
+    <string name="desc_pixel">Pixel tahmin · 4x2</string>
+    <string name="desc_eskiz">Eskiz not · 4x2</string>
+    <string name="desc_ince">İnce · 4x1</string>
+    <string name="desc_bakista">Bir bakışta · 4x1</string>
+    <string name="desc_hap">Hap saat · 4x1</string>
+    <string name="desc_cift">Çift saat · 4x1</string>
+    <string name="desc_kare">Kare · 2x2</string>
+    <string name="desc_kadran">Yuvarlak kadran · 2x2</string>
+    <string name="desc_gosterge">Derece göstergesi · 2x2</string>
+    <string name="desc_ustuste">Üst üste saat · 2x2</string>
+    <string name="desc_kurabiye">Kurabiye hava · 2x2</string>
+    <string name="desc_analog">Analog saat · 2x2</string>
+    <string name="desc_panel">Şeffaf panel · 5x2</string>
 </resources>

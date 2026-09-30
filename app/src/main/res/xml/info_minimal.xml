@@ -8,8 +8,7 @@
     android:minResizeHeight="100dp"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
-    android:initialLayout="@layout/w_wide0"
-    android:previewLayout="@layout/w_wide0"
-    android:widgetCategory="home_screen"
-    android:configure="com.caner.sketchweather.ConfigActivity"
-    android:widgetFeatures="reconfigurable" />
+    android:initialLayout="@layout/w_wide4"
+    android:previewImage="@drawable/prev_minimal"
+    android:description="@string/desc_minimal"
+    android:widgetCategory="home_screen" />

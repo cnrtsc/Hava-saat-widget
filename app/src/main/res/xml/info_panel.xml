@@ -9,7 +9,6 @@
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/w_glass"
-    android:previewLayout="@layout/w_glass"
-    android:widgetCategory="home_screen"
-    android:configure="com.caner.sketchweather.ConfigActivity"
-    android:widgetFeatures="reconfigurable" />
+    android:previewImage="@drawable/prev_panel"
+    android:description="@string/desc_panel"
+    android:widgetCategory="home_screen" />

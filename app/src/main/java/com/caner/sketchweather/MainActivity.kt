@@ -137,27 +137,9 @@ class MainActivity : Activity() {
         }
         root.addView(fonts)
 
-        // Eklenmiş widget'lar
-        root.addView(header("WİDGET'LARIM", pad))
-        val mgr = android.appwidget.AppWidgetManager.getInstance(this)
-        var count = 0
-        for (kind in Kind.values()) {
-            val ids = mgr.getAppWidgetIds(android.content.ComponentName(this, kind.cls))
-            ids.forEachIndexed { n, wid ->
-                count++
-                root.addView(TextView(this).apply {
-                    text = if (ids.size > 1) "${kind.title} · ${n + 1}" else kind.title
-                    textSize = 16f
-                    setTextColor(fg)
-                    setPadding(0, pad / 2, 0, pad / 6)
-                })
-                root.addView(styleGroup(kind, wid, pad))
-            }
-        }
-        if (count == 0) root.addView(TextView(this).apply {
-            text = "Henüz widget eklemedin. Ana ekranda boş bir alana uzun bas → Widget'lar → Hava & Saat."
-            setTextColor(muted)
-        })
+        // Çift saat için ev saati
+        root.addView(header("ÇİFT SAAT · EV SAATİ", pad))
+        root.addView(radioList(Style.HOME_NAMES, Style.home(this), 16f) { i -> p.edit().putInt("home", i).apply() })
 
         // Renk paleti
         root.addView(header("RENK PALETİ", pad))
@@ -214,7 +196,7 @@ class MainActivity : Activity() {
         root.addView(bgs)
 
         root.addView(TextView(this).apply {
-            text = "\nDört widget var: Şeffaf 5x2, Geniş (4x2), İnce (4x1) ve Kare (2x2). Eklemek için ana ekranda boş bir alana uzun bas → Widget'lar → Hava & Saat.\n\n" +
+            text = "\n21 farklı widget var; her biri listede kendi önizlemesiyle çıkar. Eklemek için ana ekranda boş bir alana uzun bas → Widget'lar → Hava & Saat.\n\n" +
                 "Saate dokun: alarmlar açılır.\nHava durumuna dokun: yenilenir.\nAlt satıra dokun: bu ayarlar açılır."
             setTextColor(muted)
             typeface = Typeface.DEFAULT
@@ -293,8 +275,4 @@ class MainActivity : Activity() {
         return g
     }
 
-    fun styleGroup(kind: Kind, wid: Int, pad: Int): RadioGroup =
-        radioList(kind.names, kind.style(this, wid), 15f) { i ->
-            WeatherRepo.prefs(this).edit().putInt("style_$wid", i).apply()
-        }
 }

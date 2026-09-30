@@ -8,8 +8,7 @@
     android:minResizeHeight="100dp"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
-    android:initialLayout="@layout/w_square"
-    android:previewLayout="@layout/w_square"
-    android:widgetCategory="home_screen"
-    android:configure="com.caner.sketchweather.ConfigActivity"
-    android:widgetFeatures="reconfigurable" />
+    android:initialLayout="@layout/w_square2"
+    android:previewImage="@drawable/prev_gosterge"
+    android:description="@string/desc_gosterge"
+    android:widgetCategory="home_screen" />

@@ -6,19 +6,19 @@ import android.graphics.Typeface
 object Style {
     val FONT_NAMES = arrayOf(
         "Sistem", "Outfit", "Manrope", "Poppins", "Bebas Neue",
-        "Space Grotesk", "DM Serif", "Josefin Sans", "Urbanist"
+        "Space Grotesk", "DM Serif", "Josefin Sans", "Urbanist", "El yazısı"
     )
     private val CLOCK_FONTS = intArrayOf(
         0, R.font.f_outfit_c, R.font.f_manrope_c, R.font.f_poppins_c, R.font.f_bebas_c,
-        R.font.f_grotesk_c, R.font.f_serif_c, R.font.f_josefin_c, R.font.f_urbanist_c
+        R.font.f_grotesk_c, R.font.f_serif_c, R.font.f_josefin_c, R.font.f_urbanist_c, R.font.f_hand_c
     )
     private val TEXT_FONTS = intArrayOf(
         0, R.font.f_outfit_t, R.font.f_manrope_t, R.font.f_poppins_t, R.font.f_bebas_t,
-        R.font.f_grotesk_t, R.font.f_serif_t, R.font.f_josefin_t, R.font.f_urbanist_t
+        R.font.f_grotesk_t, R.font.f_serif_t, R.font.f_josefin_t, R.font.f_urbanist_t, R.font.f_hand_t
     )
     val BG_NAMES = arrayOf("Koyu", "Açık", "Şeffaf", "Renkli (palet)")
     val BGS = intArrayOf(R.drawable.bg_dark, R.drawable.bg_light, R.drawable.bg_none, R.drawable.shape_round)
-    val ICON_SET_NAMES = arrayOf("Yumuşak", "Parlak 3D", "Düz ikonik", "Gerçekçi", "Çizgi", "Neon", "Pastel")
+    val ICON_SET_NAMES = arrayOf("Yumuşak", "Parlak 3D", "Düz ikonik", "Gerçekçi", "Çizgi", "Neon", "Pastel", "Eskiz", "Suluboya", "Retro piksel")
     val ICONS: Array<IntArray> = arrayOf(
         intArrayOf(R.drawable.w_sun, R.drawable.w_moon, R.drawable.w_partly, R.drawable.w_partly_night, R.drawable.w_cloud,
             R.drawable.w_fog, R.drawable.w_drizzle, R.drawable.w_rain, R.drawable.w_snow, R.drawable.w_storm),
@@ -33,7 +33,10 @@ object Style {
         intArrayOf(R.drawable.n_sun, R.drawable.n_moon, R.drawable.n_partly, R.drawable.n_partly_night, R.drawable.n_cloud,
             R.drawable.n_fog, R.drawable.n_drizzle, R.drawable.n_rain, R.drawable.n_snow, R.drawable.n_storm),
         intArrayOf(R.drawable.p_sun, R.drawable.p_moon, R.drawable.p_partly, R.drawable.p_partly_night, R.drawable.p_cloud,
-            R.drawable.p_fog, R.drawable.p_drizzle, R.drawable.p_rain, R.drawable.p_snow, R.drawable.p_storm)
+            R.drawable.p_fog, R.drawable.p_drizzle, R.drawable.p_rain, R.drawable.p_snow, R.drawable.p_storm),
+        intArrayOf(R.drawable.s_sun, R.drawable.s_moon, R.drawable.s_partly, R.drawable.s_partly_night, R.drawable.s_cloud, R.drawable.s_fog, R.drawable.s_drizzle, R.drawable.s_rain, R.drawable.s_snow, R.drawable.s_storm),
+        intArrayOf(R.drawable.c_sun, R.drawable.c_moon, R.drawable.c_partly, R.drawable.c_partly_night, R.drawable.c_cloud, R.drawable.c_fog, R.drawable.c_drizzle, R.drawable.c_rain, R.drawable.c_snow, R.drawable.c_storm),
+        intArrayOf(R.drawable.x_sun, R.drawable.x_moon, R.drawable.x_partly, R.drawable.x_partly_night, R.drawable.x_cloud, R.drawable.x_fog, R.drawable.x_drizzle, R.drawable.x_rain, R.drawable.x_snow, R.drawable.x_storm)
     )
 
     fun clockTypeface(c: Context, i: Int): Typeface =
@@ -47,11 +50,19 @@ object Style {
     private fun get(c: Context, key: String, def: Int, size: Int): Int =
         WeatherRepo.prefs(c).getInt(key, def).coerceIn(0, size - 1)
 
-    fun font(c: Context) = get(c, "font", 6, FONT_NAMES.size)
+    fun font(c: Context) = get(c, "font", 1, FONT_NAMES.size)
     fun bg(c: Context) = get(c, "bg", 2, BGS.size)
     val ANIM_NAMES = arrayOf("Kapalı", "Her 30 saniyede", "Her 10 saniyede")
     fun anim(c: Context) = get(c, "anim", 1, ANIM_NAMES.size)
     fun animInterval(c: Context): Int = when (anim(c)) { 1 -> 30_000; 2 -> 10_000; else -> 86_400_000 }
     fun iconSet(c: Context) = get(c, "icons", 3, ICONS.size)
     fun icon(c: Context, code: Int, day: Boolean): Int = ICONS[iconSet(c)][WeatherRepo.iconIndex(code, day)]
+    fun iconFrom(set: Int, code: Int, day: Boolean): Int = ICONS[set][WeatherRepo.iconIndex(code, day)]
+    fun handTypeface(c: Context): Typeface = c.resources.getFont(R.font.f_hand_c)
+
+    val HOME_NAMES = arrayOf("İstanbul", "Londra", "Hamburg / Berlin", "Dubai", "New York", "Tokyo")
+    private val HOME_TZ = arrayOf("Europe/Istanbul", "Europe/London", "Europe/Berlin", "Asia/Dubai", "America/New_York", "Asia/Tokyo")
+    fun home(c: Context) = get(c, "home", 0, HOME_NAMES.size)
+    fun homeName(c: Context): String = HOME_NAMES[home(c)]
+    fun homeTz(c: Context): String = HOME_TZ[home(c)]
 }

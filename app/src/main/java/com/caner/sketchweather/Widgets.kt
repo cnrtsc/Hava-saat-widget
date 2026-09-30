@@ -25,44 +25,24 @@ import kotlin.math.ceil
 
 abstract class BaseWidget : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
-        val app = context.applicationContext
         when (intent.action) {
-            Widgets.ACTION_TICK,
-            Intent.ACTION_TIME_CHANGED,
-            Intent.ACTION_TIMEZONE_CHANGED,
-            Intent.ACTION_BOOT_COMPLETED -> {
-                Widgets.renderAll(app, WeatherRepo.cached(app))
-                val last = WeatherRepo.prefs(app).getLong("fetched", 0L)
-                if (System.currentTimeMillis() - last > 30 * 60 * 1000L) fetchAsync(app)
-            }
-            Widgets.ACTION_REFRESH,
             AppWidgetManager.ACTION_APPWIDGET_UPDATE,
-            AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED -> {
-                Widgets.renderAll(app, WeatherRepo.cached(app))
-                fetchAsync(app)
-            }
+            AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED -> Widgets.handle(context, true, goAsync())
             else -> super.onReceive(context, intent)
         }
     }
-
-    private fun fetchAsync(app: Context) {
-        val pending = goAsync()
-        Thread {
-            try {
-                Widgets.renderAll(app, WeatherRepo.fetch(app))
-            } catch (e: Exception) {
-                // ağ yoksa önbellekteki veri kalır
-            } finally {
-                pending.finish()
-            }
-        }.start()
-    }
 }
 
-class WideWidget : BaseWidget()
-class CompactWidget : BaseWidget()
-class SquareWidget : BaseWidget()
-class GlassWidget : BaseWidget()
+/** Dakika tiki, yenileme, saat/tarih değişimi ve açılış olaylarını karşılar. */
+class TimeReceiver : android.content.BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        val app = context.applicationContext
+        val force = intent.action == Widgets.ACTION_REFRESH
+        val last = WeatherRepo.prefs(app).getLong("fetched", 0L)
+        val stale = System.currentTimeMillis() - last > 30 * 60 * 1000L
+        Widgets.handle(app, force || stale, goAsync())
+    }
+}
 
 object Widgets {
     const val ACTION_REFRESH = "com.caner.sketchweather.REFRESH"
@@ -89,11 +69,14 @@ object Widgets {
         R.layout.w_square1 to Spec(32f, 20f, 11f, "EEE"),
         R.layout.w_square2 to Spec(30f, 40f, 11f, "EEE"),
         R.layout.w_square3 to Spec(64f, 20f, 11f, "EEE"),
-        R.layout.w_square4 to Spec(30f, 40f, 11f, "EEE")
+        R.layout.w_square4 to Spec(30f, 40f, 11f, "EEE"),
+        R.layout.w_wide9 to Spec(62f, 30f, 17f, "EEEE, d MMMM"),
+        R.layout.w_square5 to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
     )
     private val PALETTE_LAYOUTS = setOf(
         R.layout.w_wide6, R.layout.w_wide7, R.layout.w_wide8, R.layout.w_compact1, R.layout.w_compact2,
-        R.layout.w_square1, R.layout.w_square2, R.layout.w_square3, R.layout.w_square4
+        R.layout.w_square1, R.layout.w_square2, R.layout.w_square3, R.layout.w_square4, R.layout.w_square5
     )
 
     private val DAY_IDS = arrayOf(
@@ -131,19 +114,34 @@ object Widgets {
         R.id.q0_min, R.id.q1_min, R.id.q2_min, R.id.q3_min, R.id.q4_min
     )
 
-    fun refreshIntent(c: Context): Intent = Intent(c, WideWidget::class.java).setAction(ACTION_REFRESH)
+    fun refreshIntent(c: Context): Intent = Intent(c, TimeReceiver::class.java).setAction(ACTION_REFRESH)
+
+    fun handle(c: Context, fetch: Boolean, pending: android.content.BroadcastReceiver.PendingResult) {
+        val app = c.applicationContext
+        renderAll(app, WeatherRepo.cached(app))
+        if (!fetch) { pending.finish(); return }
+        Thread {
+            try {
+                renderAll(app, WeatherRepo.fetch(app))
+            } catch (e: Exception) {
+                // ağ yoksa önbellek kalır
+            } finally {
+                pending.finish()
+            }
+        }.start()
+    }
 
     fun renderAll(c: Context, w: Weather?) {
         val mgr = AppWidgetManager.getInstance(c)
         var any = false
-        for (kind in Kind.values()) {
-            for (id in mgr.getAppWidgetIds(ComponentName(c, kind.cls))) {
-                any = true
-                try {
-                    mgr.updateAppWidget(id, build(c, kind.layouts[kind.style(c, id)], w))
-                } catch (e: Exception) {
-                    // tek bir widget hata verse de diğerleri çizilsin
-                }
+        for (e in Registry.ALL) {
+            val ids = mgr.getAppWidgetIds(ComponentName(c, e.cls))
+            if (ids.isEmpty()) continue
+            any = true
+            try {
+                mgr.updateAppWidget(ids, build(c, e.layout, w))
+            } catch (ex: Exception) {
+                // bir stil hata verse de diğerleri çizilsin
             }
         }
         if (any) scheduleTick(c)
@@ -153,7 +151,7 @@ object Widgets {
     fun scheduleTick(c: Context) {
         val am = c.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val pi = PendingIntent.getBroadcast(
-            c, 10, Intent(c, WideWidget::class.java).setAction(ACTION_TICK),
+            c, 10, Intent(c, TimeReceiver::class.java).setAction(ACTION_TICK),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         val next = (System.currentTimeMillis() / 60000L + 1) * 60000L
@@ -245,6 +243,49 @@ object Widgets {
         return b
     }
 
+    /** Analog saat: kadran, akrep/yelkovan, altta hava ikonu ve derece. */
+    private fun analog(c: Context, pal: Pal, w: Weather?, tf: Typeface): Bitmap {
+        val n = 600
+        val b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888)
+        val cv = Canvas(b)
+        val p = Paint(Paint.ANTI_ALIAS_FLAG)
+        val cx = n / 2f
+        p.color = pal.container
+        cv.drawCircle(cx, cx, cx - 4, p)
+        p.strokeCap = Paint.Cap.ROUND
+        for (k in 0 until 60) {
+            val a = Math.toRadians(k * 6.0 - 90)
+            val major = k % 5 == 0
+            p.color = if (major) pal.onCont else pal.onContSub
+            p.strokeWidth = if (major) 10f else 4f
+            val r1 = if (major) cx - 58 else cx - 44
+            val r2 = cx - 30
+            cv.drawLine((cx + r1 * Math.cos(a)).toFloat(), (cx + r1 * Math.sin(a)).toFloat(),
+                (cx + r2 * Math.cos(a)).toFloat(), (cx + r2 * Math.sin(a)).toFloat(), p)
+        }
+        if (w != null) {
+            try {
+                val ic = android.graphics.BitmapFactory.decodeResource(c.resources, Style.icon(c, w.code, w.isDay))
+                cv.drawBitmap(ic, null, RectF(cx - 70, n * 0.58f, cx + 70, n * 0.58f + 140), p)
+            } catch (e: Exception) { }
+            val tp = Paint(Paint.ANTI_ALIAS_FLAG).apply { typeface = tf; textSize = 54f; color = pal.onCont; textAlign = Paint.Align.CENTER }
+            cv.drawText("${w.temp}°", cx, n * 0.36f, tp)
+        }
+        val cal = java.util.Calendar.getInstance()
+        val m = cal.get(java.util.Calendar.MINUTE)
+        val h = cal.get(java.util.Calendar.HOUR) + m / 60f
+        fun hand(angDeg: Double, len: Float, width: Float, col: Int) {
+            val a = Math.toRadians(angDeg - 90)
+            p.color = col; p.strokeWidth = width
+            cv.drawLine(cx, cx, (cx + len * Math.cos(a)).toFloat(), (cx + len * Math.sin(a)).toFloat(), p)
+        }
+        hand(h * 30.0, cx * 0.50f, 22f, pal.onCont)
+        hand(m * 6.0, cx * 0.74f, 14f, pal.accent)
+        p.color = pal.accent
+        cv.drawCircle(cx, cx, 18f, p)
+        return b
+    }
+
     private fun build(c: Context, layout: Int, w: Weather?): RemoteViews {
         val v = RemoteViews(c.packageName, layout)
         val spec = SPECS[layout] ?: SPECS.getValue(R.layout.w_wide0)
@@ -290,6 +331,8 @@ object Widgets {
         var hourCol = c1; var minCol = c1; var feelsCol = c1
         var tempTf = clockTf
         var dateTf = textTf
+        var handFont = false
+        var home: String? = null
 
         when (layout) {
             R.layout.w_wide6 -> {
@@ -335,18 +378,36 @@ object Widgets {
                 tint(v, R.id.cbg1, pal.container)
                 tempCol = pal.onCont; v.setTextColor(R.id.hl, pal.onContSub)
             }
+            R.layout.w_square5 -> {
+                v.setImageViewBitmap(R.id.dial, analog(c, pal, w, textTf))
+            }
+            R.layout.w_wide9 -> {
+                val ink = 0xFF2C2A48.toInt()
+                clockCol = ink; dateCol = 0xFF55536E.toInt(); tempCol = ink; feelsCol = 0xFF55536E.toInt()
+                handFont = true
+            }
+            R.layout.w_compact3 -> {
+                v.setTextViewText(R.id.city2, Style.homeName(c))
+                val f = SimpleDateFormat("HH:mm", tr)
+                f.timeZone = java.util.TimeZone.getTimeZone(Style.homeTz(c))
+                home = f.format(now)
+            }
         }
         if (layout == R.layout.w_wide7 || layout == R.layout.w_wide8) {
             v.setTextColor(R.id.city, pal.onCont); v.setInt(R.id.pin, "setColorFilter", pal.onCont)
             v.setTextColor(R.id.now_desc, pal.onContSub)
         }
 
-        v.setImageViewBitmap(R.id.clock, textBitmap(c, "$hh:$mm", clockTf, spec.clock, clockCol, shadow))
+        val cTf = if (handFont) Style.handTypeface(c) else clockTf
+        if (handFont) { tempTf = cTf; dateTf = cTf }
+        v.setImageViewBitmap(R.id.clock, textBitmap(c, "$hh:$mm", cTf, spec.clock, clockCol, shadow))
+        home?.let { v.setImageViewBitmap(R.id.clock2, textBitmap(c, it, clockTf, spec.clock, c1, shadow)) }
         v.setImageViewBitmap(R.id.clock_h, textBitmap(c, hh, clockTf, spec.clock, hourCol, shadow))
         v.setImageViewBitmap(R.id.clock_m, textBitmap(c, mm, clockTf, spec.clock, minCol, shadow))
         v.setImageViewBitmap(R.id.date, textBitmap(c, dateStr, dateTf, spec.date, dateCol, shadow))
         v.setImageViewBitmap(R.id.now_temp, textBitmap(c, tempStr, tempTf, spec.temp, tempCol, shadow))
-        v.setImageViewBitmap(R.id.feels_img, textBitmap(c, feelsStr, clockTf, 22f, feelsCol, false))
+        if (handFont) v.setImageViewBitmap(R.id.feels_img, textBitmap(c, "hissedilen $feelsStr", cTf, 16f, feelsCol, false))
+        else v.setImageViewBitmap(R.id.feels_img, textBitmap(c, feelsStr, clockTf, 22f, feelsCol, false))
 
         // Hareketli ikon
         v.setInt(R.id.icon_flip, "setFlipInterval", Style.animInterval(c))
@@ -365,7 +426,7 @@ object Widgets {
             v.setTextViewText(R.id.now_desc, "Yükleniyor…")
             return v
         }
-        val icon = Style.icon(c, w.code, w.isDay)
+        val icon = if (handFont) Style.iconFrom(7, w.code, w.isDay) else Style.icon(c, w.code, w.isDay)
         for (id in intArrayOf(R.id.now_icon, R.id.now_icon2, R.id.now_icon3)) v.setImageViewResource(id, icon)
         v.setTextViewText(R.id.now_desc, WeatherRepo.label(w.code))
         w.feels?.let { v.setTextViewText(R.id.feels, "Hissedilen $it°") }
