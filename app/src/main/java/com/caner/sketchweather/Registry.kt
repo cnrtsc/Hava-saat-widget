@@ -33,6 +33,14 @@ class W_Yuvdetay : BaseWidget()
 class W_Yuv3gun : BaseWidget()
 class W_Kilit : BaseWidget()
 class W_Ikili : BaseWidget()
+class W_Noktamatris : BaseWidget()
+class W_Flipsaat : BaseWidget()
+class W_Isvicre : BaseWidget()
+class W_Ilerleme : BaseWidget()
+class W_Terminal : BaseWidget()
+class W_Gazete : BaseWidget()
+class W_Saat24 : BaseWidget()
+class W_Neumorfik : BaseWidget()
 class W_Grafik : BaseWidget()
 class W_Gunseridi : BaseWidget()
 class W_Pil : BaseWidget()
@@ -78,6 +86,14 @@ object Registry {
         Entry(W_Yuv3gun::class.java, "Yuvarlak hava · 3 gün", R.layout.w_roundw2, "s", R.drawable.prev_yuv3gun),
         Entry(W_Kilit::class.java, "Kilit ekranı saati", R.layout.w_lock, "w", R.drawable.prev_kilit),
         Entry(W_Ikili::class.java, "İkili yuvarlak", R.layout.w_duo, "w", R.drawable.prev_ikili),
+        Entry(W_Noktamatris::class.java, "Nokta matris", R.layout.w_th_dot, "w", R.drawable.prev_noktamatris),
+        Entry(W_Flipsaat::class.java, "Retro flip saat", R.layout.w_th_flip, "w", R.drawable.prev_flipsaat),
+        Entry(W_Isvicre::class.java, "İsviçre saat", R.layout.w_th_swiss, "w", R.drawable.prev_isvicre),
+        Entry(W_Ilerleme::class.java, "İlerleme çubukları", R.layout.w_th_prog, "w", R.drawable.prev_ilerleme),
+        Entry(W_Terminal::class.java, "Terminal", R.layout.w_th_term, "w", R.drawable.prev_terminal),
+        Entry(W_Gazete::class.java, "Gazete", R.layout.w_th_paper, "w", R.drawable.prev_gazete),
+        Entry(W_Saat24::class.java, "24 saat kadran", R.layout.w_th_sector, "s", R.drawable.prev_saat24),
+        Entry(W_Neumorfik::class.java, "Neumorfik", R.layout.w_th_neu, "s", R.drawable.prev_neumorfik),
         Entry(W_Grafik::class.java, "Sıcaklık grafiği", R.layout.w_graph, "w", R.drawable.prev_grafik),
         Entry(W_Gunseridi::class.java, "Gün şeridi", R.layout.w_strip, "c", R.drawable.prev_gunseridi),
         Entry(W_Pil::class.java, "Pil", R.layout.w_mod_pil, "s", R.drawable.prev_pil),

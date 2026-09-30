@@ -45,6 +45,7 @@ class EditActivity : Activity() {
         R.layout.w_lock, R.layout.w_lockc -> "lock"
         R.layout.w_duo -> "duo"
         R.layout.w_bentox, R.layout.w_bentosq -> "bento"
+        R.layout.w_th_dot, R.layout.w_th_flip, R.layout.w_th_swiss, R.layout.w_th_prog, R.layout.w_th_term, R.layout.w_th_paper, R.layout.w_th_sector, R.layout.w_th_neu -> "theme"
         R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim -> "mod"
         R.layout.w_strip, R.layout.w_graph -> "round"
         R.layout.w_wide6, R.layout.w_wide7, R.layout.w_wide8, R.layout.w_compact1, R.layout.w_compact2,
@@ -150,6 +151,12 @@ class EditActivity : Activity() {
                 }
                 if ((0 until 4).any { i -> read { Bento.tile(this, i) } == 1 }) clockSection()
                 paletteSection(); fontSection(true); iconSection()
+            }
+            "theme" -> {
+                val s = Ui.section(this, "Tema", "Bu tasarımın renkleri ve yazı tipi temaya özel. Zemini ve ikonları değiştirebilirsin.")
+                s.addView(Ui.slider(this, { "Zemin doluluğu: %$it" + if (it == 0) " (şeffaf)" else "" }, read { Style.opacity(this) }) { putI("opacity", it) })
+                root.addView(s)
+                iconSection()
             }
             "mod" -> {
                 val def = when (layout()) { R.layout.w_mod_pil -> 6; R.layout.w_mod_ay -> 7; else -> 8 }

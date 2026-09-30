@@ -163,6 +163,38 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ikili" />
         </receiver>
+        <receiver android:name=".W_Noktamatris" android:exported="true" android:label="Nokta matris">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_noktamatris" />
+        </receiver>
+        <receiver android:name=".W_Flipsaat" android:exported="true" android:label="Retro flip saat">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_flipsaat" />
+        </receiver>
+        <receiver android:name=".W_Isvicre" android:exported="true" android:label="İsviçre saat">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_isvicre" />
+        </receiver>
+        <receiver android:name=".W_Ilerleme" android:exported="true" android:label="İlerleme çubukları">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ilerleme" />
+        </receiver>
+        <receiver android:name=".W_Terminal" android:exported="true" android:label="Terminal">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_terminal" />
+        </receiver>
+        <receiver android:name=".W_Gazete" android:exported="true" android:label="Gazete">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gazete" />
+        </receiver>
+        <receiver android:name=".W_Saat24" android:exported="true" android:label="24 saat kadran">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_saat24" />
+        </receiver>
+        <receiver android:name=".W_Neumorfik" android:exported="true" android:label="Neumorfik">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_neumorfik" />
+        </receiver>
         <receiver android:name=".W_Grafik" android:exported="true" android:label="Sıcaklık grafiği">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_grafik" />

@@ -33,6 +33,14 @@
     <string name="desc_yuv3gun">Yuvarlak hava · 3 gün · 2x2</string>
     <string name="desc_kilit">Kilit ekranı saati · 4x2</string>
     <string name="desc_ikili">İkili yuvarlak · 4x2</string>
+    <string name="desc_noktamatris">Nokta matris · 4x2</string>
+    <string name="desc_flipsaat">Retro flip saat · 4x2</string>
+    <string name="desc_isvicre">İsviçre saat · 4x2</string>
+    <string name="desc_ilerleme">İlerleme çubukları · 4x2</string>
+    <string name="desc_terminal">Terminal · 4x2</string>
+    <string name="desc_gazete">Gazete · 4x2</string>
+    <string name="desc_saat24">24 saat kadran · 2x2</string>
+    <string name="desc_neumorfik">Neumorfik · 2x2</string>
     <string name="desc_grafik">Sıcaklık grafiği · 4x2</string>
     <string name="desc_gunseridi">Gün şeridi · 4x1</string>
     <string name="desc_pil">Pil · 2x2</string>
