@@ -137,24 +137,35 @@ class MainActivity : Activity() {
         }
         root.addView(fonts)
 
-        // Geniş widget düzeni
-        root.addView(header("GENİŞ WİDGET DÜZENİ", pad))
-        val lays = RadioGroup(this)
-        Style.WIDE_NAMES.forEachIndexed { i, name ->
-            lays.addView(RadioButton(this).apply {
-                id = View.generateViewId()
-                text = name
-                textSize = 16f
-                setTextColor(fg)
-                isChecked = i == Style.wide(this@MainActivity)
-                setPadding(pad / 2, pad / 4, 0, pad / 4)
-                setOnClickListener {
-                    p.edit().putInt("wide", i).apply()
-                    refreshWidget()
-                }
-            })
+        // Eklenmiş widget'lar
+        root.addView(header("WİDGET'LARIM", pad))
+        val mgr = android.appwidget.AppWidgetManager.getInstance(this)
+        var count = 0
+        for (kind in Kind.values()) {
+            val ids = mgr.getAppWidgetIds(android.content.ComponentName(this, kind.cls))
+            ids.forEachIndexed { n, wid ->
+                count++
+                root.addView(TextView(this).apply {
+                    text = if (ids.size > 1) "${kind.title} · ${n + 1}" else kind.title
+                    textSize = 16f
+                    setTextColor(fg)
+                    setPadding(0, pad / 2, 0, pad / 6)
+                })
+                root.addView(styleGroup(kind, wid, pad))
+            }
         }
-        root.addView(lays)
+        if (count == 0) root.addView(TextView(this).apply {
+            text = "Henüz widget eklemedin. Ana ekranda boş bir alana uzun bas → Widget'lar → Hava & Saat."
+            setTextColor(muted)
+        })
+
+        // Renk paleti
+        root.addView(header("RENK PALETİ", pad))
+        root.addView(radioList(Palette.NAMES, Palette.choice(this), 16f) { i -> p.edit().putInt("palette", i).apply() })
+
+        // Hareketli ikon
+        root.addView(header("HAREKETLİ İKON", pad))
+        root.addView(radioList(Style.ANIM_NAMES, Style.anim(this), 16f) { i -> p.edit().putInt("anim", i).apply() })
 
         // İkon seti
         root.addView(header("HAVA İKONLARI", pad))
@@ -263,4 +274,27 @@ class MainActivity : Activity() {
             updateLocStatus()
         }
     }
+
+    private fun radioList(names: Array<String>, checked: Int, size: Float, onPick: (Int) -> Unit): RadioGroup {
+        val g = RadioGroup(this)
+        names.forEachIndexed { i, name ->
+            g.addView(RadioButton(this).apply {
+                id = View.generateViewId()
+                text = name
+                textSize = size
+                setTextColor(fg)
+                isChecked = i == checked
+                setOnClickListener {
+                    onPick(i)
+                    refreshWidget()
+                }
+            })
+        }
+        return g
+    }
+
+    fun styleGroup(kind: Kind, wid: Int, pad: Int): RadioGroup =
+        radioList(kind.names, kind.style(this, wid), 15f) { i ->
+            WeatherRepo.prefs(this).edit().putInt("style_$wid", i).apply()
+        }
 }

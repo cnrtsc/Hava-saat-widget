@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+<ImageView android:id="@+id/bg" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:src="@drawable/bg_none" />
+<LinearLayout android:padding="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+<FrameLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1.35"
+    android:layout_marginEnd="6dp">
+<ImageView android:id="@+id/cbg1" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:src="@drawable/shape_round" />
+<LinearLayout android:id="@+id/clock_area"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:padding="16dp">
+<ImageView android:id="@+id/date"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+<ImageView android:id="@+id/clock_h"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="4dp" />
+<ImageView android:id="@+id/clock_m"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+</LinearLayout>
+</FrameLayout>
+<LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_weight="1">
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1.1"
+    android:layout_marginBottom="6dp">
+<ImageView android:id="@+id/cbg2" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:src="@drawable/shape_pill" />
+<LinearLayout android:id="@+id/weather_area"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="10dp"
+    android:paddingEnd="14dp">
+<ViewFlipper android:id="@+id/icon_flip"
+    android:layout_width="54dp"
+    android:layout_height="54dp"
+    android:autoStart="true"
+    android:flipInterval="30000"
+    android:inAnimation="@android:anim/fade_in"
+    android:outAnimation="@android:anim/fade_out">
+<ImageView android:id="@+id/now_icon"
+    android:layout_width="54dp"
+    android:layout_height="54dp"
+    android:src="@drawable/r_partly" />
+<ImageView android:id="@+id/now_icon2"
+    android:layout_width="54dp"
+    android:layout_height="54dp"
+    android:src="@drawable/r_partly"
+    android:translationX="2dp"
+    android:translationY="-3dp" />
+<ImageView android:id="@+id/now_icon3"
+    android:layout_width="54dp"
+    android:layout_height="54dp"
+    android:src="@drawable/r_partly"
+    android:translationY="-5dp" />
+</ViewFlipper>
+<TextView android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
+<ImageView android:id="@+id/now_temp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+</LinearLayout>
+</FrameLayout>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:orientation="horizontal"
+    android:layout_weight="1">
+<FrameLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:layout_marginEnd="6dp">
+<ImageView android:id="@+id/cbg3" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" android:src="@drawable/shape_circle" />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+<ImageView android:id="@+id/feels_img"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+<TextView android:id="@+id/feels_lab"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:includeFontPadding="false"
+    android:textColor="#FFFFFF"
+    android:textSize="10sp"
+    android:maxLines="1"
+    android:text="hissedilen" />
+</LinearLayout>
+</FrameLayout>
+<FrameLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="0.7">
+<ImageView android:id="@+id/cbg4" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:src="@drawable/shape_pill" />
+<LinearLayout android:id="@+id/days_area"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+<TextView android:id="@+id/hum"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:includeFontPadding="false"
+    android:textColor="#FFFFFF"
+    android:textSize="12sp"
+    android:maxLines="1"
+    android:text="--" />
+<TextView android:id="@+id/wind"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:includeFontPadding="false"
+    android:textColor="#FFFFFF"
+    android:textSize="10sp"
+    android:maxLines="1"
+    android:text="--"
+    android:layout_marginTop="4dp"
+    android:gravity="center" />
+</LinearLayout>
+</FrameLayout>
+</LinearLayout>
+</LinearLayout>
+</LinearLayout>
+</FrameLayout>

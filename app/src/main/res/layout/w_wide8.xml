@@ -1,139 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
 <ImageView android:id="@+id/bg" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:src="@drawable/bg_none" />
-<LinearLayout android:padding="14dp"
+<LinearLayout android:padding="0dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<ImageView android:id="@+id/cbg1" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:src="@drawable/shape_round" />
 <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp">
+<LinearLayout android:id="@+id/weather_area"
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:orientation="horizontal"
     android:layout_weight="1"
     android:gravity="center_vertical">
-<LinearLayout android:id="@+id/weather_area"
+<ImageView android:id="@+id/now_temp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginStart="12dp">
+<LinearLayout android:id="@+id/city_row"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:gravity="center_vertical">
+    android:gravity="start">
+<ImageView android:id="@+id/pin"
+    android:layout_width="15dp"
+    android:layout_height="15dp"
+    android:src="@drawable/pin" />
+<TextView android:id="@+id/city"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:includeFontPadding="false"
+    android:textColor="#FFFFFF"
+    android:textSize="14sp"
+    android:maxLines="1"
+    android:layout_marginStart="3dp" />
+</LinearLayout>
+<TextView android:id="@+id/now_desc"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:includeFontPadding="false"
+    android:textColor="#FFFFFF"
+    android:textSize="12sp"
+    android:maxLines="1" />
+</LinearLayout>
+<TextView android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
 <ViewFlipper android:id="@+id/icon_flip"
-    android:layout_width="60dp"
-    android:layout_height="60dp"
+    android:layout_width="54dp"
+    android:layout_height="54dp"
     android:autoStart="true"
     android:flipInterval="30000"
     android:inAnimation="@android:anim/fade_in"
     android:outAnimation="@android:anim/fade_out">
 <ImageView android:id="@+id/now_icon"
-    android:layout_width="60dp"
-    android:layout_height="60dp"
+    android:layout_width="54dp"
+    android:layout_height="54dp"
     android:src="@drawable/r_partly" />
 <ImageView android:id="@+id/now_icon2"
-    android:layout_width="60dp"
-    android:layout_height="60dp"
+    android:layout_width="54dp"
+    android:layout_height="54dp"
     android:src="@drawable/r_partly"
     android:translationX="2dp"
     android:translationY="-3dp" />
 <ImageView android:id="@+id/now_icon3"
-    android:layout_width="60dp"
-    android:layout_height="60dp"
+    android:layout_width="54dp"
+    android:layout_height="54dp"
     android:src="@drawable/r_partly"
     android:translationY="-5dp" />
 </ViewFlipper>
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_marginStart="6dp">
-<ImageView android:id="@+id/now_temp"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
-<TextView android:id="@+id/now_desc"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:includeFontPadding="false"
-    android:textColor="#C9D1DC"
-    android:textSize="12sp"
-    android:maxLines="1" />
-<TextView android:id="@+id/feels"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:includeFontPadding="false"
-    android:textColor="#C9D1DC"
-    android:textSize="11sp"
-    android:maxLines="1" />
 </LinearLayout>
-</LinearLayout>
-<TextView android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
-<LinearLayout android:id="@+id/clock_area"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:gravity="end">
-<ImageView android:id="@+id/clock"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
-<ImageView android:id="@+id/date"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content" />
-<LinearLayout android:id="@+id/city_row"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1.25">
+<ImageView android:id="@+id/cbg2" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:src="@drawable/shape_pill" />
+<LinearLayout android:id="@+id/days_area"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:gravity="end">
-<ImageView android:id="@+id/pin"
-    android:layout_width="12dp"
-    android:layout_height="12dp"
-    android:src="@drawable/pin" />
-<TextView android:id="@+id/city"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
+    android:padding="2dp">
+<FrameLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:layout_margin="4dp">
+<ImageView android:id="@+id/cbg3" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:src="@drawable/shape_pill" />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+<TextView android:id="@+id/h0_time"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
     android:textColor="#FFFFFF"
     android:textSize="11sp"
-    android:maxLines="1"
-    android:layout_marginStart="3dp" />
-</LinearLayout>
-</LinearLayout>
-</LinearLayout>
-<ImageView android:id="@+id/divider" android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginTop="6dp" android:layout_marginBottom="6dp" android:scaleType="fitXY" android:src="@drawable/divider" />
-<LinearLayout android:id="@+id/days_area"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-<LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_weight="1"
-    android:gravity="center">
-<TextView android:id="@+id/h1_time"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
+    android:maxLines="1" />
+<ImageView android:id="@+id/h0_icon"
+    android:layout_width="26dp"
+    android:layout_height="26dp"
+    android:layout_marginTop="2dp"
+    android:layout_marginBottom="2dp" />
+<TextView android:id="@+id/h0_temp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
-    android:textColor="#C9D1DC"
+    android:textColor="#FFFFFF"
+    android:textSize="13sp"
+    android:maxLines="1" />
+</LinearLayout>
+</FrameLayout>
+<FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_margin="4dp">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+<TextView android:id="@+id/h1_time"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:includeFontPadding="false"
+    android:textColor="#FFFFFF"
     android:textSize="11sp"
     android:maxLines="1" />
 <ImageView android:id="@+id/h1_icon"
-    android:layout_width="28dp"
-    android:layout_height="28dp"
+    android:layout_width="26dp"
+    android:layout_height="26dp"
     android:layout_marginTop="2dp"
     android:layout_marginBottom="2dp" />
 <TextView android:id="@+id/h1_temp"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
@@ -141,31 +147,26 @@
     android:textSize="13sp"
     android:maxLines="1" />
 </LinearLayout>
+</FrameLayout>
+<FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_margin="4dp">
 <LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_weight="1"
     android:gravity="center">
 <TextView android:id="@+id/h2_time"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
-    android:textColor="#C9D1DC"
+    android:textColor="#FFFFFF"
     android:textSize="11sp"
     android:maxLines="1" />
 <ImageView android:id="@+id/h2_icon"
-    android:layout_width="28dp"
-    android:layout_height="28dp"
+    android:layout_width="26dp"
+    android:layout_height="26dp"
     android:layout_marginTop="2dp"
     android:layout_marginBottom="2dp" />
 <TextView android:id="@+id/h2_temp"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
@@ -173,31 +174,26 @@
     android:textSize="13sp"
     android:maxLines="1" />
 </LinearLayout>
+</FrameLayout>
+<FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_margin="4dp">
 <LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_weight="1"
     android:gravity="center">
 <TextView android:id="@+id/h3_time"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
-    android:textColor="#C9D1DC"
+    android:textColor="#FFFFFF"
     android:textSize="11sp"
     android:maxLines="1" />
 <ImageView android:id="@+id/h3_icon"
-    android:layout_width="28dp"
-    android:layout_height="28dp"
+    android:layout_width="26dp"
+    android:layout_height="26dp"
     android:layout_marginTop="2dp"
     android:layout_marginBottom="2dp" />
 <TextView android:id="@+id/h3_temp"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
@@ -205,31 +201,26 @@
     android:textSize="13sp"
     android:maxLines="1" />
 </LinearLayout>
+</FrameLayout>
+<FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_margin="4dp">
 <LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_weight="1"
     android:gravity="center">
 <TextView android:id="@+id/h4_time"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
-    android:textColor="#C9D1DC"
+    android:textColor="#FFFFFF"
     android:textSize="11sp"
     android:maxLines="1" />
 <ImageView android:id="@+id/h4_icon"
-    android:layout_width="28dp"
-    android:layout_height="28dp"
+    android:layout_width="26dp"
+    android:layout_height="26dp"
     android:layout_marginTop="2dp"
     android:layout_marginBottom="2dp" />
 <TextView android:id="@+id/h4_temp"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
@@ -237,31 +228,26 @@
     android:textSize="13sp"
     android:maxLines="1" />
 </LinearLayout>
+</FrameLayout>
+<FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_margin="4dp">
 <LinearLayout
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_weight="1"
     android:gravity="center">
 <TextView android:id="@+id/h5_time"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
-    android:textColor="#C9D1DC"
+    android:textColor="#FFFFFF"
     android:textSize="11sp"
     android:maxLines="1" />
 <ImageView android:id="@+id/h5_icon"
-    android:layout_width="28dp"
-    android:layout_height="28dp"
+    android:layout_width="26dp"
+    android:layout_height="26dp"
     android:layout_marginTop="2dp"
     android:layout_marginBottom="2dp" />
 <TextView android:id="@+id/h5_temp"
-    android:shadowColor="#66000000"
-    android:shadowDy="1"
-    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
@@ -269,6 +255,10 @@
     android:textSize="13sp"
     android:maxLines="1" />
 </LinearLayout>
+</FrameLayout>
 </LinearLayout>
+</FrameLayout>
+</LinearLayout>
+</FrameLayout>
 </LinearLayout>
 </FrameLayout>

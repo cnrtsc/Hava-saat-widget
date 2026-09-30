@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent">
+<ImageView android:id="@+id/bg" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:src="@drawable/bg_none" />
+<LinearLayout android:padding="4dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+<FrameLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:layout_marginEnd="8dp">
+<ImageView android:id="@+id/cbg1" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitXY" android:src="@drawable/shape_pill" />
+<LinearLayout android:id="@+id/clock_area"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center">
+<ImageView android:id="@+id/clock"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+</LinearLayout>
+</FrameLayout>
+<FrameLayout
+    android:layout_width="80dp"
+    android:layout_height="match_parent">
+<ImageView android:id="@+id/cbg2" android:layout_width="match_parent" android:layout_height="match_parent" android:scaleType="fitCenter" android:src="@drawable/shape_circle" />
+<LinearLayout android:id="@+id/weather_area"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center">
+<ViewFlipper android:id="@+id/icon_flip"
+    android:layout_width="30dp"
+    android:layout_height="30dp"
+    android:autoStart="true"
+    android:flipInterval="30000"
+    android:inAnimation="@android:anim/fade_in"
+    android:outAnimation="@android:anim/fade_out">
+<ImageView android:id="@+id/now_icon"
+    android:layout_width="30dp"
+    android:layout_height="30dp"
+    android:src="@drawable/r_partly" />
+<ImageView android:id="@+id/now_icon2"
+    android:layout_width="30dp"
+    android:layout_height="30dp"
+    android:src="@drawable/r_partly"
+    android:translationX="2dp"
+    android:translationY="-3dp" />
+<ImageView android:id="@+id/now_icon3"
+    android:layout_width="30dp"
+    android:layout_height="30dp"
+    android:src="@drawable/r_partly"
+    android:translationY="-5dp" />
+</ViewFlipper>
+<ImageView android:id="@+id/now_temp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" />
+</LinearLayout>
+</FrameLayout>
+</LinearLayout>
+</FrameLayout>

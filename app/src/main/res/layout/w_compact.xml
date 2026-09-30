@@ -33,9 +33,9 @@
     android:layout_height="12dp"
     android:src="@drawable/pin" />
 <TextView android:id="@+id/city"
-    android:shadowColor="#80000000"
+    android:shadowColor="#66000000"
     android:shadowDy="1"
-    android:shadowRadius="6"
+    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"

@@ -10,4 +10,6 @@
     android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/w_compact"
     android:previewLayout="@layout/w_compact"
-    android:widgetCategory="home_screen" />
+    android:widgetCategory="home_screen"
+    android:configure="com.caner.sketchweather.ConfigActivity"
+    android:widgetFeatures="reconfigurable" />

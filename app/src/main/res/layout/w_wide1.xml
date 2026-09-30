@@ -16,9 +16,9 @@
     android:layout_height="14dp"
     android:src="@drawable/pin" />
 <TextView android:id="@+id/city"
-    android:shadowColor="#80000000"
+    android:shadowColor="#66000000"
     android:shadowDy="1"
-    android:shadowRadius="6"
+    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
@@ -27,10 +27,29 @@
     android:maxLines="1"
     android:layout_marginStart="3dp" />
 </LinearLayout>
+<ViewFlipper android:id="@+id/icon_flip"
+    android:layout_width="56dp"
+    android:layout_height="56dp"
+    android:autoStart="true"
+    android:flipInterval="30000"
+    android:inAnimation="@android:anim/fade_in"
+    android:outAnimation="@android:anim/fade_out">
 <ImageView android:id="@+id/now_icon"
     android:layout_width="56dp"
     android:layout_height="56dp"
     android:src="@drawable/r_partly" />
+<ImageView android:id="@+id/now_icon2"
+    android:layout_width="56dp"
+    android:layout_height="56dp"
+    android:src="@drawable/r_partly"
+    android:translationX="2dp"
+    android:translationY="-3dp" />
+<ImageView android:id="@+id/now_icon3"
+    android:layout_width="56dp"
+    android:layout_height="56dp"
+    android:src="@drawable/r_partly"
+    android:translationY="-5dp" />
+</ViewFlipper>
 <LinearLayout
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -53,9 +72,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
 <TextView android:id="@+id/hl"
-    android:shadowColor="#80000000"
+    android:shadowColor="#66000000"
     android:shadowDy="1"
-    android:shadowRadius="6"
+    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
@@ -63,9 +82,9 @@
     android:textSize="12sp"
     android:maxLines="1" />
 <TextView android:id="@+id/feels"
-    android:shadowColor="#80000000"
+    android:shadowColor="#66000000"
     android:shadowDy="1"
-    android:shadowRadius="6"
+    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
@@ -84,9 +103,9 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" />
 <TextView android:id="@+id/sep"
-    android:shadowColor="#80000000"
+    android:shadowColor="#66000000"
     android:shadowDy="1"
-    android:shadowRadius="6"
+    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"
@@ -95,9 +114,9 @@
     android:maxLines="1"
     android:text="  ·  " />
 <TextView android:id="@+id/now_desc"
-    android:shadowColor="#80000000"
+    android:shadowColor="#66000000"
     android:shadowDy="1"
-    android:shadowRadius="6"
+    android:shadowRadius="5"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:includeFontPadding="false"

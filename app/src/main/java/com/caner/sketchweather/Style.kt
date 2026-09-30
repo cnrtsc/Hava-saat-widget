@@ -16,20 +16,8 @@ object Style {
         0, R.font.f_outfit_t, R.font.f_manrope_t, R.font.f_poppins_t, R.font.f_bebas_t,
         R.font.f_grotesk_t, R.font.f_serif_t, R.font.f_josefin_t, R.font.f_urbanist_t
     )
-    val WIDE_NAMES = arrayOf(
-        "Klasik  (saat solda, hava sağda, 3 gün)",
-        "Merkez  (konum, ikon, saat ve derece ortada)",
-        "Büyük saat  (dev saat, altta hava şeridi)",
-        "Hava + saatlik  (büyük hava, 5 saatlik tahmin)",
-        "Minimal  (tarih, saat ve tek satır hava)",
-        "Yan yana  (solda hava, sağda saat ve detaylar)"
-    )
-    val WIDE_LAYOUTS = intArrayOf(
-        R.layout.w_wide0, R.layout.w_wide1, R.layout.w_wide2,
-        R.layout.w_wide3, R.layout.w_wide4, R.layout.w_wide5
-    )
-    val BG_NAMES = arrayOf("Koyu", "Açık", "Şeffaf")
-    val BGS = intArrayOf(R.drawable.bg_dark, R.drawable.bg_light, R.drawable.bg_none)
+    val BG_NAMES = arrayOf("Koyu", "Açık", "Şeffaf", "Renkli (palet)")
+    val BGS = intArrayOf(R.drawable.bg_dark, R.drawable.bg_light, R.drawable.bg_none, R.drawable.shape_round)
     val ICON_SET_NAMES = arrayOf("Yumuşak", "Parlak 3D", "Düz ikonik", "Gerçekçi", "Çizgi", "Neon", "Pastel")
     val ICONS: Array<IntArray> = arrayOf(
         intArrayOf(R.drawable.w_sun, R.drawable.w_moon, R.drawable.w_partly, R.drawable.w_partly_night, R.drawable.w_cloud,
@@ -61,7 +49,9 @@ object Style {
 
     fun font(c: Context) = get(c, "font", 6, FONT_NAMES.size)
     fun bg(c: Context) = get(c, "bg", 2, BGS.size)
-    fun wide(c: Context) = get(c, "wide", 0, WIDE_NAMES.size)
+    val ANIM_NAMES = arrayOf("Kapalı", "Her 30 saniyede", "Her 10 saniyede")
+    fun anim(c: Context) = get(c, "anim", 1, ANIM_NAMES.size)
+    fun animInterval(c: Context): Int = when (anim(c)) { 1 -> 30_000; 2 -> 10_000; else -> 86_400_000 }
     fun iconSet(c: Context) = get(c, "icons", 3, ICONS.size)
     fun icon(c: Context, code: Int, day: Boolean): Int = ICONS[iconSet(c)][WeatherRepo.iconIndex(code, day)]
 }
