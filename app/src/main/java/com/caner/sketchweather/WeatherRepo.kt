@@ -1,6 +1,11 @@
 package com.caner.sketchweather
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationManager
 import android.content.SharedPreferences
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -35,7 +40,49 @@ object WeatherRepo {
         }
     }
 
+    fun hasLocationPermission(c: Context): Boolean =
+        c.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+            c.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+    fun useLocation(c: Context): Boolean = prefs(c).getBoolean("useLoc", false)
+
+    /** Cihazın bilinen son konumunu alır; izin yoksa ya da konum yoksa null. */
+    fun lastKnown(c: Context): Location? {
+        if (!hasLocationPermission(c)) return null
+        val lm = c.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        var best: Location? = null
+        for (prov in listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER, LocationManager.PASSIVE_PROVIDER)) {
+            val l = try { lm.getLastKnownLocation(prov) } catch (e: Exception) { null } ?: continue
+            if (best == null || l.time > best.time) best = l
+        }
+        return best
+    }
+
+    /** Konumu kaydeder; şehir adını gerektiğinde yeniden bulur. */
+    fun saveLocation(c: Context, loc: Location) {
+        val p = prefs(c)
+        val oldLat = p.getFloat("nameLat", 999f).toDouble()
+        val oldLon = p.getFloat("nameLon", 999f).toDouble()
+        val res = FloatArray(1)
+        val far = oldLat > 900 || run {
+            Location.distanceBetween(oldLat, oldLon, loc.latitude, loc.longitude, res); res[0] > 2000f
+        }
+        val e = p.edit().putFloat("lat", loc.latitude.toFloat()).putFloat("lon", loc.longitude.toFloat())
+        if (far) {
+            val name = try {
+                @Suppress("DEPRECATION")
+                val a = Geocoder(c, Locale("tr", "TR")).getFromLocation(loc.latitude, loc.longitude, 1)?.firstOrNull()
+                a?.subLocality ?: a?.locality ?: a?.subAdminArea ?: a?.adminArea
+            } catch (ex: Exception) { null }
+            if (name != null) {
+                e.putString("city", name).putFloat("nameLat", loc.latitude.toFloat()).putFloat("nameLon", loc.longitude.toFloat())
+            }
+        }
+        e.apply()
+    }
+
     fun fetch(c: Context): Weather {
+        if (useLocation(c)) lastKnown(c)?.let { saveLocation(c, it) }
         val p = prefs(c)
         val lat = p.getFloat("lat", 41.0082f)
         val lon = p.getFloat("lon", 28.9784f)
@@ -50,7 +97,7 @@ object WeatherRepo {
         )
         val json = get(url)
         val w = parse(json)
-        p.edit().putString("cache", json).apply()
+        p.edit().putString("cache", json).putLong("fetched", System.currentTimeMillis()).apply()
         return w
     }
 

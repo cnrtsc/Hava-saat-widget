@@ -12,16 +12,26 @@ object Style {
         0, R.font.f_outfit_c, R.font.f_manrope_c, R.font.f_poppins_c, R.font.f_bebas_c,
         R.font.f_grotesk_c, R.font.f_serif_c, R.font.f_josefin_c, R.font.f_urbanist_c
     )
+    private val TEXT_FONTS = intArrayOf(
+        0, R.font.f_outfit_t, R.font.f_manrope_t, R.font.f_poppins_t, R.font.f_bebas_t,
+        R.font.f_grotesk_t, R.font.f_serif_t, R.font.f_josefin_t, R.font.f_urbanist_t
+    )
     val WIDE_NAMES = arrayOf(
         "Klasik  (saat solda, hava sağda, 3 gün)",
-        "Merkez  (konum, ikon, saat ve sıcaklık ortada)",
+        "Merkez  (konum, ikon, saat ve derece ortada)",
         "Büyük saat  (dev saat, altta hava şeridi)",
-        "Hava + saatlik  (büyük hava, 5 saatlik tahmin)"
+        "Hava + saatlik  (büyük hava, 5 saatlik tahmin)",
+        "Minimal  (tarih, saat ve tek satır hava)",
+        "Yan yana  (solda hava, sağda saat ve detaylar)"
     )
-    val BG_NAMES = arrayOf("Koyu cam", "Açık", "Şeffaf")
+    val WIDE_LAYOUTS = intArrayOf(
+        R.layout.w_wide0, R.layout.w_wide1, R.layout.w_wide2,
+        R.layout.w_wide3, R.layout.w_wide4, R.layout.w_wide5
+    )
+    val BG_NAMES = arrayOf("Koyu", "Açık", "Şeffaf")
     val BGS = intArrayOf(R.drawable.bg_dark, R.drawable.bg_light, R.drawable.bg_none)
-    val ICON_SET_NAMES = arrayOf("Yumuşak", "Parlak 3D", "Düz ikonik", "Gerçekçi")
-    val ICONS = arrayOf(
+    val ICON_SET_NAMES = arrayOf("Yumuşak", "Parlak 3D", "Düz ikonik", "Gerçekçi", "Çizgi", "Neon", "Pastel")
+    val ICONS: Array<IntArray> = arrayOf(
         intArrayOf(R.drawable.w_sun, R.drawable.w_moon, R.drawable.w_partly, R.drawable.w_partly_night, R.drawable.w_cloud,
             R.drawable.w_fog, R.drawable.w_drizzle, R.drawable.w_rain, R.drawable.w_snow, R.drawable.w_storm),
         intArrayOf(R.drawable.g_sun, R.drawable.g_moon, R.drawable.g_partly, R.drawable.g_partly_night, R.drawable.g_cloud,
@@ -29,18 +39,28 @@ object Style {
         intArrayOf(R.drawable.f_sun, R.drawable.f_moon, R.drawable.f_partly, R.drawable.f_partly_night, R.drawable.f_cloud,
             R.drawable.f_fog, R.drawable.f_drizzle, R.drawable.f_rain, R.drawable.f_snow, R.drawable.f_storm),
         intArrayOf(R.drawable.r_sun, R.drawable.r_moon, R.drawable.r_partly, R.drawable.r_partly_night, R.drawable.r_cloud,
-            R.drawable.r_fog, R.drawable.r_drizzle, R.drawable.r_rain, R.drawable.r_snow, R.drawable.r_storm)
+            R.drawable.r_fog, R.drawable.r_drizzle, R.drawable.r_rain, R.drawable.r_snow, R.drawable.r_storm),
+        intArrayOf(R.drawable.l_sun, R.drawable.l_moon, R.drawable.l_partly, R.drawable.l_partly_night, R.drawable.l_cloud,
+            R.drawable.l_fog, R.drawable.l_drizzle, R.drawable.l_rain, R.drawable.l_snow, R.drawable.l_storm),
+        intArrayOf(R.drawable.n_sun, R.drawable.n_moon, R.drawable.n_partly, R.drawable.n_partly_night, R.drawable.n_cloud,
+            R.drawable.n_fog, R.drawable.n_drizzle, R.drawable.n_rain, R.drawable.n_snow, R.drawable.n_storm),
+        intArrayOf(R.drawable.p_sun, R.drawable.p_moon, R.drawable.p_partly, R.drawable.p_partly_night, R.drawable.p_cloud,
+            R.drawable.p_fog, R.drawable.p_drizzle, R.drawable.p_rain, R.drawable.p_snow, R.drawable.p_storm)
     )
 
     fun clockTypeface(c: Context, i: Int): Typeface =
         if (CLOCK_FONTS[i] == 0) Typeface.create("sans-serif-light", Typeface.NORMAL)
         else c.resources.getFont(CLOCK_FONTS[i])
 
+    fun textTypeface(c: Context, i: Int): Typeface =
+        if (TEXT_FONTS[i] == 0) Typeface.create("sans-serif", Typeface.NORMAL)
+        else c.resources.getFont(TEXT_FONTS[i])
+
     private fun get(c: Context, key: String, def: Int, size: Int): Int =
         WeatherRepo.prefs(c).getInt(key, def).coerceIn(0, size - 1)
 
-    fun font(c: Context) = get(c, "font", 1, FONT_NAMES.size)
-    fun bg(c: Context) = get(c, "bg", 0, BGS.size)
+    fun font(c: Context) = get(c, "font", 6, FONT_NAMES.size)
+    fun bg(c: Context) = get(c, "bg", 2, BGS.size)
     fun wide(c: Context) = get(c, "wide", 0, WIDE_NAMES.size)
     fun iconSet(c: Context) = get(c, "icons", 3, ICONS.size)
     fun icon(c: Context, code: Int, day: Boolean): Int = ICONS[iconSet(c)][WeatherRepo.iconIndex(code, day)]

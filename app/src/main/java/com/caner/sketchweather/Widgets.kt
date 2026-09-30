@@ -1,38 +1,60 @@
 package com.caner.sketchweather
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Typeface
+import android.os.Build
 import android.provider.AlarmClock
+import android.util.TypedValue
 import android.widget.RemoteViews
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.TextStyle
+import java.util.Date
 import java.util.Locale
+import kotlin.math.ceil
 
 abstract class BaseWidget : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
+        val app = context.applicationContext
         when (intent.action) {
+            Widgets.ACTION_TICK,
+            Intent.ACTION_TIME_CHANGED,
+            Intent.ACTION_TIMEZONE_CHANGED,
+            Intent.ACTION_BOOT_COMPLETED -> {
+                Widgets.renderAll(app, WeatherRepo.cached(app))
+                val last = WeatherRepo.prefs(app).getLong("fetched", 0L)
+                if (System.currentTimeMillis() - last > 30 * 60 * 1000L) fetchAsync(app)
+            }
             Widgets.ACTION_REFRESH,
             AppWidgetManager.ACTION_APPWIDGET_UPDATE,
             AppWidgetManager.ACTION_APPWIDGET_OPTIONS_CHANGED -> {
-                val app = context.applicationContext
                 Widgets.renderAll(app, WeatherRepo.cached(app))
-                val pending = goAsync()
-                Thread {
-                    try {
-                        Widgets.renderAll(app, WeatherRepo.fetch(app))
-                    } catch (e: Exception) {
-                        // ağ yoksa önbellekteki veri kalır
-                    } finally {
-                        pending.finish()
-                    }
-                }.start()
+                fetchAsync(app)
             }
             else -> super.onReceive(context, intent)
         }
+    }
+
+    private fun fetchAsync(app: Context) {
+        val pending = goAsync()
+        Thread {
+            try {
+                Widgets.renderAll(app, WeatherRepo.fetch(app))
+            } catch (e: Exception) {
+                // ağ yoksa önbellekteki veri kalır
+            } finally {
+                pending.finish()
+            }
+        }.start()
     }
 }
 
@@ -43,6 +65,22 @@ class GlassWidget : BaseWidget()
 
 object Widgets {
     const val ACTION_REFRESH = "com.caner.sketchweather.REFRESH"
+    const val ACTION_TICK = "com.caner.sketchweather.TICK"
+
+    /** Her düzen için: saat, derece, tarih boyutu (sp) ve tarih biçimi. */
+    private class Spec(val clock: Float, val temp: Float, val date: Float, val datePattern: String)
+
+    private val SPECS = mapOf(
+        R.layout.w_wide0 to Spec(52f, 34f, 14f, "EEEE, d MMMM"),
+        R.layout.w_wide1 to Spec(46f, 26f, 12f, "EEEE, d MMMM"),
+        R.layout.w_wide2 to Spec(74f, 20f, 13f, "d MMMM, EEEE"),
+        R.layout.w_wide3 to Spec(30f, 36f, 11f, "EEE, d MMM"),
+        R.layout.w_wide4 to Spec(64f, 16f, 13f, "EEEE, d MMMM"),
+        R.layout.w_wide5 to Spec(46f, 30f, 13f, "EEEE, d MMMM"),
+        R.layout.w_compact to Spec(34f, 24f, 11f, "EEE, d MMM"),
+        R.layout.w_square to Spec(20f, 30f, 11f, "EEE, d MMM"),
+        R.layout.w_glass to Spec(42f, 30f, 12f, "d MMMM EEEE")
+    )
 
     private val DAY_IDS = arrayOf(
         intArrayOf(R.id.d1_name, R.id.d1_icon, R.id.d1_temp),
@@ -64,53 +102,106 @@ object Widgets {
         intArrayOf(R.id.q4_name, R.id.q4_icon, R.id.q4_max, R.id.q4_min)
     )
     private val PRIMARY = intArrayOf(
-        R.id.hum, R.id.wind, R.id.rise, R.id.sset,
+        R.id.city, R.id.hum, R.id.wind, R.id.rise, R.id.sset,
+        R.id.d1_name, R.id.d2_name, R.id.d3_name,
+        R.id.h1_temp, R.id.h2_temp, R.id.h3_temp, R.id.h4_temp, R.id.h5_temp,
         R.id.q0_name, R.id.q1_name, R.id.q2_name, R.id.q3_name, R.id.q4_name,
-        R.id.q0_max, R.id.q1_max, R.id.q2_max, R.id.q3_max, R.id.q4_max,
-        R.id.clock, R.id.now_temp, R.id.city, R.id.d1_name, R.id.d2_name, R.id.d3_name,
-        R.id.h1_temp, R.id.h2_temp, R.id.h3_temp, R.id.h4_temp, R.id.h5_temp
+        R.id.q0_max, R.id.q1_max, R.id.q2_max, R.id.q3_max, R.id.q4_max
     )
     private val SECONDARY = intArrayOf(
-        R.id.hl2, R.id.lab_hum, R.id.lab_wind, R.id.lab_rise, R.id.lab_set,
-        R.id.q0_min, R.id.q1_min, R.id.q2_min, R.id.q3_min, R.id.q4_min,
-        R.id.date, R.id.date2, R.id.now_desc, R.id.hl, R.id.sep, R.id.extra,
+        R.id.now_desc, R.id.feels, R.id.hl, R.id.hl2, R.id.sep, R.id.extra,
+        R.id.lab_hum, R.id.lab_wind, R.id.lab_rise, R.id.lab_set,
         R.id.d1_temp, R.id.d2_temp, R.id.d3_temp,
-        R.id.h1_time, R.id.h2_time, R.id.h3_time, R.id.h4_time, R.id.h5_time
+        R.id.h1_time, R.id.h2_time, R.id.h3_time, R.id.h4_time, R.id.h5_time,
+        R.id.q0_min, R.id.q1_min, R.id.q2_min, R.id.q3_min, R.id.q4_min
     )
 
     fun refreshIntent(c: Context): Intent = Intent(c, WideWidget::class.java).setAction(ACTION_REFRESH)
 
     fun renderAll(c: Context, w: Weather?) {
         val mgr = AppWidgetManager.getInstance(c)
-        val font = Style.font(c)
         val kinds = listOf(
-            Pair(WideWidget::class.java, Layouts.WIDE[Style.wide(c)][font]),
-            Pair(CompactWidget::class.java, Layouts.COMPACT[font]),
-            Pair(SquareWidget::class.java, Layouts.SQUARE[font]),
-            Pair(GlassWidget::class.java, Layouts.GLASS[font])
+            Pair(WideWidget::class.java, Style.WIDE_LAYOUTS[Style.wide(c)]),
+            Pair(CompactWidget::class.java, R.layout.w_compact),
+            Pair(SquareWidget::class.java, R.layout.w_square),
+            Pair(GlassWidget::class.java, R.layout.w_glass)
         )
+        var any = false
         for ((cls, layout) in kinds) {
             val ids = mgr.getAppWidgetIds(ComponentName(c, cls))
-            if (ids.isNotEmpty()) mgr.updateAppWidget(ids, build(c, layout, w))
+            if (ids.isNotEmpty()) {
+                any = true
+                mgr.updateAppWidget(ids, build(c, layout, w))
+            }
         }
+        if (any) scheduleTick(c)
+    }
+
+    /** Saati her dakika başında yeniler. */
+    fun scheduleTick(c: Context) {
+        val am = c.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val pi = PendingIntent.getBroadcast(
+            c, 10, Intent(c, WideWidget::class.java).setAction(ACTION_TICK),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        val next = (System.currentTimeMillis() / 60000L + 1) * 60000L
+        try {
+            if (Build.VERSION.SDK_INT >= 31 && !am.canScheduleExactAlarms()) {
+                am.setWindow(AlarmManager.RTC, next, 5000L, pi)
+            } else {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC, next, pi)
+            }
+        } catch (e: SecurityException) {
+            am.setWindow(AlarmManager.RTC, next, 5000L, pi)
+        }
+    }
+
+    private fun textBitmap(c: Context, text: String, tf: Typeface, sp: Float, color: Int, shadow: Boolean): Bitmap {
+        val dm = c.resources.displayMetrics
+        val px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, dm)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
+            typeface = tf
+            textSize = px
+            this.color = color
+            if (shadow) setShadowLayer(px * 0.07f, 0f, px * 0.03f, 0x80000000.toInt())
+        }
+        val fm = paint.fontMetrics
+        val pad = if (shadow) px * 0.12f else 2f
+        val w = ceil(paint.measureText(text) + pad * 2).toInt().coerceAtLeast(1)
+        val h = ceil(fm.descent - fm.ascent + pad * 2).toInt().coerceAtLeast(1)
+        val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+        Canvas(bmp).drawText(text, pad, pad - fm.ascent, paint)
+        bmp.density = dm.densityDpi
+        return bmp
     }
 
     private fun build(c: Context, layout: Int, w: Weather?): RemoteViews {
         val v = RemoteViews(c.packageName, layout)
-        val bg = Style.bg(c)
-        val isGlass = Layouts.GLASS.contains(layout)
-        v.setImageViewResource(R.id.bg, if (isGlass) R.drawable.bg_none else Style.BGS[bg])
+        val spec = SPECS[layout] ?: SPECS.getValue(R.layout.w_wide0)
+        val isGlass = layout == R.layout.w_glass
+        val bg = if (isGlass) 2 else Style.bg(c)
+        v.setImageViewResource(R.id.bg, Style.BGS[bg])
 
-        val light = bg == 1 && !isGlass
+        val light = bg == 1
+        val shadow = bg == 2
         val c1 = if (light) 0xFF1B1F24.toInt() else 0xFFFFFFFF.toInt()
         val c2 = if (light) 0xFF5A636E.toInt() else 0xFFC9D1DC.toInt()
         for (id in PRIMARY) v.setTextColor(id, c1)
         for (id in SECONDARY) v.setTextColor(id, c2)
         for (id in intArrayOf(R.id.divider, R.id.vdiv)) {
             v.setInt(id, "setColorFilter", c1)
-            v.setInt(id, "setImageAlpha", if (light) 35 else 55)
+            v.setInt(id, "setImageAlpha", if (light) 35 else 60)
         }
         v.setInt(R.id.pin, "setColorFilter", c1)
+
+        // Saat, tarih ve derece seçilen yazı tipiyle görsel olarak çizilir
+        val font = Style.font(c)
+        val clockTf = Style.clockTypeface(c, font)
+        val textTf = Style.textTypeface(c, font)
+        val tr = Locale("tr", "TR")
+        val now = Date()
+        v.setImageViewBitmap(R.id.clock, textBitmap(c, SimpleDateFormat("HH:mm", tr).format(now), clockTf, spec.clock, c1, shadow))
+        v.setImageViewBitmap(R.id.date, textBitmap(c, SimpleDateFormat(spec.datePattern, tr).format(now), textTf, spec.date, c2, shadow))
 
         val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         val alarms = Intent(AlarmClock.ACTION_SHOW_ALARMS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -123,12 +214,14 @@ object Widgets {
         v.setTextViewText(R.id.city, WeatherRepo.city(c))
 
         if (w == null) {
+            v.setImageViewBitmap(R.id.now_temp, textBitmap(c, "--°", clockTf, spec.temp, c1, shadow))
             v.setTextViewText(R.id.now_desc, "Yükleniyor…")
             return v
         }
         v.setImageViewResource(R.id.now_icon, Style.icon(c, w.code, w.isDay))
-        v.setTextViewText(R.id.now_temp, "${w.temp}°")
+        v.setImageViewBitmap(R.id.now_temp, textBitmap(c, "${w.temp}°", clockTf, spec.temp, c1, shadow))
         v.setTextViewText(R.id.now_desc, WeatherRepo.label(w.code))
+        w.feels?.let { v.setTextViewText(R.id.feels, "Hissedilen $it°") }
         val today = w.days.firstOrNull()
         if (today != null) {
             v.setTextViewText(R.id.hl, "${today.max}° / ${today.min}°")
@@ -145,7 +238,6 @@ object Widgets {
         w.wind?.let { extras.add("Rüzgâr $it km/s") }
         v.setTextViewText(R.id.extra, extras.joinToString("  ·  "))
 
-        val tr = Locale("tr", "TR")
         for (k in DAY_IDS.indices) {
             val d = w.days.getOrNull(k + 1) ?: continue
             val name = LocalDate.parse(d.date).dayOfWeek.getDisplayName(TextStyle.SHORT, tr)

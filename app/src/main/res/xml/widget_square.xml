@@ -8,6 +8,6 @@
     android:minResizeHeight="100dp"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
-    android:initialLayout="@layout/square_f1"
-    android:previewLayout="@layout/square_f1"
+    android:initialLayout="@layout/w_square"
+    android:previewLayout="@layout/w_square"
     android:widgetCategory="home_screen" />

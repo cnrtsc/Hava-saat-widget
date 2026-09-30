@@ -8,6 +8,6 @@
     android:minResizeHeight="40dp"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="1800000"
-    android:initialLayout="@layout/compact_f1"
-    android:previewLayout="@layout/compact_f1"
+    android:initialLayout="@layout/w_compact"
+    android:previewLayout="@layout/w_compact"
     android:widgetCategory="home_screen" />
