@@ -1,5 +1,7 @@
 package com.caner.sketchweather
 
+class W_Gokyuzu : BaseWidget()
+class W_Gokyuzu5 : BaseWidget()
 class W_Saatbilgi : BaseWidget()
 class W_Saatbilgi5 : BaseWidget()
 class W_Klasik : BaseWidget()
@@ -51,8 +53,10 @@ class W_Kilitince : BaseWidget()
 class Entry(val cls: Class<out BaseWidget>, val label: String, val layout: Int, val size: String, val preview: Int)
 
 object Registry {
-    val SIZE_TITLES = mapOf("w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "l" to "Büyük · 5x2")
+    val SIZE_TITLES = mapOf("t" to "Uzun · 4x3", "w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "l" to "Büyük · 5x2")
     val ALL = listOf(
+        Entry(W_Gokyuzu::class.java, "Gökyüzü kartı", R.layout.w_skycard, "t", R.drawable.prev_gokyuzu),
+        Entry(W_Gokyuzu5::class.java, "Gökyüzü kartı (geniş)", R.layout.w_skycard, "l", R.drawable.prev_gokyuzu5),
         Entry(W_Saatbilgi::class.java, "Analog saat + bilgi", R.layout.w_combo, "w", R.drawable.prev_saatbilgi),
         Entry(W_Saatbilgi5::class.java, "Analog saat + bilgi (geniş)", R.layout.w_combo, "l", R.drawable.prev_saatbilgi5),
         Entry(W_Klasik::class.java, "Klasik", R.layout.w_wide0, "w", R.drawable.prev_klasik),

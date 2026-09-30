@@ -76,7 +76,7 @@ class MainActivity : Activity() {
                     runOnUiThread {
                         if (place == null) locStatus.text = "Şehir bulunamadı."
                         else {
-                            p.edit().putBoolean("useLoc", false).putString("city", place.name)
+                            p.edit().putBoolean("useLoc", false).putString("city", place.name).putString("city2", "")
                                 .putFloat("lat", place.lat.toFloat()).putFloat("lon", place.lon.toFloat()).remove("cache").apply()
                             info.text = place.name; updateLocStatus(); refreshWidget()
                         }

@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Hava &amp; Saat</string>
+    <string name="desc_gokyuzu">Gökyüzü kartı · 4x3</string>
+    <string name="desc_gokyuzu5">Gökyüzü kartı (geniş) · 5x2</string>
     <string name="desc_saatbilgi">Analog saat + bilgi · 4x2</string>
     <string name="desc_saatbilgi5">Analog saat + bilgi (geniş) · 5x2</string>
     <string name="desc_klasik">Klasik · 4x2</string>

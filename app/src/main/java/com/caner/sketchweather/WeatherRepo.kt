@@ -29,6 +29,7 @@ object WeatherRepo {
         c.getSharedPreferences("sketch_weather", Context.MODE_PRIVATE)
 
     fun city(c: Context): String = prefs(c).getString("city", null) ?: "İstanbul"
+    fun city2(c: Context): String = prefs(c).getString("city2", null) ?: ""
 
     private fun get(url: String): String {
         val con = URL(url).openConnection() as HttpURLConnection
@@ -70,13 +71,15 @@ object WeatherRepo {
         }
         val e = p.edit().putFloat("lat", loc.latitude.toFloat()).putFloat("lon", loc.longitude.toFloat())
         if (far) {
-            val name = try {
+            val a = try {
                 @Suppress("DEPRECATION")
-                val a = Geocoder(c, Locale("tr", "TR")).getFromLocation(loc.latitude, loc.longitude, 1)?.firstOrNull()
-                a?.subLocality ?: a?.locality ?: a?.subAdminArea ?: a?.adminArea
+                Geocoder(c, Locale("tr", "TR")).getFromLocation(loc.latitude, loc.longitude, 1)?.firstOrNull()
             } catch (ex: Exception) { null }
+            val name = a?.subLocality ?: a?.locality ?: a?.subAdminArea ?: a?.adminArea
             if (name != null) {
-                e.putString("city", name).putFloat("nameLat", loc.latitude.toFloat()).putFloat("nameLon", loc.longitude.toFloat())
+                val big = a?.locality ?: a?.adminArea
+                e.putString("city", name).putString("city2", if (big != null && big != name) big else a?.adminArea ?: "")
+                    .putFloat("nameLat", loc.latitude.toFloat()).putFloat("nameLon", loc.longitude.toFloat())
             }
         }
         e.apply()
