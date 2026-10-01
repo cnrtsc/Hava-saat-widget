@@ -1,6 +1,10 @@
 package com.caner.sketchweather
 
 class W_Gokyuzu : BaseWidget()
+class W_Origamikart : BaseWidget()
+class W_Origamiserit : BaseWidget()
+class W_Origamikare : BaseWidget()
+class W_Origamicapraz : BaseWidget()
 class W_Gokyuzu5 : BaseWidget()
 class W_Saatbilgi : BaseWidget()
 class W_Saatbilgi5 : BaseWidget()
@@ -57,6 +61,10 @@ object Registry {
     val SIZE_TITLES = mapOf("t" to "Uzun · 4x3", "w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "l" to "Büyük · 5x2")
     val ALL = listOf(
         Entry(W_Gokyuzu::class.java, "Gökyüzü kartı", R.layout.w_skycard, "t", R.drawable.prev_gokyuzu),
+        Entry(W_Origamikart::class.java, "Origami kart", R.layout.w_ori_card, "w", R.drawable.prev_origamikart),
+        Entry(W_Origamiserit::class.java, "Origami şerit", R.layout.w_ori_strip, "c", R.drawable.prev_origamiserit),
+        Entry(W_Origamikare::class.java, "Origami kare", R.layout.w_ori_square, "s", R.drawable.prev_origamikare),
+        Entry(W_Origamicapraz::class.java, "Origami çapraz", R.layout.w_ori_diag, "s", R.drawable.prev_origamicapraz),
         Entry(W_Gokyuzu5::class.java, "Gökyüzü kartı (geniş)", R.layout.w_skycard, "l", R.drawable.prev_gokyuzu5),
         Entry(W_Saatbilgi::class.java, "Analog saat + bilgi", R.layout.w_combo, "w", R.drawable.prev_saatbilgi),
         Entry(W_Saatbilgi5::class.java, "Analog saat + bilgi (geniş)", R.layout.w_combo, "l", R.drawable.prev_saatbilgi5),

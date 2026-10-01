@@ -47,6 +47,7 @@ class EditActivity : Activity() {
         R.layout.w_bentox, R.layout.w_bentosq -> "bento"
         R.layout.w_skycard -> "sky"
         R.layout.w_pills -> "pills"
+        R.layout.w_ori_card, R.layout.w_ori_strip, R.layout.w_ori_square, R.layout.w_ori_diag -> "origami"
         R.layout.w_th_dot, R.layout.w_th_flip, R.layout.w_th_swiss, R.layout.w_th_prog, R.layout.w_th_term, R.layout.w_th_paper, R.layout.w_th_sector, R.layout.w_th_neu -> "theme"
         R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim -> "mod"
         R.layout.w_strip, R.layout.w_graph -> "round"
@@ -153,6 +154,16 @@ class EditActivity : Activity() {
                 }
                 if ((0 until 4).any { i -> read { Bento.tile(this, i) } == 1 }) clockSection()
                 paletteSection(); fontSection(true); iconSection()
+            }
+            "origami" -> {
+                val s = Ui.section(this, "Kağıt", "Zeminin rengini ve doluluğunu seç. \"Havaya göre\" seçersen kağıt hava durumuyla renk değiştirir.")
+                s.addView(Ui.chips(this, Origami.PAPER_NAMES, read { Origami.paper(this) }) { putI("paperColor", it); build() })
+                if (read { Origami.paper(this) } != 3)
+                    s.addView(Ui.slider(this, { "Kağıt doluluğu: %$it" }, read { Style.opacity(this) }) { putI("opacity", it) })
+                s.addView(Ui.label(this, "Yazı rengi"))
+                s.addView(Ui.chips(this, Style.TEXT_COLOR_NAMES, read { Style.textColorIdx(this) }) { putI("textColor", it); build() })
+                root.addView(s)
+                fontSection(true); iconSection()
             }
             "pills" -> {
                 val s = Ui.section(this, "Kapsüller", "Her kapsülde ne görüneceğini seç. \"Yok\" seçersen o kapsül gizlenir.")

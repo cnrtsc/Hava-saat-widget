@@ -35,6 +35,22 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gokyuzu" />
         </receiver>
+        <receiver android:name=".W_Origamikart" android:exported="true" android:label="Origami kart">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_origamikart" />
+        </receiver>
+        <receiver android:name=".W_Origamiserit" android:exported="true" android:label="Origami şerit">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_origamiserit" />
+        </receiver>
+        <receiver android:name=".W_Origamikare" android:exported="true" android:label="Origami kare">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_origamikare" />
+        </receiver>
+        <receiver android:name=".W_Origamicapraz" android:exported="true" android:label="Origami çapraz">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_origamicapraz" />
+        </receiver>
         <receiver android:name=".W_Gokyuzu5" android:exported="true" android:label="Gökyüzü kartı (geniş)">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gokyuzu5" />

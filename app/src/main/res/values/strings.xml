@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Hava &amp; Saat</string>
     <string name="desc_gokyuzu">Gökyüzü kartı · 4x3</string>
+    <string name="desc_origamikart">Origami kart · 4x2</string>
+    <string name="desc_origamiserit">Origami şerit · 4x1</string>
+    <string name="desc_origamikare">Origami kare · 2x2</string>
+    <string name="desc_origamicapraz">Origami çapraz · 2x2</string>
     <string name="desc_gokyuzu5">Gökyüzü kartı (geniş) · 5x2</string>
     <string name="desc_saatbilgi">Analog saat + bilgi · 4x2</string>
     <string name="desc_saatbilgi5">Analog saat + bilgi (geniş) · 5x2</string>
