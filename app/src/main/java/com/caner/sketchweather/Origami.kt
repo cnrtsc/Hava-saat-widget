@@ -41,7 +41,7 @@ object Origami {
             1 -> Tone(a(Color.rgb(239, 230, 214)), tc ?: Color.rgb(42, 38, 34), Color.rgb(107, 98, 88), false)
             2 -> {
                 val (cc, _) = WeatherRepo.conditionColor(w)
-                val dk = Color.rgb((Color.red(cc) * .55f).toInt(), (Color.green(cc) * .55f).toInt(), (Color.blue(cc) * .55f).toInt())
+                val dk = Color.rgb((Color.red(cc) * .72f).toInt(), (Color.green(cc) * .72f).toInt(), (Color.blue(cc) * .72f).toInt())
                 Tone(a(dk), tc ?: Color.WHITE, Color.rgb(220, 226, 236), false)
             }
             3 -> Tone(null, tc ?: Color.WHITE, Color.rgb(226, 230, 238), true)
@@ -75,6 +75,8 @@ object Origami {
             }
         }
     }
+
+    fun meshOn(cv: Canvas, r: RectF, seed: Int, n: Int, k: Float) = mesh(cv, r, seed, n, k)
 
     private fun card(cv: Canvas, r: RectF, rad: Float, t: Tone, seed: Int) {
         val bg = t.bg ?: return
@@ -146,11 +148,11 @@ object Origami {
             }
             STRIP -> {
                 val third = (Wf - 2 * pad) / 3
+                val y0 = Hf * .12f; val y1 = Hf * .02f; val y2 = Hf * .98f; val y3 = Hf * .88f
                 if (t.bg != null) {
                     val sh = Paint(Paint.ANTI_ALIAS_FLAG).apply { setShadowLayer(Hf * .08f, 0f, Hf * .05f, 0x80000000.toInt()) }
                     val base = t.bg
-                    val dark = Color.argb(Color.alpha(base), (Color.red(base) * .8f).toInt(), (Color.green(base) * .8f).toInt(), (Color.blue(base) * .8f).toInt())
-                    val y0 = Hf * .1f; val y1 = Hf * .02f; val y2 = Hf * .98f; val y3 = Hf * .9f
+                    val dark = Color.argb(Color.alpha(base), (Color.red(base) * .78f).toInt(), (Color.green(base) * .78f).toInt(), (Color.blue(base) * .78f).toInt())
                     val panels = listOf(
                         floatArrayOf(pad, y0, pad + third, y1, pad + third, y2, pad, y3),
                         floatArrayOf(pad + third, y1, pad + 2 * third, y0, pad + 2 * third, y3, pad + third, y2),
@@ -161,16 +163,37 @@ object Origami {
                         cv.drawPath(path, sh)
                         cv.save(); cv.clipPath(path); mesh(cv, RectF(q[0], 0f, q[2], Hf), 77 + i, 3, .8f); cv.restore()
                     }
+                    val fold = Paint(Paint.ANTI_ALIAS_FLAG).apply { strokeWidth = 2f }
+                    fold.color = 0x30FFFFFF; cv.drawLine(pad + third, y1, pad + third, y2, fold)
+                    fold.color = 0x55000000; cv.drawLine(pad + 2 * third, y0, pad + 2 * third, y3, fold)
                 }
-                val x1 = pin(c, cv, pad + Hf * .2f, Hf * .45f, Hf * .2f)
-                cv.drawText(city, x1, Hf * .45f, txt(tf, Hf * .19f, t.ink, t).apply { isFakeBoldText = true })
+                // her panelin eğimi: yazılar kağıdın katına göre açılı durur
+                val slope = (y1 - y0) / third
+                val deg = Math.toDegrees(kotlin.math.atan(slope.toDouble())).toFloat()
+                val look = Combo.Look(0, t.ink, t.sub, t.ink, t.shadow, 0)
+                // 1. panel: konum (yükselen kat)
+                cv.save(); cv.rotate(deg, pad + third / 2, Hf / 2)
+                val cp = txt(tf, Hf * .18f, t.ink, t).apply { isFakeBoldText = true }
                 val c2 = WeatherRepo.city2(c)
-                if (c2.isNotEmpty()) cv.drawText(c2, pad + Hf * .2f, Hf * .7f, txt(tf, Hf * .14f, t.sub, t))
-                Combo.icon(c, cv, ic, pad + third + Hf * .5f, Hf / 2, Hf * .78f)
-                cv.drawText(temp, pad + third + Hf * .95f, Hf * .6f, txt(cf, Hf * .3f, t.ink, t))
-                val right = Wf - pad - Hf * .2f
-                cv.drawText(SimpleDateFormat("HH:mm", tr).format(now), right, Hf * .56f, Lock.clockPaint(c, Hf * .33f, t.ink, Combo.Look(0, t.ink, t.sub, t.ink, t.shadow, 0)).apply { textAlign = Paint.Align.RIGHT })
-                cv.drawText(SimpleDateFormat("EEE, d MMM", tr).format(now), right, Hf * .78f, txt(tf, Hf * .13f, t.sub, t, Paint.Align.RIGHT))
+                val blockW = Hf * .2f + cp.measureText(city)
+                val x0 = pad + (third - blockW) / 2
+                val x1 = pin(c, cv, x0, Hf * (if (c2.isNotEmpty()) .47f else .58f), Hf * .19f)
+                cv.drawText(city, x1, Hf * (if (c2.isNotEmpty()) .47f else .58f), cp)
+                if (c2.isNotEmpty()) cv.drawText(c2, pad + third / 2, Hf * .7f, txt(tf, Hf * .13f, t.sub, t, Paint.Align.CENTER))
+                cv.restore()
+                // 2. panel: saat (alçalan kat, ortada)
+                cv.save(); cv.rotate(-deg, Wf / 2, Hf / 2)
+                cv.drawText(SimpleDateFormat("HH:mm", tr).format(now), Wf / 2, Hf * .58f, Lock.clockPaint(c, Hf * .38f, t.ink, look))
+                cv.drawText(SimpleDateFormat("EEE, d MMM", tr).format(now), Wf / 2, Hf * .78f, txt(tf, Hf * .12f, t.sub, t, Paint.Align.CENTER))
+                cv.restore()
+                // 3. panel: hava (yükselen kat)
+                cv.save(); cv.rotate(deg, pad + 2.5f * third, Hf / 2)
+                val tp = txt(cf, Hf * .3f, t.ink, t)
+                val iw = Hf * .7f
+                val gx = pad + 2 * third + (third - iw - tp.measureText(temp)) / 2
+                Combo.icon(c, cv, ic, gx + iw / 2, Hf / 2, iw)
+                cv.drawText(temp, gx + iw, Hf * .6f, tp)
+                cv.restore()
             }
             SQUARE -> {
                 val s = min(Wf, Hf)

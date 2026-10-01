@@ -65,20 +65,34 @@ object Pills {
         val items = (0 until 4).mapNotNull { i -> item(c, pill(c, i), w)?.let { Pair(pill(c, i), it) } }
         if (items.isEmpty()) return b
         val ph = H * .7f
-        val gap = H * .1f
-        var fs = ph * .36f
-        val isz = ph * .56f
-        fun width(it: Item, f: Float): Float {
-            val p = if (it.clock) Lock.clockPaint(c, f * 1.15f, ink, lk) else Combo.text(tf, f, ink, lk, Paint.Align.LEFT)
-            return p.measureText(it.text) + (if (it.icon != null || it.pin) isz * .9f else 0f) + ph * .6f
+        val gap = H * .08f
+        val avail = W - 4f
+        fun widths(list: List<Pair<Int, Item>>, f: Float): List<Float> {
+            val isz = f * 1.55f
+            return list.map { (_, it) ->
+                val p = if (it.clock) Lock.clockPaint(c, f * 1.15f, ink, lk) else Combo.text(tf, f, ink, lk, Paint.Align.LEFT)
+                p.measureText(it.text) + (if (it.icon != null || it.pin) isz * .95f else 0f) + f * 1.6f
+            }
         }
-        var total = items.sumOf { width(it.second, fs).toDouble() }.toFloat() + gap * (items.size - 1)
-        if (total > W - 4) { fs *= (W - 4 - gap * (items.size - 1)) / (total - gap * (items.size - 1)); total = W - 4f }
-        val extra = ((W - 4) - total) / items.size
+        var shown = items
+        var fs = ph * .36f
+        while (true) {
+            val ws = widths(shown, fs)
+            val total = ws.sum() + gap * (shown.size - 1)
+            if (total <= avail) break
+            val scaled = fs * (avail - gap * (shown.size - 1)) / (total - gap * (shown.size - 1))
+            if (scaled >= ph * .24f) { fs = scaled; break }
+            if (shown.size <= 1) { fs = scaled; break }
+            shown = shown.dropLast(1)   // sığmayan son kapsül gizlenir
+        }
+        val isz = fs * 1.55f
+        val ws = widths(shown, fs)
+        val extra = (avail - ws.sum() - gap * (shown.size - 1)).coerceAtLeast(0f) / shown.size
         var x = 2f
         val y0 = (H - ph) / 2
-        for ((which, it) in items) {
-            val pw = width(it, fs) + extra
+        for ((idx, pair) in shown.withIndex()) {
+            val (which, it) = pair
+            val pw = ws[idx] + extra
             val r = RectF(x, y0, x + pw, y0 + ph)
             var bg = Color.argb((215 * op).toInt(), 22, 26, 34)
             var col = ink

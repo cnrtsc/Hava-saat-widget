@@ -123,24 +123,57 @@ class MainActivity : Activity() {
         root.addView(s)
     }
 
-    // ---------- 3. Yeni widget ekle ----------
+    // ---------- 3. Yeni widget ekle (favoriler önce) ----------
+    private fun favs(): Set<String> = p.getStringSet("favs", emptySet()) ?: emptySet()
+    private fun toggleFav(e: Entry) {
+        val s = favs().toMutableSet()
+        if (!s.add(e.cls.name)) s.remove(e.cls.name)
+        p.edit().putStringSet("favs", s).apply()
+        build()
+    }
+
+    private fun cell(e: Entry, wide: Int): LinearLayout = LinearLayout(this).apply {
+        orientation = LinearLayout.VERTICAL
+        setPadding(Ui.dp(this@MainActivity, 4), Ui.dp(this@MainActivity, 4), Ui.dp(this@MainActivity, 8), Ui.dp(this@MainActivity, 4))
+        addView(ImageView(this@MainActivity).apply {
+            setImageResource(e.preview); adjustViewBounds = true
+            layoutParams = LinearLayout.LayoutParams(Ui.dp(this@MainActivity, wide), -2)
+            setOnClickListener { pin(e) }
+            setOnLongClickListener { toggleFav(e); true }
+        })
+        addView(LinearLayout(this@MainActivity).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER_VERTICAL
+            addView(TextView(this@MainActivity).apply {
+                text = e.label; textSize = 12f; setTextColor(Ui.FG)
+                layoutParams = LinearLayout.LayoutParams(0, -2, 1f)
+            })
+            addView(TextView(this@MainActivity).apply {
+                val on = favs().contains(e.cls.name)
+                text = if (on) "★" else "☆"; textSize = 20f
+                setTextColor(if (on) Ui.ACCENT else Ui.MUTED)
+                setPadding(Ui.dp(this@MainActivity, 8), 0, Ui.dp(this@MainActivity, 4), 0)
+                contentDescription = if (on) "Favorilerden çıkar" else "Favorilere ekle"
+                setOnClickListener { toggleFav(e) }
+            })
+        })
+    }
+
     private fun addCard() {
-        val s = Ui.section(this, "Yeni widget ekle", "Önizlemeye dokun; ana ekrana eklensin. Eklemeden sonra buradan düzenleyebilirsin.")
+        val fav = Registry.ALL.filter { favs().contains(it.cls.name) }
+        if (fav.isNotEmpty()) {
+            val f = Ui.section(this, "★  Favorilerim", "Dokun: ana ekrana ekle · Yıldız: favoriden çıkar")
+            val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+            fav.forEach { row.addView(cell(it, if (it.size == "s") 110 else 200)) }
+            f.addView(android.widget.HorizontalScrollView(this).apply { addView(row) })
+            root.addView(f)
+        }
+        val s = Ui.section(this, "Yeni widget ekle", "Önizlemeye dokun: ana ekrana eklensin. Yıldıza dokun ya da önizlemeye basılı tut: favorilere ekle.")
         for ((size, title) in Registry.SIZE_TITLES) {
             s.addView(Ui.label(this, title))
             val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-            Registry.ALL.filter { it.size == size }.forEach { e ->
-                row.addView(LinearLayout(this).apply {
-                    orientation = LinearLayout.VERTICAL
-                    setPadding(Ui.dp(this@MainActivity, 4), Ui.dp(this@MainActivity, 4), Ui.dp(this@MainActivity, 8), Ui.dp(this@MainActivity, 4))
-                    addView(ImageView(this@MainActivity).apply {
-                        setImageResource(e.preview); adjustViewBounds = true
-                        layoutParams = LinearLayout.LayoutParams(Ui.dp(this@MainActivity, if (size == "s") 110 else 210), -2)
-                    })
-                    addView(TextView(this@MainActivity).apply { text = e.label; textSize = 12f; setTextColor(Ui.FG) })
-                    setOnClickListener { pin(e) }
-                })
-            }
+            Registry.ALL.filter { it.size == size }.sortedByDescending { favs().contains(it.cls.name) }
+                .forEach { row.addView(cell(it, if (size == "s") 110 else 210)) }
             s.addView(android.widget.HorizontalScrollView(this).apply { addView(row) })
         }
         root.addView(s)

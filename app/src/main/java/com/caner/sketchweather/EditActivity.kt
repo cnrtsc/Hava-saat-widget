@@ -209,7 +209,13 @@ class EditActivity : Activity() {
             "palette" -> { paletteSection(); fontSection(true); iconSection() }
             else -> { bgSection(); fontSection(true); iconSection() }
         }
+        decorSection()
         root.addView(Ui.card(this).apply {
+            addView(TextView(this@EditActivity).apply {
+                text = "⧉  Bu görünümü diğer tüm widget'lara uygula"; setTextColor(Ui.ACCENT); textSize = 15f
+                setPadding(0, 0, 0, Ui.dp(this@EditActivity, 14))
+                setOnClickListener { copyLook() }
+            })
             addView(TextView(this@EditActivity).apply {
                 text = "↺  Bu widget'ın ayarlarını sıfırla"; setTextColor(Ui.ACCENT); textSize = 15f
                 setOnClickListener {
@@ -219,6 +225,51 @@ class EditActivity : Activity() {
                 }
             })
         })
+    }
+
+    private val LOOK_KEYS = listOf("ubg", "ubgColor", "ubgOp", "ubgRad", "ubgFrame", "ubgFrameCol", "font", "textColor", "clockFx", "icons", "palette", "anim", "rim", "boxShape")
+
+    /** Yazı tipi, renkler, ikonlar, zemin ve çerçeveyi diğer widget'lara kopyalar. */
+    private fun copyLook() {
+        val mgr = AppWidgetManager.getInstance(this)
+        val ed = p.edit()
+        var n = 0
+        for (e in Registry.ALL) for (other in mgr.getAppWidgetIds(android.content.ComponentName(this, e.cls))) {
+            if (other == wid) continue
+            n++
+            for (k in LOOK_KEYS) {
+                val src = Cfg.wkey(wid, k); val dst = Cfg.wkey(other, k)
+                when (val v = p.all[src]) {
+                    is Int -> ed.putInt(dst, v)
+                    is Boolean -> ed.putBoolean(dst, v)
+                    null -> ed.remove(dst)
+                }
+            }
+        }
+        ed.apply()
+        sendBroadcast(Widgets.refreshIntent(this))
+        android.widget.Toast.makeText(this, "$n widget'a uygulandı", android.widget.Toast.LENGTH_SHORT).show()
+    }
+
+    /** Her widget için ortak: ek zemin, renk, doluluk, köşe, çerçeve. */
+    private fun decorSection() {
+        val s = Ui.section(this, "Zemin ve çerçeve", "Tasarımın üstüne ek bir zemin ya da çerçeve ekle.")
+        s.addView(Ui.chips(this, Decor.BG_NAMES, read { Decor.mode(this) }) { putI("ubg", it); build() })
+        val m = read { Decor.mode(this) }
+        if (m == 1 || m == 2 || m == 5) {
+            s.addView(Ui.label(this, "Zemin rengi"))
+            s.addView(Ui.chips(this, Decor.SWATCH_NAMES, read { Decor.swatch(this) }) { putI("ubgColor", it); build() })
+        }
+        if (m > 0) s.addView(Ui.slider(this, { "Zemin doluluğu: %$it" }, read { Decor.op(this) }) { putI("ubgOp", it) })
+        if (m > 0 || read { Decor.frame(this) } > 0) {
+            s.addView(Ui.label(this, "Köşeler"))
+            s.addView(Ui.chips(this, Decor.RADIUS_NAMES, read { Decor.radius(this) }) { putI("ubgRad", it); build() })
+        }
+        s.addView(Ui.label(this, "Çerçeve"))
+        s.addView(Ui.chips(this, Decor.FRAME_NAMES, read { Decor.frame(this) }) { putI("ubgFrame", it); build() })
+        if (read { Decor.frame(this) } > 0)
+            s.addView(Ui.chips(this, Decor.FRAME_COLOR_NAMES, read { Decor.frameColor(this) }) { putI("ubgFrameCol", it); build() })
+        root.addView(s)
     }
 
     private fun clockSection() {

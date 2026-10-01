@@ -105,6 +105,9 @@ object Widgets {
         R.layout.w_square8 to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
     )
+    private val DIAL_LAYOUTS = setOf(
+        R.layout.w_square1, R.layout.w_square2, R.layout.w_square5, R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo, R.layout.w_roundw0, R.layout.w_roundw1, R.layout.w_roundw2, R.layout.w_lock, R.layout.w_lockc, R.layout.w_duo, R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim, R.layout.w_strip, R.layout.w_graph, R.layout.w_bentox, R.layout.w_bentosq, R.layout.w_skycard, R.layout.w_pills, R.layout.w_ori_card, R.layout.w_ori_strip, R.layout.w_ori_square, R.layout.w_ori_diag, R.layout.w_th_dot, R.layout.w_th_flip, R.layout.w_th_swiss, R.layout.w_th_prog, R.layout.w_th_term, R.layout.w_th_paper, R.layout.w_th_sector, R.layout.w_th_neu
+    )
     private val PALETTE_LAYOUTS = setOf(
         R.layout.w_wide6, R.layout.w_wide7, R.layout.w_wide8, R.layout.w_compact1, R.layout.w_compact2,
         R.layout.w_square1, R.layout.w_square2, R.layout.w_square3, R.layout.w_square4, R.layout.w_square5,
@@ -533,12 +536,12 @@ object Widgets {
                 clockCol = pal.onCont; tempCol = pal.onAccent
             }
             R.layout.w_square1 -> {
-                v.setImageViewBitmap(R.id.dial, dialDay(pal, w))
+                v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, dialDay(pal, w)))
                 clockCol = pal.onDark; v.setTextColor(R.id.mini, pal.onDarkSub)
                 v.setTextViewText(R.id.mini, "$tempStr · ${WeatherRepo.city(c)}")
             }
             R.layout.w_square2 -> {
-                v.setImageViewBitmap(R.id.dial, dialGauge(pal, w))
+                v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, dialGauge(pal, w)))
                 tempCol = pal.onCont; v.setTextColor(R.id.hl, pal.onContSub)
             }
             R.layout.w_square3 -> {
@@ -548,38 +551,38 @@ object Widgets {
                 tint(v, R.id.cbg1, pal.container, opF)
                 tempCol = pal.onCont; v.setTextColor(R.id.hl, pal.onContSub)
             }
-            R.layout.w_square5 -> v.setImageViewBitmap(R.id.dial, Combo.render(c, w, wdp, hdp, 1))
-            R.layout.w_square6 -> v.setImageViewBitmap(R.id.dial, Combo.render(c, w, wdp, hdp, 2))
-            R.layout.w_combo -> v.setImageViewBitmap(R.id.dial, Combo.render(c, w, wdp, hdp, 0))
-            R.layout.w_roundw0 -> v.setImageViewBitmap(R.id.dial, RoundW.render(c, w, wdp, hdp, 0))
-            R.layout.w_roundw1 -> v.setImageViewBitmap(R.id.dial, RoundW.render(c, w, wdp, hdp, 1))
-            R.layout.w_roundw2 -> v.setImageViewBitmap(R.id.dial, RoundW.render(c, w, wdp, hdp, 2))
-            R.layout.w_lock -> v.setImageViewBitmap(R.id.dial, Lock.render(c, w, wdp, hdp, false))
-            R.layout.w_lockc -> v.setImageViewBitmap(R.id.dial, Lock.render(c, w, wdp, hdp, true))
-            R.layout.w_duo -> v.setImageViewBitmap(R.id.dial, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slotL", 0), Mod.slot(c, "slotR", 2))))
-            R.layout.w_mod_pil -> v.setImageViewBitmap(R.id.dial, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slot", 6))))
-            R.layout.w_mod_ay -> v.setImageViewBitmap(R.id.dial, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slot", 7))))
-            R.layout.w_mod_takvim -> v.setImageViewBitmap(R.id.dial, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slot", 8))))
-            R.layout.w_strip -> v.setImageViewBitmap(R.id.dial, Extra.strip(c, w, wdp, hdp))
-            R.layout.w_graph -> v.setImageViewBitmap(R.id.dial, Extra.graph(c, w, wdp, hdp))
-            R.layout.w_bentox -> v.setImageViewBitmap(R.id.dial, Bento.render(c, w, wdp, hdp, false))
-            R.layout.w_bentosq -> v.setImageViewBitmap(R.id.dial, Bento.render(c, w, wdp, hdp, true))
-            R.layout.w_skycard -> v.setImageViewBitmap(R.id.dial, SkyCard.render(c, w, wdp, hdp))
-            R.layout.w_pills -> v.setImageViewBitmap(R.id.dial, Pills.render(c, w, wdp, hdp))
-            R.layout.w_ori_card -> v.setImageViewBitmap(R.id.dial, Origami.render(c, w, wdp, hdp, Origami.CARD))
-            R.layout.w_ori_strip -> v.setImageViewBitmap(R.id.dial, Origami.render(c, w, wdp, hdp, Origami.STRIP))
-            R.layout.w_ori_square -> v.setImageViewBitmap(R.id.dial, Origami.render(c, w, wdp, hdp, Origami.SQUARE))
-            R.layout.w_ori_diag -> v.setImageViewBitmap(R.id.dial, Origami.render(c, w, wdp, hdp, Origami.DIAG))
-            R.layout.w_th_dot -> v.setImageViewBitmap(R.id.dial, Themes.render(c, w, wdp, hdp, Themes.DOT))
-            R.layout.w_th_flip -> v.setImageViewBitmap(R.id.dial, Themes.render(c, w, wdp, hdp, Themes.FLIP))
-            R.layout.w_th_swiss -> v.setImageViewBitmap(R.id.dial, Themes.render(c, w, wdp, hdp, Themes.SWISS))
-            R.layout.w_th_prog -> v.setImageViewBitmap(R.id.dial, Themes.render(c, w, wdp, hdp, Themes.PROG))
-            R.layout.w_th_term -> v.setImageViewBitmap(R.id.dial, Themes.render(c, w, wdp, hdp, Themes.TERM))
-            R.layout.w_th_paper -> v.setImageViewBitmap(R.id.dial, Themes.render(c, w, wdp, hdp, Themes.PAPER))
-            R.layout.w_th_sector -> v.setImageViewBitmap(R.id.dial, Themes.render(c, w, wdp, hdp, Themes.SECTOR))
-            R.layout.w_th_neu -> v.setImageViewBitmap(R.id.dial, Themes.render(c, w, wdp, hdp, Themes.NEU))
-            R.layout.w_square7 -> v.setImageViewBitmap(R.id.dial, roundWeather(c, pal, w, textTf))
-            R.layout.w_square8 -> v.setImageViewBitmap(R.id.dial, roundSun(c, pal, w, textTf))
+            R.layout.w_square5 -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Combo.render(c, w, wdp, hdp, 1)))
+            R.layout.w_square6 -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Combo.render(c, w, wdp, hdp, 2)))
+            R.layout.w_combo -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Combo.render(c, w, wdp, hdp, 0)))
+            R.layout.w_roundw0 -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, RoundW.render(c, w, wdp, hdp, 0)))
+            R.layout.w_roundw1 -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, RoundW.render(c, w, wdp, hdp, 1)))
+            R.layout.w_roundw2 -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, RoundW.render(c, w, wdp, hdp, 2)))
+            R.layout.w_lock -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Lock.render(c, w, wdp, hdp, false)))
+            R.layout.w_lockc -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Lock.render(c, w, wdp, hdp, true)))
+            R.layout.w_duo -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slotL", 0), Mod.slot(c, "slotR", 2)))))
+            R.layout.w_mod_pil -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slot", 6)))))
+            R.layout.w_mod_ay -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slot", 7)))))
+            R.layout.w_mod_takvim -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Mod.render(c, w, wdp, hdp, intArrayOf(Mod.slot(c, "slot", 8)))))
+            R.layout.w_strip -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Extra.strip(c, w, wdp, hdp)))
+            R.layout.w_graph -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Extra.graph(c, w, wdp, hdp)))
+            R.layout.w_bentox -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Bento.render(c, w, wdp, hdp, false)))
+            R.layout.w_bentosq -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Bento.render(c, w, wdp, hdp, true)))
+            R.layout.w_skycard -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, SkyCard.render(c, w, wdp, hdp)))
+            R.layout.w_pills -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Pills.render(c, w, wdp, hdp)))
+            R.layout.w_ori_card -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Origami.render(c, w, wdp, hdp, Origami.CARD)))
+            R.layout.w_ori_strip -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Origami.render(c, w, wdp, hdp, Origami.STRIP)))
+            R.layout.w_ori_square -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Origami.render(c, w, wdp, hdp, Origami.SQUARE)))
+            R.layout.w_ori_diag -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Origami.render(c, w, wdp, hdp, Origami.DIAG)))
+            R.layout.w_th_dot -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.DOT)))
+            R.layout.w_th_flip -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.FLIP)))
+            R.layout.w_th_swiss -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.SWISS)))
+            R.layout.w_th_prog -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.PROG)))
+            R.layout.w_th_term -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.TERM)))
+            R.layout.w_th_paper -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.PAPER)))
+            R.layout.w_th_sector -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.SECTOR)))
+            R.layout.w_th_neu -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.NEU)))
+            R.layout.w_square7 -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, roundWeather(c, pal, w, textTf)))
+            R.layout.w_square8 -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, roundSun(c, pal, w, textTf)))
             R.layout.w_wide9 -> {
                 val ink = 0xFF2C2A48.toInt()
                 clockCol = ink; dateCol = 0xFF55536E.toInt(); tempCol = ink; feelsCol = 0xFF55536E.toInt()
@@ -614,6 +617,13 @@ object Widgets {
         v.setImageViewBitmap(R.id.now_temp, textBitmap(c, tempStr, tempTf, spec.temp, tempCol, shadow))
         if (handFont) v.setImageViewBitmap(R.id.feels_img, textBitmap(c, "hissedilen $feelsStr", cTf, 16f, feelsCol, false))
         else v.setImageViewBitmap(R.id.feels_img, textBitmap(c, feelsStr, clockTf, 22f, feelsCol, false))
+
+        // Ortak görünüm katmanı (ek zemin / çerçeve) — görsel olarak çizilmeyen düzenlerde arka plana uygulanır
+        if (Decor.active(c) && !DIAL_LAYOUTS.contains(layout)) {
+            v.setImageViewBitmap(R.id.bg, Decor.backgroundOnly(c, w, wdp, hdp))
+            v.setInt(R.id.bg, "setImageAlpha", 255)
+            v.setInt(R.id.bg, "setColorFilter", 0)
+        }
 
         // Hareketli ikon
         v.setInt(R.id.icon_flip, "setFlipInterval", Style.animInterval(c))

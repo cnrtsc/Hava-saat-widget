@@ -202,15 +202,15 @@ object WeatherRepo {
     fun conditionColor(w: Weather?): Pair<Int, Boolean> {
         if (w == null) return Pair(0xFF5A6B85.toInt(), false)
         return when (iconIndex(w.code, w.isDay)) {
-            0 -> Pair(0xFFF4A340.toInt(), false)
-            1 -> Pair(0xFF28386E.toInt(), false)
-            2 -> Pair(0xFF5F9BDA.toInt(), false)
-            3 -> Pair(0xFF34457A.toInt(), false)
-            4 -> Pair(0xFF7D8BA0.toInt(), false)
-            5 -> Pair(0xFFA7B0BC.toInt(), true)
-            6, 7 -> Pair(0xFF3C6EC4.toInt(), false)
-            8 -> Pair(0xFFCFE2F5.toInt(), true)
-            else -> Pair(0xFF5B4A8E.toInt(), false)
+            0 -> Pair(0xFFFF9A1F.toInt(), false)
+            1 -> Pair(0xFF1E2B66.toInt(), false)
+            2 -> Pair(0xFF2F86E8.toInt(), false)
+            3 -> Pair(0xFF2A3A86.toInt(), false)
+            4 -> Pair(0xFF66788F.toInt(), false)
+            5 -> Pair(0xFF8C98A7.toInt(), false)
+            6, 7 -> Pair(0xFF2257C9.toInt(), false)
+            8 -> Pair(0xFF7FB3E8.toInt(), false)
+            else -> Pair(0xFF5B34A8.toInt(), false)
         }
     }
 
