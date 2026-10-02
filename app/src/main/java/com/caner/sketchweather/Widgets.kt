@@ -97,6 +97,7 @@ object Widgets {
         R.layout.w_thin_home to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_thin_rain to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_thin_sentence to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_minipills to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_th_dot to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_th_flip to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_th_swiss to Spec(30f, 30f, 11f, "EEE"),
@@ -110,8 +111,8 @@ object Widgets {
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
     )
     private val DIAL_LAYOUTS = setOf(
-        R.layout.w_thin_loc, R.layout.w_thin_home, R.layout.w_thin_rain, R.layout.w_thin_sentence,
-        R.layout.w_square1, R.layout.w_square2, R.layout.w_square5, R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo, R.layout.w_roundw0, R.layout.w_roundw1, R.layout.w_roundw2, R.layout.w_lock, R.layout.w_lockc, R.layout.w_duo, R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim, R.layout.w_strip, R.layout.w_graph, R.layout.w_bentox, R.layout.w_bentosq, R.layout.w_skycard, R.layout.w_pills, R.layout.w_ori_card, R.layout.w_ori_strip, R.layout.w_ori_square, R.layout.w_ori_diag, R.layout.w_thin_loc, R.layout.w_thin_home, R.layout.w_thin_rain, R.layout.w_thin_sentence, R.layout.w_th_dot, R.layout.w_th_flip, R.layout.w_th_swiss, R.layout.w_th_prog, R.layout.w_th_term, R.layout.w_th_paper, R.layout.w_th_sector, R.layout.w_th_neu
+        R.layout.w_thin_loc, R.layout.w_thin_home, R.layout.w_thin_rain, R.layout.w_thin_sentence, R.layout.w_minipills,
+        R.layout.w_square1, R.layout.w_square2, R.layout.w_square5, R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo, R.layout.w_roundw0, R.layout.w_roundw1, R.layout.w_roundw2, R.layout.w_lock, R.layout.w_lockc, R.layout.w_duo, R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim, R.layout.w_strip, R.layout.w_graph, R.layout.w_bentox, R.layout.w_bentosq, R.layout.w_skycard, R.layout.w_pills, R.layout.w_ori_card, R.layout.w_ori_strip, R.layout.w_ori_square, R.layout.w_ori_diag, R.layout.w_thin_loc, R.layout.w_thin_home, R.layout.w_thin_rain, R.layout.w_thin_sentence, R.layout.w_minipills, R.layout.w_th_dot, R.layout.w_th_flip, R.layout.w_th_swiss, R.layout.w_th_prog, R.layout.w_th_term, R.layout.w_th_paper, R.layout.w_th_sector, R.layout.w_th_neu
     )
     private val PALETTE_LAYOUTS = setOf(
         R.layout.w_wide6, R.layout.w_wide7, R.layout.w_wide8, R.layout.w_compact1, R.layout.w_compact2,
@@ -119,7 +120,7 @@ object Widgets {
         R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo,
         R.layout.w_roundw0, R.layout.w_roundw1, R.layout.w_roundw2, R.layout.w_lock, R.layout.w_lockc,
         R.layout.w_duo, R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim, R.layout.w_strip, R.layout.w_graph,
-        R.layout.w_bentox, R.layout.w_bentosq, R.layout.w_skycard, R.layout.w_pills, R.layout.w_ori_card, R.layout.w_ori_strip, R.layout.w_ori_square, R.layout.w_ori_diag, R.layout.w_thin_loc, R.layout.w_thin_home, R.layout.w_thin_rain, R.layout.w_thin_sentence,
+        R.layout.w_bentox, R.layout.w_bentosq, R.layout.w_skycard, R.layout.w_pills, R.layout.w_ori_card, R.layout.w_ori_strip, R.layout.w_ori_square, R.layout.w_ori_diag, R.layout.w_thin_loc, R.layout.w_thin_home, R.layout.w_thin_rain, R.layout.w_thin_sentence, R.layout.w_minipills,
         R.layout.w_th_dot, R.layout.w_th_flip, R.layout.w_th_swiss, R.layout.w_th_prog, R.layout.w_th_term, R.layout.w_th_paper, R.layout.w_th_sector, R.layout.w_th_neu
     )
 
@@ -207,7 +208,7 @@ object Widgets {
                 var hdp = o.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, 0)
                 if (wdp <= 0 || hdp <= 0) {
                     wdp = when (e.size) { "s" -> 160; "l" -> 360; else -> 320 }
-                    hdp = when (e.size) { "s" -> 160; "c" -> 70; "t" -> 250; else -> 170 }
+                    hdp = when (e.size) { "s" -> 160; "c" -> 70; "m" -> 50; "t" -> 250; else -> 170 }
                 }
                 try {
                     mgr.updateAppWidget(id, Cfg.with(id) { build(c, layout, w, wdp, hdp) })
@@ -583,6 +584,7 @@ object Widgets {
             R.layout.w_thin_home -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Thin.render(c, w, wdp, hdp, Thin.HOME)))
             R.layout.w_thin_rain -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Thin.render(c, w, wdp, hdp, Thin.RAIN)))
             R.layout.w_thin_sentence -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Thin.render(c, w, wdp, hdp, Thin.SENTENCE)))
+            R.layout.w_minipills -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, MiniPills.render(c, w, wdp, hdp)))
             R.layout.w_th_dot -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.DOT)))
             R.layout.w_th_flip -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.FLIP)))
             R.layout.w_th_swiss -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.SWISS)))

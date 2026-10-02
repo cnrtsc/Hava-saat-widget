@@ -23,7 +23,7 @@ object Themes {
     const val SECTOR = 4; const val TERM = 5; const val PAPER = 6; const val NEU = 7
 
     /** tema başına önerilen ikon şekli ve stili */
-    private val DEF_SHAPE = intArrayOf(3, 4, 3, 4, 0, 3, 0, 0)
+    private val DEF_SHAPE = intArrayOf(2, 5, 2, 5, 0, 2, 0, 0)
     private val DEF_STYLE = intArrayOf(4, 0, 0, 0, 6, 7, 6, 5)
 
     /** Tema kendi ikon setini önerir; widget'a özel seçim yapıldıysa o kullanılır. */

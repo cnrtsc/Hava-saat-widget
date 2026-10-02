@@ -126,7 +126,7 @@ object Origami {
         val city = WeatherRepo.city(c)
         val temp = if (w != null) "${w.temp}°" else "--°"
         val desc = if (w != null) WeatherRepo.label(w.code) else "Yükleniyor…"
-        val ic = if (w != null) icon(c, w.code, w.isDay) else R.drawable.i_a2_cloud
+        val ic = if (w != null) icon(c, w.code, w.isDay) else R.drawable.i_a02_cloud
         val pad = 8f
         when (kind) {
             CARD -> {

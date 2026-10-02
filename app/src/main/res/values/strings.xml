@@ -42,6 +42,7 @@
     <string name="desc_neumorfik">Neumorfik · 2x2</string>
     <string name="desc_grafik">Sıcaklık grafiği · 4x2</string>
     <string name="desc_gunseridi">Gün şeridi · 4x1</string>
+    <string name="desc_minihap">Mini haplar · 4x1 · küçük</string>
     <string name="desc_hapdizisi">Hap dizisi · 4x1</string>
     <string name="desc_konumserit">Konum şeridi · 4x1</string>
     <string name="desc_evsimdi">Ev ↔ şu an · 4x1</string>

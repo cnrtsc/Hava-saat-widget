@@ -21,11 +21,11 @@ object Style {
     )
     val BG_NAMES = arrayOf("Koyu", "Açık", "Şeffaf", "Renkli (palet)")
     val BGS = intArrayOf(R.drawable.bg_dark, R.drawable.bg_light, R.drawable.bg_none, R.drawable.shape_round)
-    val SHAPE_NAMES = arrayOf("Klasik", "Rozet", "Geometrik", "Minimal", "Gerçekçi")
-    val ICON_STYLE_NAMES = arrayOf("Düz", "Origami", "Eskiz", "Suluboya", "Çizgi", "Kil 3D", "Gradyan", "Neon")
+    val SHAPE_NAMES = arrayOf("Klasik", "Geometrik", "Minimal", "Balon", "Blok", "Gerçekçi")
+    val ICON_STYLE_NAMES = arrayOf("Düz", "Origami", "Eskiz", "Suluboya", "Çizgi", "Kil 3D", "Gradyan", "Neon", "Kesik kağıt", "Pastel")
     fun iconShape(c: Context) = Cfg.int(c, "iconShape", 0).coerceIn(0, SHAPE_NAMES.size - 1)
     fun iconStyle(c: Context) = Cfg.int(c, "iconStyle", 6).coerceIn(0, ICON_STYLE_NAMES.size - 1)
-    fun row(shape: Int, style: Int): IntArray = if (shape >= 4) IconTable.ROWS[32] else IconTable.ROWS[shape * 8 + style]
+    fun row(shape: Int, style: Int): IntArray = if (shape >= 5) IconTable.ROWS[50] else IconTable.ROWS[shape * 10 + style]
     fun iconOf(shape: Int, style: Int, code: Int, day: Boolean): Int = row(shape, style)[WeatherRepo.iconIndex(code, day)]
     /** Widget'a özel ikon seçimi yoksa tasarımın önerdiği şekil/stil kullanılır. */
     fun iconPref(c: Context, defShape: Int, defStyle: Int, code: Int, day: Boolean): Int {

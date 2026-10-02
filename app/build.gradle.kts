@@ -17,8 +17,8 @@ android {
         applicationId = "com.caner.sketchweather"
         minSdk = 26
         targetSdk = 34
-        versionCode = 15
-        versionName = "15.0"
+        versionCode = 16
+        versionName = "16.0"
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

@@ -42,6 +42,7 @@ class W_Gazete : BaseWidget()
 class W_Neumorfik : BaseWidget()
 class W_Grafik : BaseWidget()
 class W_Gunseridi : BaseWidget()
+class W_Minihap : BaseWidget()
 class W_Hapdizisi : BaseWidget()
 class W_Konumserit : BaseWidget()
 class W_Evsimdi : BaseWidget()
@@ -54,7 +55,7 @@ class W_Kilitince : BaseWidget()
 class Entry(val cls: Class<out BaseWidget>, val label: String, val layout: Int, val size: String, val preview: Int)
 
 object Registry {
-    val SIZE_TITLES = mapOf("t" to "Uzun · 4x3", "w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "l" to "Büyük · 5x2")
+    val SIZE_TITLES = mapOf("m" to "Mini · ek bilgi şeridi", "t" to "Uzun · 4x3", "w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "l" to "Büyük · 5x2")
     val ALL = listOf(
         Entry(W_Origamikart::class.java, "Origami kart", R.layout.w_ori_card, "w", R.drawable.prev_origamikart),
         Entry(W_Origamiserit::class.java, "Origami şerit", R.layout.w_ori_strip, "c", R.drawable.prev_origamiserit),
@@ -98,6 +99,7 @@ object Registry {
         Entry(W_Neumorfik::class.java, "Neumorfik", R.layout.w_th_neu, "s", R.drawable.prev_neumorfik),
         Entry(W_Grafik::class.java, "Sıcaklık grafiği", R.layout.w_graph, "w", R.drawable.prev_grafik),
         Entry(W_Gunseridi::class.java, "Gün şeridi", R.layout.w_strip, "c", R.drawable.prev_gunseridi),
+        Entry(W_Minihap::class.java, "Mini haplar", R.layout.w_minipills, "m", R.drawable.prev_minihap),
         Entry(W_Hapdizisi::class.java, "Hap dizisi", R.layout.w_pills, "c", R.drawable.prev_hapdizisi),
         Entry(W_Konumserit::class.java, "Konum şeridi", R.layout.w_thin_loc, "c", R.drawable.prev_konumserit),
         Entry(W_Evsimdi::class.java, "Ev ↔ şu an", R.layout.w_thin_home, "c", R.drawable.prev_evsimdi),

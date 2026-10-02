@@ -54,6 +54,7 @@ class EditActivity : Activity() {
         R.layout.w_duo -> "duo"
         R.layout.w_mod_pil, R.layout.w_mod_takvim -> "mod"
         R.layout.w_pills -> "pills"
+        R.layout.w_minipills -> "mini"
         R.layout.w_ori_card, R.layout.w_ori_strip, R.layout.w_ori_square, R.layout.w_ori_diag -> "origami"
         R.layout.w_thin_loc, R.layout.w_thin_home, R.layout.w_thin_rain, R.layout.w_thin_sentence -> "thin"
         R.layout.w_th_dot, R.layout.w_th_flip, R.layout.w_th_swiss, R.layout.w_th_prog, R.layout.w_th_term, R.layout.w_th_paper,
@@ -159,6 +160,14 @@ class EditActivity : Activity() {
                 val s = section("İçerik", "Her kapsülde ne yazacağı. \"Yok\" seçilen kapsül gizlenir; sığmayan son kapsül de kendiliğinden gizlenir.")
                 for (i in 0 until 4) { row(s, "${i + 1}. kapsül"); chips(s, Pills.CONTENT, read { Pills.pill(this, i) }) { putI("pill$i", it) } }
                 s.addView(Ui.check(this, "Hava kapsülü havaya göre renklensin", read { Pills.weatherTint(this) }) { putB("pillTint", it) })
+            }
+            "mini" -> {
+                val s = section("İçerik", "Küçük kapsüller. Kısa bilgiler simgeyle gösterilir; sığmayan kapsül alt satıra geçer, yer yoksa gizlenir.")
+                for (i in 0 until MiniPills.SLOTS) { row(s, "${i + 1}. kapsül"); chips(s, MiniPills.CONTENT, read { MiniPills.slot(this, i) }) { putI("mp$i", it) } }
+                row(s, "Gün tahmini", "Sona \"Per ☁ 21°\" gibi kapsüller ekler.")
+                chips(s, MiniPills.DAYS, read { MiniPills.days(this) }) { putI("mpDays", it) }
+                row(s, "Kapsül boyutu"); chips(s, MiniPills.SIZES, read { MiniPills.size(this) }) { putI("mpSize", it) }
+                row(s, "Hizalama"); chips(s, MiniPills.ALIGN, read { MiniPills.align(this) }) { putI("mpAlign", it) }
             }
             "palette" -> if (layout() != R.layout.w_square4) {
                 val s = section("İçerik", "Tasarımdaki kutuların biçimi.")
@@ -343,7 +352,7 @@ class EditActivity : Activity() {
             })
         }
         s.addView(HorizontalScrollView(this).apply { addView(r) })
-        if (shape < 4) {
+        if (shape < 5) {
             row(s, "Stil")
             val r2 = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
             Style.ICON_STYLE_NAMES.forEachIndexed { i, n ->
