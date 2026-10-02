@@ -1,11 +1,9 @@
 package com.caner.sketchweather
 
-class W_Gokyuzu : BaseWidget()
 class W_Origamikart : BaseWidget()
 class W_Origamiserit : BaseWidget()
 class W_Origamikare : BaseWidget()
 class W_Origamicapraz : BaseWidget()
-class W_Gokyuzu5 : BaseWidget()
 class W_Saatbilgi : BaseWidget()
 class W_Saatbilgi5 : BaseWidget()
 class W_Klasik : BaseWidget()
@@ -14,9 +12,6 @@ class W_Buyuksaat : BaseWidget()
 class W_Saatlik : BaseWidget()
 class W_Minimal : BaseWidget()
 class W_Yanyana : BaseWidget()
-class W_Bento : BaseWidget()
-class W_Bentoozel : BaseWidget()
-class W_Bentokare : BaseWidget()
 class W_Tasan : BaseWidget()
 class W_Pixel : BaseWidget()
 class W_Eskiz : BaseWidget()
@@ -32,7 +27,6 @@ class W_Kurabiye : BaseWidget()
 class W_Analog : BaseWidget()
 class W_Analogsade : BaseWidget()
 class W_Yuvhava : BaseWidget()
-class W_Yuvgun : BaseWidget()
 class W_Panel : BaseWidget()
 class W_Yuvsade : BaseWidget()
 class W_Yuvdetay : BaseWidget()
@@ -45,13 +39,15 @@ class W_Isvicre : BaseWidget()
 class W_Ilerleme : BaseWidget()
 class W_Terminal : BaseWidget()
 class W_Gazete : BaseWidget()
-class W_Saat24 : BaseWidget()
 class W_Neumorfik : BaseWidget()
 class W_Grafik : BaseWidget()
 class W_Gunseridi : BaseWidget()
 class W_Hapdizisi : BaseWidget()
+class W_Konumserit : BaseWidget()
+class W_Evsimdi : BaseWidget()
+class W_Yagmurcizelge : BaseWidget()
+class W_Cumle : BaseWidget()
 class W_Pil : BaseWidget()
-class W_Ay : BaseWidget()
 class W_Takvim : BaseWidget()
 class W_Kilitince : BaseWidget()
 
@@ -60,12 +56,10 @@ class Entry(val cls: Class<out BaseWidget>, val label: String, val layout: Int, 
 object Registry {
     val SIZE_TITLES = mapOf("t" to "Uzun · 4x3", "w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "l" to "Büyük · 5x2")
     val ALL = listOf(
-        Entry(W_Gokyuzu::class.java, "Gökyüzü kartı", R.layout.w_skycard, "t", R.drawable.prev_gokyuzu),
         Entry(W_Origamikart::class.java, "Origami kart", R.layout.w_ori_card, "w", R.drawable.prev_origamikart),
         Entry(W_Origamiserit::class.java, "Origami şerit", R.layout.w_ori_strip, "c", R.drawable.prev_origamiserit),
         Entry(W_Origamikare::class.java, "Origami kare", R.layout.w_ori_square, "s", R.drawable.prev_origamikare),
         Entry(W_Origamicapraz::class.java, "Origami çapraz", R.layout.w_ori_diag, "s", R.drawable.prev_origamicapraz),
-        Entry(W_Gokyuzu5::class.java, "Gökyüzü kartı (geniş)", R.layout.w_skycard, "l", R.drawable.prev_gokyuzu5),
         Entry(W_Saatbilgi::class.java, "Analog saat + bilgi", R.layout.w_combo, "w", R.drawable.prev_saatbilgi),
         Entry(W_Saatbilgi5::class.java, "Analog saat + bilgi (geniş)", R.layout.w_combo, "l", R.drawable.prev_saatbilgi5),
         Entry(W_Klasik::class.java, "Klasik", R.layout.w_wide0, "w", R.drawable.prev_klasik),
@@ -74,9 +68,6 @@ object Registry {
         Entry(W_Saatlik::class.java, "Hava + saatlik", R.layout.w_wide3, "w", R.drawable.prev_saatlik),
         Entry(W_Minimal::class.java, "Minimal", R.layout.w_wide4, "w", R.drawable.prev_minimal),
         Entry(W_Yanyana::class.java, "Yan yana", R.layout.w_wide5, "w", R.drawable.prev_yanyana),
-        Entry(W_Bento::class.java, "Bento", R.layout.w_wide6, "w", R.drawable.prev_bento),
-        Entry(W_Bentoozel::class.java, "Bento · özel", R.layout.w_bentox, "w", R.drawable.prev_bentoozel),
-        Entry(W_Bentokare::class.java, "Bento kare", R.layout.w_bentosq, "s", R.drawable.prev_bentokare),
         Entry(W_Tasan::class.java, "Taşan ikon", R.layout.w_wide7, "w", R.drawable.prev_tasan),
         Entry(W_Pixel::class.java, "Pixel tahmin", R.layout.w_wide8, "w", R.drawable.prev_pixel),
         Entry(W_Eskiz::class.java, "Eskiz not", R.layout.w_wide9, "w", R.drawable.prev_eskiz),
@@ -92,7 +83,6 @@ object Registry {
         Entry(W_Analog::class.java, "Analog saat", R.layout.w_square5, "s", R.drawable.prev_analog),
         Entry(W_Analogsade::class.java, "Analog (sadece saat)", R.layout.w_square6, "s", R.drawable.prev_analogsade),
         Entry(W_Yuvhava::class.java, "Yuvarlak hava", R.layout.w_square7, "s", R.drawable.prev_yuvhava),
-        Entry(W_Yuvgun::class.java, "Yuvarlak gün", R.layout.w_square8, "s", R.drawable.prev_yuvgun),
         Entry(W_Panel::class.java, "Şeffaf panel", R.layout.w_glass, "l", R.drawable.prev_panel),
         Entry(W_Yuvsade::class.java, "Yuvarlak hava · sade", R.layout.w_roundw0, "s", R.drawable.prev_yuvsade),
         Entry(W_Yuvdetay::class.java, "Yuvarlak hava · detaylı", R.layout.w_roundw1, "s", R.drawable.prev_yuvdetay),
@@ -105,13 +95,15 @@ object Registry {
         Entry(W_Ilerleme::class.java, "İlerleme çubukları", R.layout.w_th_prog, "w", R.drawable.prev_ilerleme),
         Entry(W_Terminal::class.java, "Terminal", R.layout.w_th_term, "w", R.drawable.prev_terminal),
         Entry(W_Gazete::class.java, "Gazete", R.layout.w_th_paper, "w", R.drawable.prev_gazete),
-        Entry(W_Saat24::class.java, "24 saat kadran", R.layout.w_th_sector, "s", R.drawable.prev_saat24),
         Entry(W_Neumorfik::class.java, "Neumorfik", R.layout.w_th_neu, "s", R.drawable.prev_neumorfik),
         Entry(W_Grafik::class.java, "Sıcaklık grafiği", R.layout.w_graph, "w", R.drawable.prev_grafik),
         Entry(W_Gunseridi::class.java, "Gün şeridi", R.layout.w_strip, "c", R.drawable.prev_gunseridi),
         Entry(W_Hapdizisi::class.java, "Hap dizisi", R.layout.w_pills, "c", R.drawable.prev_hapdizisi),
+        Entry(W_Konumserit::class.java, "Konum şeridi", R.layout.w_thin_loc, "c", R.drawable.prev_konumserit),
+        Entry(W_Evsimdi::class.java, "Ev ↔ şu an", R.layout.w_thin_home, "c", R.drawable.prev_evsimdi),
+        Entry(W_Yagmurcizelge::class.java, "Yağmur çizelgesi", R.layout.w_thin_rain, "c", R.drawable.prev_yagmurcizelge),
+        Entry(W_Cumle::class.java, "Cümle", R.layout.w_thin_sentence, "c", R.drawable.prev_cumle),
         Entry(W_Pil::class.java, "Pil", R.layout.w_mod_pil, "s", R.drawable.prev_pil),
-        Entry(W_Ay::class.java, "Ay evresi", R.layout.w_mod_ay, "s", R.drawable.prev_ay),
         Entry(W_Takvim::class.java, "Takvim", R.layout.w_mod_takvim, "s", R.drawable.prev_takvim),
         Entry(W_Kilitince::class.java, "Kilit ekranı · ince", R.layout.w_lockc, "c", R.drawable.prev_kilitince)
     )

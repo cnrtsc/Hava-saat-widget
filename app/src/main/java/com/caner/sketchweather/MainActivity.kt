@@ -189,10 +189,12 @@ class MainActivity : Activity() {
     // ---------- 4. Genel varsayılanlar ----------
     private fun defaultsCard() {
         val s = Ui.section(this, "Genel varsayılanlar", "Kendi ayarı olmayan widget'lar bunları kullanır.")
-        s.addView(Ui.label(this, "Yazı tipi"))
+        s.addView(Ui.label(this, "Saat yazı tipi"))
         s.addView(Ui.chips(this, Style.FONT_NAMES, p.getInt("font", 1)) { p.edit().putInt("font", it).apply(); refreshWidget(); build() })
-        s.addView(Ui.label(this, "Hava ikonları"))
-        s.addView(Ui.chips(this, Style.ICON_SET_NAMES, p.getInt("icons", 3)) { p.edit().putInt("icons", it).apply(); refreshWidget(); build() })
+        s.addView(Ui.label(this, "Hava ikonu şekli"))
+        s.addView(Ui.chips(this, Style.SHAPE_NAMES, p.getInt("iconShape", 0)) { p.edit().putInt("iconShape", it).apply(); refreshWidget(); build() })
+        s.addView(Ui.label(this, "Hava ikonu stili"))
+        s.addView(Ui.chips(this, Style.ICON_STYLE_NAMES, p.getInt("iconStyle", 6)) { p.edit().putInt("iconStyle", it).apply(); refreshWidget(); build() })
         s.addView(Ui.label(this, "Renk paleti"))
         s.addView(Ui.chips(this, Palette.NAMES, p.getInt("palette", 0)) { p.edit().putInt("palette", it).apply(); refreshWidget(); build() })
         s.addView(Ui.label(this, "Çift saat · ev saati"))

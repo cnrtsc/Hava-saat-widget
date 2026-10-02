@@ -20,7 +20,8 @@ data class Weather(
     val feels: Int?, val humidity: Int?, val wind: Int?,
     val days: List<Day>, val hours: List<Hour>,
     val sunrise: String?, val sunset: String?,
-    val rainChance: Int? = null, val uv: Int? = null, val aqi: Int? = null
+    val rainChance: Int? = null, val uv: Int? = null, val aqi: Int? = null,
+    val rain15: List<Float> = emptyList(), val rain15Start: String? = null
 )
 data class Place(val name: String, val lat: Double, val lon: Double)
 
@@ -118,7 +119,7 @@ object WeatherRepo {
                 "&current=temperature_2m,weather_code,is_day,apparent_temperature,relative_humidity_2m,wind_speed_10m" +
                 "&hourly=temperature_2m,weather_code,is_day,precipitation_probability&forecast_hours=13" +
                 "&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,uv_index_max" +
-                "&timezone=auto&forecast_days=6",
+                "&minutely_15=precipitation&forecast_minutely_15=8&timezone=auto&forecast_days=6",
             lat, lon
         )
         var json = get(url)
@@ -130,6 +131,21 @@ object WeatherRepo {
         val w = parse(json)
         p.edit().putString("cache", json).putLong("fetched", System.currentTimeMillis()).apply()
         return w
+    }
+
+    private val HOME_COORDS = arrayOf(floatArrayOf(41.0082f, 28.9784f), floatArrayOf(51.5072f, -0.1276f), floatArrayOf(53.5511f, 9.9937f),
+        floatArrayOf(25.2048f, 55.2708f), floatArrayOf(40.7128f, -74.006f), floatArrayOf(35.6762f, 139.6503f))
+
+    /** Çift şehir widget'ı için ev şehrinin havası (yarım saatte bir). */
+    fun fetchHome(c: Context) {
+        val i = Style.home(c)
+        val (lat, lon) = Pair(HOME_COORDS[i][0], HOME_COORDS[i][1])
+        val url = String.format(Locale.US, "https://api.open-meteo.com/v1/forecast?latitude=%.4f&longitude=%.4f&current=temperature_2m,weather_code,is_day&timezone=auto", lat, lon)
+        try {
+            val cur = JSONObject(get(url)).getJSONObject("current")
+            prefs(c).edit().putInt("homeTemp", r(cur.getDouble("temperature_2m"))).putInt("homeCode", cur.getInt("weather_code"))
+                .putBoolean("homeDay", cur.optInt("is_day", 1) == 1).putInt("homeIdx", i).apply()
+        } catch (e: Exception) { }
     }
 
     fun cached(c: Context): Weather? {
@@ -173,7 +189,9 @@ object WeatherRepo {
             d.optJSONArray("sunset")?.optString(0)?.takeIf { it.length >= 16 }?.substring(11, 16),
             rainNext(o, d),
             d.optJSONArray("uv_index_max")?.let { if (it.length() > 0 && !it.isNull(0)) r(it.getDouble(0)) else null },
-            if (o.has("aqi")) r(o.getDouble("aqi")) else null
+            if (o.has("aqi")) r(o.getDouble("aqi")) else null,
+            o.optJSONObject("minutely_15")?.optJSONArray("precipitation")?.let { a -> (0 until a.length()).map { if (a.isNull(it)) 0f else a.getDouble(it).toFloat() } } ?: emptyList(),
+            o.optJSONObject("minutely_15")?.optJSONArray("time")?.optString(0)?.takeIf { it.length >= 16 }?.substring(11, 16)
         ).also { last = it }
     }
 

@@ -22,14 +22,15 @@ object Themes {
     const val DOT = 0; const val FLIP = 1; const val SWISS = 2; const val PROG = 3
     const val SECTOR = 4; const val TERM = 5; const val PAPER = 6; const val NEU = 7
 
-    private val DEF_ICONS = intArrayOf(12, 3, 10, 3, 3, 9, 10, 10)
+    /** tema başına önerilen ikon şekli ve stili */
+    private val DEF_SHAPE = intArrayOf(3, 4, 3, 4, 0, 3, 0, 0)
+    private val DEF_STYLE = intArrayOf(4, 0, 0, 0, 6, 7, 6, 5)
 
     /** Tema kendi ikon setini önerir; widget'a özel seçim yapıldıysa o kullanılır. */
     private fun icon(c: Context, theme: Int, code: Int, day: Boolean): Int {
         val id = Cfg.current()
         val p = WeatherRepo.prefs(c)
-        val set = if (id != null && p.contains(Cfg.wkey(id, "icons"))) Style.iconSet(c) else DEF_ICONS[theme]
-        return Style.iconFrom(set.coerceIn(0, Style.ICONS.size - 1), code, day)
+        return Style.iconPref(c, DEF_SHAPE[theme], DEF_STYLE[theme], code, day)
     }
 
     private fun font(c: Context, res: Int): Typeface = try { c.resources.getFont(res) } catch (e: Exception) { Typeface.DEFAULT }

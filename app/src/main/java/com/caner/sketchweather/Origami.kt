@@ -27,8 +27,7 @@ object Origami {
     private fun icon(c: Context, code: Int, day: Boolean): Int {
         val id = Cfg.current()
         val p = WeatherRepo.prefs(c)
-        val set = if (id != null && p.contains(Cfg.wkey(id, "icons"))) Style.iconSet(c) else ICON_SET
-        return Style.iconFrom(set.coerceIn(0, Style.ICONS.size - 1), code, day)
+        return Style.iconPref(c, 0, 1, code, day)
     }
 
     private class Tone(val bg: Int?, val ink: Int, val sub: Int, val shadow: Boolean)
@@ -69,7 +68,7 @@ object Origami {
                 val cx = (t[0][0] + t[1][0] + t[2][0]) / 3; val cy = (t[0][1] + t[1][1] + t[2][1]) / 3
                 val v = ((1 - (cx - r.left) / r.width()) * .4f + (1 - (cy - r.top) / r.height()) * .6f - .5f) * .3f * k + (rnd() - .5f) * .2f * k
                 p.color = if (v > 0) Color.WHITE else Color.BLACK
-                p.alpha = (min(.28f, abs(v)) * 255).toInt()
+                p.alpha = (min(.38f, abs(v)) * 255).toInt()
                 path.reset(); path.moveTo(t[0][0], t[0][1]); path.lineTo(t[1][0], t[1][1]); path.lineTo(t[2][0], t[2][1]); path.close()
                 cv.drawPath(path, p)
             }
@@ -84,7 +83,17 @@ object Origami {
         cv.drawRoundRect(r, rad, rad, sh)
         val clip = Path().apply { addRoundRect(r, rad, rad, Path.Direction.CW) }
         cv.save(); cv.clipPath(clip)
-        mesh(cv, r, seed, 5, 1.1f * Color.alpha(bg) / 255f)
+        mesh(cv, r, seed, 6, 1.8f * Color.alpha(bg) / 255f)
+        // ana kat: köşegen boyunca açık ve koyu iki yüz + kat izi
+        val a = Color.alpha(bg) / 255f
+        val tri1 = Path().apply { moveTo(r.left, r.top); lineTo(r.right, r.top); lineTo(r.left, r.bottom); close() }
+        val tri2 = Path().apply { moveTo(r.right, r.top); lineTo(r.right, r.bottom); lineTo(r.left, r.bottom); close() }
+        cv.drawPath(tri1, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE; alpha = (30 * a).toInt() })
+        cv.drawPath(tri2, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK; alpha = (40 * a).toInt() })
+        cv.drawLine(r.right, r.top, r.left, r.bottom, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK; alpha = (70 * a).toInt(); strokeWidth = 2.5f })
+        cv.drawLine(r.right - 2f, r.top + 2f, r.left + 2f, r.bottom - 2f, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE; alpha = (45 * a).toInt(); strokeWidth = 1.5f })
+        // ikinci, daha yumuşak kat
+        cv.drawLine(r.left, r.top + r.height() * .35f, r.right, r.top + r.height() * .55f, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK; alpha = (35 * a).toInt(); strokeWidth = 2f })
         cv.restore()
     }
 
@@ -117,7 +126,7 @@ object Origami {
         val city = WeatherRepo.city(c)
         val temp = if (w != null) "${w.temp}°" else "--°"
         val desc = if (w != null) WeatherRepo.label(w.code) else "Yükleniyor…"
-        val ic = if (w != null) icon(c, w.code, w.isDay) else R.drawable.o_cloud
+        val ic = if (w != null) icon(c, w.code, w.isDay) else R.drawable.i_a2_cloud
         val pad = 8f
         when (kind) {
             CARD -> {
@@ -161,7 +170,11 @@ object Origami {
                         val path = Path().apply { moveTo(q[0], q[1]); lineTo(q[2], q[3]); lineTo(q[4], q[5]); lineTo(q[6], q[7]); close() }
                         sh.color = if (i == 1) dark else base
                         cv.drawPath(path, sh)
-                        cv.save(); cv.clipPath(path); mesh(cv, RectF(q[0], 0f, q[2], Hf), 77 + i, 3, .8f); cv.restore()
+                        cv.save(); cv.clipPath(path); mesh(cv, RectF(q[0], 0f, q[2], Hf), 77 + i, 3, 1.5f)
+                        // panel içinde kata doğru koyulaşan gölge: katlanmanın derinliği
+                        val g = if (i == 1) android.graphics.LinearGradient(q[0], 0f, q[2], 0f, 0x38000000, 0x00000000, android.graphics.Shader.TileMode.CLAMP)
+                                else android.graphics.LinearGradient(q[0], 0f, q[2], 0f, 0x22FFFFFF, 0x30000000, android.graphics.Shader.TileMode.CLAMP)
+                        cv.drawPath(path, Paint().apply { shader = g }); cv.restore()
                     }
                     val fold = Paint(Paint.ANTI_ALIAS_FLAG).apply { strokeWidth = 2f }
                     fold.color = 0x30FFFFFF; cv.drawLine(pad + third, y1, pad + third, y2, fold)
@@ -169,7 +182,7 @@ object Origami {
                 }
                 // her panelin eğimi: yazılar kağıdın katına göre açılı durur
                 val slope = (y1 - y0) / third
-                val deg = Math.toDegrees(kotlin.math.atan(slope.toDouble())).toFloat()
+                val deg = Math.toDegrees(kotlin.math.atan(slope.toDouble())).toFloat() * .3f  // hafif eğim
                 val look = Combo.Look(0, t.ink, t.sub, t.ink, t.shadow, 0)
                 // 1. panel: konum (yükselen kat)
                 cv.save(); cv.rotate(deg, pad + third / 2, Hf / 2)

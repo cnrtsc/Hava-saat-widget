@@ -14,11 +14,25 @@ import kotlin.math.min
 object Lock {
     fun clockPaint(c: Context, size: Float, color: Int, lk: Combo.Look): Paint {
         val p = Combo.text(Style.clockTypeface(c, Style.font(c)), size, color, lk)
-        when (Style.clockFx(c)) {
-            1 -> { p.style = Paint.Style.STROKE; p.strokeWidth = size * .028f; p.strokeJoin = Paint.Join.ROUND }
-            2 -> p.setShadowLayer(size * .06f, size * .02f, size * .04f, 0xA0000000.toInt())
-        }
+        applyFx(p, Style.clockFx(c), size, color)
         return p
+    }
+
+    /** Saat efektleri: tek bir Paint ayarıyla çizilebilen görünümler. */
+    fun applyFx(p: Paint, fx: Int, size: Float, color: Int) {
+        when (fx) {
+            1 -> { p.style = Paint.Style.STROKE; p.strokeWidth = size * .028f; p.strokeJoin = Paint.Join.ROUND }
+            2 -> { p.style = Paint.Style.STROKE; p.strokeWidth = size * .065f; p.strokeJoin = Paint.Join.ROUND }
+            3 -> p.setShadowLayer(size * .08f, size * .03f, size * .06f, 0xB0000000.toInt())
+            4 -> p.setShadowLayer(size * .22f, 0f, 0f, color)
+            5 -> p.setShadowLayer(size * .14f, 0f, 0f, 0xCCFFFFFF.toInt())
+            6 -> {
+                p.style = Paint.Style.STROKE; p.strokeWidth = size * .04f; p.strokeCap = Paint.Cap.ROUND
+                p.pathEffect = android.graphics.DashPathEffect(floatArrayOf(size * .09f, size * .06f), 0f)
+            }
+            7 -> { p.style = Paint.Style.FILL_AND_STROKE; p.strokeWidth = size * .035f; p.strokeJoin = Paint.Join.ROUND }
+            8 -> { p.alpha = 150; p.setShadowLayer(size * .05f, 0f, size * .03f, 0x80000000.toInt()) }
+        }
     }
 
     fun render(c: Context, w: Weather?, wdp: Int, hdp: Int, compact: Boolean): Bitmap {

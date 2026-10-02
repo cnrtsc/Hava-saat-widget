@@ -1,11 +1,9 @@
 <resources>
     <string name="app_name">Hava &amp; Saat</string>
-    <string name="desc_gokyuzu">Gökyüzü kartı · 4x3</string>
     <string name="desc_origamikart">Origami kart · 4x2</string>
     <string name="desc_origamiserit">Origami şerit · 4x1</string>
     <string name="desc_origamikare">Origami kare · 2x2</string>
     <string name="desc_origamicapraz">Origami çapraz · 2x2</string>
-    <string name="desc_gokyuzu5">Gökyüzü kartı (geniş) · 5x2</string>
     <string name="desc_saatbilgi">Analog saat + bilgi · 4x2</string>
     <string name="desc_saatbilgi5">Analog saat + bilgi (geniş) · 5x2</string>
     <string name="desc_klasik">Klasik · 4x2</string>
@@ -14,9 +12,6 @@
     <string name="desc_saatlik">Hava + saatlik · 4x2</string>
     <string name="desc_minimal">Minimal · 4x2</string>
     <string name="desc_yanyana">Yan yana · 4x2</string>
-    <string name="desc_bento">Bento · 4x2</string>
-    <string name="desc_bentoozel">Bento · özel · 4x2</string>
-    <string name="desc_bentokare">Bento kare · 2x2</string>
     <string name="desc_tasan">Taşan ikon · 4x2</string>
     <string name="desc_pixel">Pixel tahmin · 4x2</string>
     <string name="desc_eskiz">Eskiz not · 4x2</string>
@@ -32,7 +27,6 @@
     <string name="desc_analog">Analog saat · 2x2</string>
     <string name="desc_analogsade">Analog (sadece saat) · 2x2</string>
     <string name="desc_yuvhava">Yuvarlak hava · 2x2</string>
-    <string name="desc_yuvgun">Yuvarlak gün · 2x2</string>
     <string name="desc_panel">Şeffaf panel · 5x2</string>
     <string name="desc_yuvsade">Yuvarlak hava · sade · 2x2</string>
     <string name="desc_yuvdetay">Yuvarlak hava · detaylı · 2x2</string>
@@ -45,13 +39,15 @@
     <string name="desc_ilerleme">İlerleme çubukları · 4x2</string>
     <string name="desc_terminal">Terminal · 4x2</string>
     <string name="desc_gazete">Gazete · 4x2</string>
-    <string name="desc_saat24">24 saat kadran · 2x2</string>
     <string name="desc_neumorfik">Neumorfik · 2x2</string>
     <string name="desc_grafik">Sıcaklık grafiği · 4x2</string>
     <string name="desc_gunseridi">Gün şeridi · 4x1</string>
     <string name="desc_hapdizisi">Hap dizisi · 4x1</string>
+    <string name="desc_konumserit">Konum şeridi · 4x1</string>
+    <string name="desc_evsimdi">Ev ↔ şu an · 4x1</string>
+    <string name="desc_yagmurcizelge">Yağmur çizelgesi · 4x1</string>
+    <string name="desc_cumle">Cümle · 4x1</string>
     <string name="desc_pil">Pil · 2x2</string>
-    <string name="desc_ay">Ay evresi · 2x2</string>
     <string name="desc_takvim">Takvim · 2x2</string>
     <string name="desc_kilitince">Kilit ekranı · ince · 4x1</string>
 </resources>

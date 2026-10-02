@@ -31,10 +31,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".EditActivity" android:exported="false" />
-        <receiver android:name=".W_Gokyuzu" android:exported="true" android:label="Gökyüzü kartı">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gokyuzu" />
-        </receiver>
         <receiver android:name=".W_Origamikart" android:exported="true" android:label="Origami kart">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_origamikart" />
@@ -50,10 +46,6 @@
         <receiver android:name=".W_Origamicapraz" android:exported="true" android:label="Origami çapraz">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_origamicapraz" />
-        </receiver>
-        <receiver android:name=".W_Gokyuzu5" android:exported="true" android:label="Gökyüzü kartı (geniş)">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gokyuzu5" />
         </receiver>
         <receiver android:name=".W_Saatbilgi" android:exported="true" android:label="Analog saat + bilgi">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
@@ -86,18 +78,6 @@
         <receiver android:name=".W_Yanyana" android:exported="true" android:label="Yan yana">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yanyana" />
-        </receiver>
-        <receiver android:name=".W_Bento" android:exported="true" android:label="Bento">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bento" />
-        </receiver>
-        <receiver android:name=".W_Bentoozel" android:exported="true" android:label="Bento · özel">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bentoozel" />
-        </receiver>
-        <receiver android:name=".W_Bentokare" android:exported="true" android:label="Bento kare">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_bentokare" />
         </receiver>
         <receiver android:name=".W_Tasan" android:exported="true" android:label="Taşan ikon">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
@@ -159,10 +139,6 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yuvhava" />
         </receiver>
-        <receiver android:name=".W_Yuvgun" android:exported="true" android:label="Yuvarlak gün">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yuvgun" />
-        </receiver>
         <receiver android:name=".W_Panel" android:exported="true" android:label="Şeffaf panel">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_panel" />
@@ -211,10 +187,6 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gazete" />
         </receiver>
-        <receiver android:name=".W_Saat24" android:exported="true" android:label="24 saat kadran">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_saat24" />
-        </receiver>
         <receiver android:name=".W_Neumorfik" android:exported="true" android:label="Neumorfik">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_neumorfik" />
@@ -231,13 +203,25 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hapdizisi" />
         </receiver>
+        <receiver android:name=".W_Konumserit" android:exported="true" android:label="Konum şeridi">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_konumserit" />
+        </receiver>
+        <receiver android:name=".W_Evsimdi" android:exported="true" android:label="Ev ↔ şu an">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_evsimdi" />
+        </receiver>
+        <receiver android:name=".W_Yagmurcizelge" android:exported="true" android:label="Yağmur çizelgesi">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_yagmurcizelge" />
+        </receiver>
+        <receiver android:name=".W_Cumle" android:exported="true" android:label="Cümle">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cumle" />
+        </receiver>
         <receiver android:name=".W_Pil" android:exported="true" android:label="Pil">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pil" />
-        </receiver>
-        <receiver android:name=".W_Ay" android:exported="true" android:label="Ay evresi">
-            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ay" />
         </receiver>
         <receiver android:name=".W_Takvim" android:exported="true" android:label="Takvim">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
