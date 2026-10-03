@@ -63,6 +63,20 @@ class MainActivity : Activity() {
         s.addView(locStatus)
         updateLocStatus()
         s.addView(Button(this).apply { text = "Anlık konumumu kullan"; setOnClickListener { askLocation() } })
+        s.addView(Button(this).apply {
+            text = "↻  Konumu ve havayı şimdi yenile"
+            setOnClickListener {
+                refreshWidget()
+                Toast.makeText(this@MainActivity, "Yenileniyor…", Toast.LENGTH_SHORT).show()
+                postDelayed({ info.text = WeatherRepo.city(this@MainActivity); updateLocStatus() }, 6000)
+            }
+        })
+        s.addView(Ui.label(this, "Konum ayrıntısı (varsayılan)"))
+        s.addView(Ui.chips(this, WeatherRepo.DETAIL_NAMES, p.getInt("locDetail", 0)) { p.edit().putInt("locDetail", it).apply(); refreshWidget(); build() })
+        s.addView(TextView(this).apply {
+            text = "Konum, telefonun konum servisinden (GPS / ağ) yaklaşık 30 dakikada bir alınır; semt ve şehir adı bu konumdan bulunur. Elle şehir yazarsan o şehirde sabit kalır."
+            setTextColor(Ui.MUTED); textSize = 12f; setPadding(0, Ui.dp(this@MainActivity, 8), 0, 0)
+        })
         val input = EditText(this).apply { hint = "ya da şehir yaz (örn. Hamburg)"; setSingleLine(); setTextColor(Ui.FG); setHintTextColor(Ui.MUTED) }
         s.addView(input)
         s.addView(Button(this).apply {
@@ -76,7 +90,7 @@ class MainActivity : Activity() {
                     runOnUiThread {
                         if (place == null) locStatus.text = "Şehir bulunamadı."
                         else {
-                            p.edit().putBoolean("useLoc", false).putString("city", place.name).putString("city2", "")
+                            p.edit().putBoolean("useLoc", false).putString("city", place.name).putString("city2", "").putString("locSub", place.name).putString("locDist", "").putString("locCity", "").putString("locStreet", "")
                                 .putFloat("lat", place.lat.toFloat()).putFloat("lon", place.lon.toFloat()).remove("cache").apply()
                             info.text = place.name; updateLocStatus(); refreshWidget()
                         }

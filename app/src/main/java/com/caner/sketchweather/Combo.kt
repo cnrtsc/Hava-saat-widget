@@ -65,10 +65,12 @@ object Combo {
         if (lk.shadow) setShadowLayer(6f, 0f, 2f, 0x90000000.toInt())
     }
 
+    var textMul = 1f
     fun text(tf: Typeface, size: Float, color: Int, lk: Look, align: Paint.Align = Paint.Align.CENTER) =
-        paint(color, lk).apply { typeface = tf; textSize = size; textAlign = align }
+        paint(color, lk).apply { typeface = tf; textSize = size * textMul; textAlign = align }
 
-    fun icon(c: Context, cv: Canvas, res: Int, cx: Float, cy: Float, size: Float) {
+    fun icon(c: Context, cv: Canvas, res: Int, cx: Float, cy: Float, size0: Float) {
+        val size = size0 * Style.iconScale(c)
         try {
             val b = BitmapFactory.decodeResource(c.resources, res) ?: return
             cv.drawBitmap(b, null, RectF(cx - size / 2, cy - size / 2, cx + size / 2, cy + size / 2), Paint(Paint.FILTER_BITMAP_FLAG))

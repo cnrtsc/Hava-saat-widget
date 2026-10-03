@@ -38,6 +38,7 @@ class TimeReceiver : android.content.BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val app = context.applicationContext
         val force = intent.action == Widgets.ACTION_REFRESH
+        if (force) WeatherRepo.prefs(app).edit().putLong("locAt", 0L).apply()   // yenile: konumu da taze al
         val last = WeatherRepo.prefs(app).getLong("fetched", 0L)
         val stale = System.currentTimeMillis() - last > 30 * 60 * 1000L
         Widgets.handle(app, force || stale, goAsync())
@@ -459,6 +460,8 @@ object Widgets {
     }
 
     fun build(c: Context, layout: Int, w: Weather?, wdp: Int = 320, hdp: Int = 170): RemoteViews {
+        Combo.textMul = Style.textScale(c)
+        val csc = Style.clockScale(c); val tsc = Style.textScale(c)
         val v = RemoteViews(c.packageName, layout)
         val spec = SPECS[layout] ?: SPECS.getValue(R.layout.w_wide0)
         val pal = Palette.get(c)
@@ -621,12 +624,12 @@ object Widgets {
         val cTf = if (handFont) Style.handTypeface(c) else clockTf
         if (handFont) { tempTf = cTf; dateTf = cTf }
         val fx = Style.clockFx(c)
-        v.setImageViewBitmap(R.id.clock, textBitmap(c, "$hh:$mm", cTf, spec.clock, clockCol, shadow, fx))
-        home?.let { v.setImageViewBitmap(R.id.clock2, textBitmap(c, it, clockTf, spec.clock, c1, shadow)) }
-        v.setImageViewBitmap(R.id.clock_h, textBitmap(c, hh, clockTf, spec.clock, hourCol, shadow, fx))
-        v.setImageViewBitmap(R.id.clock_m, textBitmap(c, mm, clockTf, spec.clock, minCol, shadow, fx))
-        v.setImageViewBitmap(R.id.date, textBitmap(c, dateStr, dateTf, spec.date, dateCol, shadow))
-        v.setImageViewBitmap(R.id.now_temp, textBitmap(c, tempStr, tempTf, spec.temp, tempCol, shadow))
+        v.setImageViewBitmap(R.id.clock, textBitmap(c, "$hh:$mm", cTf, spec.clock * csc, clockCol, shadow, fx))
+        home?.let { v.setImageViewBitmap(R.id.clock2, textBitmap(c, it, clockTf, spec.clock * csc, c1, shadow)) }
+        v.setImageViewBitmap(R.id.clock_h, textBitmap(c, hh, clockTf, spec.clock * csc, hourCol, shadow, fx))
+        v.setImageViewBitmap(R.id.clock_m, textBitmap(c, mm, clockTf, spec.clock * csc, minCol, shadow, fx))
+        v.setImageViewBitmap(R.id.date, textBitmap(c, dateStr, dateTf, spec.date * tsc, dateCol, shadow))
+        v.setImageViewBitmap(R.id.now_temp, textBitmap(c, tempStr, tempTf, spec.temp * tsc, tempCol, shadow))
         if (handFont) v.setImageViewBitmap(R.id.feels_img, textBitmap(c, "hissedilen $feelsStr", cTf, 16f, feelsCol, false))
         else v.setImageViewBitmap(R.id.feels_img, textBitmap(c, feelsStr, clockTf, 22f, feelsCol, false))
 
@@ -645,7 +648,9 @@ object Widgets {
         val flags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         val alarms = Intent(AlarmClock.ACTION_SHOW_ALARMS).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         v.setOnClickPendingIntent(R.id.clock_area, PendingIntent.getActivity(c, 1, alarms, flags))
-        v.setOnClickPendingIntent(R.id.weather_area, PendingIntent.getActivity(c, 2, weatherIntent(c), flags))
+        if (Cfg.int(c, "tapWeather", 0) == 1)
+            v.setOnClickPendingIntent(R.id.weather_area, PendingIntent.getBroadcast(c, 2, refreshIntent(c), flags))
+        else v.setOnClickPendingIntent(R.id.weather_area, PendingIntent.getActivity(c, 2, weatherIntent(c), flags))
         val settings = Intent(c, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         v.setOnClickPendingIntent(R.id.days_area, PendingIntent.getActivity(c, 3, settings, flags))
         v.setOnClickPendingIntent(R.id.city_row, PendingIntent.getActivity(c, 4, settings, flags))

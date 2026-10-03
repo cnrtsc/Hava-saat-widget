@@ -101,6 +101,8 @@ class EditActivity : Activity() {
         val cat = category(layout())
         designSection(cur)
         contentSection(cat)
+        locationSection()
+        sizeSection(cat)
         backgroundSection(cat)
         edgesSection()
         textSection(cat)
@@ -184,6 +186,25 @@ class EditActivity : Activity() {
         chips(s, arrayOf("Üstte", "Altta", "Yok"), read { Combo.digital(this) }) { putI("digital", it) }
     }
 
+    /* ---------- Konum ve dokunma ---------- */
+    private fun locationSection() {
+        val s = section("Konum ve dokunma", "Widget'ta yazan konumun ne kadar ayrıntılı olacağı ve hava kısmına dokununca ne olacağı.")
+        row(s, "Konum ayrıntısı", "Bilgi bulunamazsa bir üst düzey gösterilir.")
+        chips(s, WeatherRepo.DETAIL_NAMES, read { WeatherRepo.detail(this) }) { putI("locDetail", it) }
+        row(s, "Hava kısmına dokununca")
+        chips(s, arrayOf("Hava uygulamasını aç", "Konumu ve havayı yenile"), intOf("tapWeather", 0)) { putI("tapWeather", it) }
+    }
+
+    /* ---------- Boyutlar ---------- */
+    private fun sizeSection(cat: String) {
+        val s = section("Boyutlar", "Widget içindeki saatin, yazıların (konum dahil) ve hava ikonunun büyüklüğü. %100 tasarımın kendi boyutu.")
+        s.addView(Ui.slider(this, { "Saat boyutu: %${60 + it * 90 / 100}" }, (intOf("sClock", 100) - 60) * 100 / 90) { putI("sClock", 60 + it * 90 / 100) })
+        s.addView(Ui.slider(this, { "Konum ve yazı boyutu: %${60 + it * 90 / 100}" }, (intOf("sText", 100) - 60) * 100 / 90) { putI("sText", 60 + it * 90 / 100) })
+        s.addView(Ui.slider(this, { "İkon boyutu: %${60 + it * 90 / 100}" }, (intOf("sIcon", 100) - 60) * 100 / 90) { putI("sIcon", 60 + it * 90 / 100) })
+        if (cat == "standard" || cat == "palette")
+            s.addView(TextView(this).apply { text = "Bu tasarımda ikon boyutu sabittir; saat ve yazı boyutu uygulanır."; setTextColor(Ui.MUTED); textSize = 12f })
+    }
+
     /* ---------- 3. Arka plan ---------- */
     private val BG_KINDS = arrayOf("Tasarımın kendi zemini", "Şeffaf", "Düz renk", "Degrade", "Havaya göre", "Gökyüzü resmi", "Kağıt dokusu")
 
@@ -250,8 +271,9 @@ class EditActivity : Activity() {
                 if (read { Combo.color(this) } == 2) paletteRow(s)
             }
             "origami" -> {
-                row(s, "Kağıt rengi", "\"Havaya göre\" seçilirse kağıt hava durumuyla renk değiştirir.")
-                chips(s, arrayOf("Koyu kağıt", "Krem kağıt", "Havaya göre"), read { Origami.paper(this) }.coerceAtMost(2)) { putI("paperColor", it) }
+                row(s, "Kağıt", "\"Havaya göre\" seçilirse kağıt hava durumuyla renk değiştirir.")
+                val map = intArrayOf(0, 1, 2, 4)
+                chips(s, arrayOf("Koyu kağıt", "Krem kağıt", "Havaya göre", "Defter kağıdı"), map.indexOf(read { Origami.paper(this) }).coerceAtLeast(0)) { putI("paperColor", map[it]) }
             }
         }
     }
@@ -352,7 +374,7 @@ class EditActivity : Activity() {
             })
         }
         s.addView(HorizontalScrollView(this).apply { addView(r) })
-        if (shape < 5) {
+        if (shape < 7) {
             row(s, "Stil")
             val r2 = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
             Style.ICON_STYLE_NAMES.forEachIndexed { i, n ->
@@ -366,7 +388,7 @@ class EditActivity : Activity() {
 
     /* ---------- 7. İşlemler ---------- */
     private val LOOK_KEYS = listOf("ubg", "ubgColor", "ubgOp", "ubgRad", "ubgFrame", "ubgFrameCol", "font", "textFont", "textColor", "clockFx",
-        "iconShape", "iconStyle", "palette")
+        "iconShape", "iconStyle", "palette", "sClock", "sText", "sIcon", "locDetail", "tapWeather")
 
     private fun actions() {
         root.addView(Ui.card(this).apply {

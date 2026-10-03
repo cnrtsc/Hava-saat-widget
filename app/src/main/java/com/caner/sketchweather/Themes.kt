@@ -23,7 +23,7 @@ object Themes {
     const val SECTOR = 4; const val TERM = 5; const val PAPER = 6; const val NEU = 7
 
     /** tema başına önerilen ikon şekli ve stili */
-    private val DEF_SHAPE = intArrayOf(2, 5, 2, 5, 0, 2, 0, 0)
+    private val DEF_SHAPE = intArrayOf(2, 7, 2, 7, 0, 2, 0, 0)
     private val DEF_STYLE = intArrayOf(4, 0, 0, 0, 6, 7, 6, 5)
 
     /** Tema kendi ikon setini önerir; widget'a özel seçim yapıldıysa o kullanılır. */
@@ -34,8 +34,9 @@ object Themes {
     }
 
     private fun font(c: Context, res: Int): Typeface = try { c.resources.getFont(res) } catch (e: Exception) { Typeface.DEFAULT }
+    private var tsc = 1f
     private fun tp(tf: Typeface, size: Float, col: Int, al: Paint.Align = Paint.Align.LEFT) =
-        Paint(Paint.ANTI_ALIAS_FLAG).apply { typeface = tf; textSize = size; color = col; textAlign = al }
+        Paint(Paint.ANTI_ALIAS_FLAG).apply { typeface = tf; textSize = size * tsc; color = col; textAlign = al }
     private fun a(col: Int, f: Float) = Color.argb((Color.alpha(col) * f).toInt().coerceIn(0, 255), Color.red(col), Color.green(col), Color.blue(col))
 
     private fun pin(c: Context, cv: Canvas, x: Float, base: Float, size: Float, col: Int): Float {
@@ -55,6 +56,7 @@ object Themes {
         val b = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
         val cv = Canvas(b)
         val op = Style.opacity(c) / 100f
+        tsc = Style.textScale(c)
         val Wf = W.toFloat(); val Hf = H.toFloat()
         val now = Date()
         val cal = Calendar.getInstance()

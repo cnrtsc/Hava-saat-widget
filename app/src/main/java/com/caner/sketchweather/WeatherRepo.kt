@@ -29,8 +29,29 @@ object WeatherRepo {
     fun prefs(c: Context): SharedPreferences =
         c.getSharedPreferences("sketch_weather", Context.MODE_PRIVATE)
 
-    fun city(c: Context): String = prefs(c).getString("city", null) ?: "İstanbul"
-    fun city2(c: Context): String = prefs(c).getString("city2", null) ?: ""
+    val DETAIL_NAMES = arrayOf("Mahalle / semt", "İlçe", "Şehir", "Sokak")
+    fun detail(c: Context) = Cfg.int(c, "locDetail", 0).coerceIn(0, 3)
+    private fun part(c: Context, k: String) = prefs(c).getString(k, null)?.takeIf { it.isNotBlank() }
+    /** Seçilen ayrıntı düzeyine göre konum adı; veri yoksa bir üst düzeye düşer. */
+    fun city(c: Context): String {
+        val base = prefs(c).getString("city", null) ?: "İstanbul"
+        return when (detail(c)) {
+            1 -> part(c, "locDist") ?: part(c, "locCity") ?: base
+            2 -> part(c, "locCity") ?: base
+            3 -> part(c, "locStreet") ?: part(c, "locSub") ?: base
+            else -> part(c, "locSub") ?: base
+        }
+    }
+    /** Bir üst düzey (ikinci satır için). */
+    fun city2(c: Context): String {
+        val v = when (detail(c)) {
+            1 -> part(c, "locCity")
+            2 -> null
+            3 -> part(c, "locSub") ?: part(c, "locDist")
+            else -> part(c, "locDist") ?: prefs(c).getString("city2", null)
+        } ?: ""
+        return if (v == city(c)) "" else v
+    }
 
     private fun get(url: String): String {
         val con = URL(url).openConnection() as HttpURLConnection
@@ -80,6 +101,8 @@ object WeatherRepo {
             if (name != null) {
                 val big = a?.locality ?: a?.adminArea
                 e.putString("city", name).putString("city2", if (big != null && big != name) big else a?.adminArea ?: "")
+                    .putString("locStreet", a?.thoroughfare ?: "").putString("locSub", a?.subLocality ?: "")
+                    .putString("locDist", a?.subAdminArea ?: a?.locality ?: "").putString("locCity", a?.adminArea ?: a?.locality ?: "")
                     .putFloat("nameLat", loc.latitude.toFloat()).putFloat("nameLon", loc.longitude.toFloat())
             }
         }

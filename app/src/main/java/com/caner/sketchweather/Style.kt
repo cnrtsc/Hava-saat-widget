@@ -21,11 +21,11 @@ object Style {
     )
     val BG_NAMES = arrayOf("Koyu", "Açık", "Şeffaf", "Renkli (palet)")
     val BGS = intArrayOf(R.drawable.bg_dark, R.drawable.bg_light, R.drawable.bg_none, R.drawable.shape_round)
-    val SHAPE_NAMES = arrayOf("Klasik", "Geometrik", "Minimal", "Balon", "Blok", "Gerçekçi")
+    val SHAPE_NAMES = arrayOf("Klasik", "Geometrik", "Minimal", "Balon", "Blok", "Ufuk", "Nokta", "Gerçekçi")
     val ICON_STYLE_NAMES = arrayOf("Düz", "Origami", "Eskiz", "Suluboya", "Çizgi", "Kil 3D", "Gradyan", "Neon", "Kesik kağıt", "Pastel")
     fun iconShape(c: Context) = Cfg.int(c, "iconShape", 0).coerceIn(0, SHAPE_NAMES.size - 1)
     fun iconStyle(c: Context) = Cfg.int(c, "iconStyle", 6).coerceIn(0, ICON_STYLE_NAMES.size - 1)
-    fun row(shape: Int, style: Int): IntArray = if (shape >= 5) IconTable.ROWS[50] else IconTable.ROWS[shape * 10 + style]
+    fun row(shape: Int, style: Int): IntArray = if (shape >= 7) IconTable.ROWS[70] else IconTable.ROWS[shape * 10 + style]
     fun iconOf(shape: Int, style: Int, code: Int, day: Boolean): Int = row(shape, style)[WeatherRepo.iconIndex(code, day)]
     /** Widget'a özel ikon seçimi yoksa tasarımın önerdiği şekil/stil kullanılır. */
     fun iconPref(c: Context, defShape: Int, defStyle: Int, code: Int, day: Boolean): Int {
@@ -62,6 +62,10 @@ object Style {
     val FX_NAMES = arrayOf("Dolu", "İnce kontur", "Kalın kontur", "Gölgeli", "Neon parlama", "Yumuşak ışık", "Kesik çizgi", "Kalın dolu", "Yarı saydam")
     fun clockFx(c: Context) = get(c, "clockFx", 0, FX_NAMES.size)
     fun opacity(c: Context) = Cfg.int(c, "opacity", 100).coerceIn(0, 100)
+    /** Widget içi boyut ayarları (%70–%140) */
+    fun clockScale(c: Context) = Cfg.int(c, "sClock", 100).coerceIn(60, 150) / 100f
+    fun textScale(c: Context) = Cfg.int(c, "sText", 100).coerceIn(60, 150) / 100f
+    fun iconScale(c: Context) = Cfg.int(c, "sIcon", 100).coerceIn(60, 150) / 100f
     val ANIM_NAMES = arrayOf("Kapalı", "Her 30 saniyede", "Her 10 saniyede")
     fun anim(c: Context) = 0
     fun animInterval(c: Context): Int = when (anim(c)) { 1 -> 30_000; 2 -> 10_000; else -> 86_400_000 }

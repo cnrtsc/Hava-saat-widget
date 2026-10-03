@@ -13,8 +13,10 @@ import kotlin.math.min
 /** Kilit ekranı tarzı: üstte tarih + hava satırı, altında büyük saat (isteğe bağlı çerçeve). */
 object Lock {
     fun clockPaint(c: Context, size: Float, color: Int, lk: Combo.Look): Paint {
+        val sz = size * Style.clockScale(c)
         val p = Combo.text(Style.clockTypeface(c, Style.font(c)), size, color, lk)
-        applyFx(p, Style.clockFx(c), size, color)
+        p.textSize = sz
+        applyFx(p, Style.clockFx(c), sz, color)
         return p
     }
 

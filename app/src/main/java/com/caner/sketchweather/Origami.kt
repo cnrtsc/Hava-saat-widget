@@ -18,11 +18,13 @@ import kotlin.math.min
 /** Origami hava widget'ları: katlanmış kağıt zemin ve origami ikonlar. */
 object Origami {
     const val CARD = 0; const val STRIP = 1; const val SQUARE = 2; const val DIAG = 3
-    val PAPER_NAMES = arrayOf("Koyu kağıt", "Krem kağıt", "Havaya göre", "Şeffaf")
+    val PAPER_NAMES = arrayOf("Koyu kağıt", "Krem kağıt", "Havaya göre", "Şeffaf", "Defter kağıdı")
     const val ICON_SET = 15
     private val tr = Locale("tr", "TR")
 
     fun paper(c: Context) = Cfg.int(c, "paperColor", 0).coerceIn(0, PAPER_NAMES.size - 1)
+
+    private fun lum(col: Int) = (.299 * Color.red(col) + .587 * Color.green(col) + .114 * Color.blue(col)) / 255.0
 
     private fun icon(c: Context, code: Int, day: Boolean): Int {
         val id = Cfg.current()
@@ -30,21 +32,25 @@ object Origami {
         return Style.iconPref(c, 0, 1, code, day)
     }
 
-    private class Tone(val bg: Int?, val ink: Int, val sub: Int, val shadow: Boolean)
+    private class Tone(val bg: Int?, val ink: Int, val sub: Int, val shadow: Boolean, val ruled: Boolean = false)
 
     private fun tone(c: Context, w: Weather?): Tone {
         val op = Style.opacity(c) / 100f
         fun a(col: Int) = Color.argb((255 * op).toInt(), Color.red(col), Color.green(col), Color.blue(col))
-        val tc = Style.textColor(c)
+        val light = paper(c) == 1 || paper(c) == 4
+        // açık kağıtta açık renkli yazı seçiliyse okunmaz: koyu yazıya geç
+        val tc = Style.textColor(c)?.let { if (light && lum(it) > .6) null else it }
+        fun subOf(def: Int) = tc?.let { Color.argb(200, Color.red(it), Color.green(it), Color.blue(it)) } ?: def
         return when (paper(c)) {
-            1 -> Tone(a(Color.rgb(239, 230, 214)), tc ?: Color.rgb(42, 38, 34), Color.rgb(107, 98, 88), false)
+            1 -> Tone(a(Color.rgb(239, 230, 214)), tc ?: Color.rgb(42, 38, 34), subOf(Color.rgb(107, 98, 88)), false)
+            4 -> Tone(a(Color.rgb(251, 250, 244)), tc ?: Color.rgb(30, 42, 74), subOf(Color.rgb(96, 104, 124)), false, true)
             2 -> {
                 val (cc, _) = WeatherRepo.conditionColor(w)
                 val dk = Color.rgb((Color.red(cc) * .72f).toInt(), (Color.green(cc) * .72f).toInt(), (Color.blue(cc) * .72f).toInt())
-                Tone(a(dk), tc ?: Color.WHITE, Color.rgb(220, 226, 236), false)
+                Tone(a(dk), tc ?: Color.WHITE, subOf(Color.rgb(220, 226, 236)), false)
             }
-            3 -> Tone(null, tc ?: Color.WHITE, Color.rgb(226, 230, 238), true)
-            else -> Tone(a(Color.rgb(43, 49, 60)), tc ?: Color.WHITE, Color.rgb(201, 208, 219), false)
+            3 -> Tone(null, tc ?: Color.WHITE, subOf(Color.rgb(226, 230, 238)), true)
+            else -> Tone(a(Color.rgb(43, 49, 60)), tc ?: Color.WHITE, subOf(Color.rgb(201, 208, 219)), false)
         }
     }
 
@@ -75,6 +81,15 @@ object Origami {
         }
     }
 
+    /** Defter kağıdı: mavi yatay çizgiler ve kırmızı kenar boşluğu çizgisi. */
+    private fun ruled(cv: Canvas, r: RectF, a: Float) {
+        val step = maxOf(18f, r.height() / 7f)
+        val lp = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(122, 160, 214); alpha = (150 * a).toInt(); strokeWidth = 2f }
+        var y = r.top + step * 1.2f
+        while (y < r.bottom) { cv.drawLine(r.left, y, r.right, y, lp); y += step }
+        cv.drawLine(r.left + r.width() * .08f, r.top, r.left + r.width() * .08f, r.bottom, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(226, 104, 104); alpha = (170 * a).toInt(); strokeWidth = 2.5f })
+    }
+
     fun meshOn(cv: Canvas, r: RectF, seed: Int, n: Int, k: Float) = mesh(cv, r, seed, n, k)
 
     private fun card(cv: Canvas, r: RectF, rad: Float, t: Tone, seed: Int) {
@@ -83,7 +98,8 @@ object Origami {
         cv.drawRoundRect(r, rad, rad, sh)
         val clip = Path().apply { addRoundRect(r, rad, rad, Path.Direction.CW) }
         cv.save(); cv.clipPath(clip)
-        mesh(cv, r, seed, 6, 1.8f * Color.alpha(bg) / 255f)
+        if (t.ruled) ruled(cv, r, Color.alpha(bg) / 255f)
+        mesh(cv, r, seed, 6, (if (t.ruled) 1.2f else 1.8f) * Color.alpha(bg) / 255f)
         // ana kat: köşegen boyunca açık ve koyu iki yüz + kat izi
         val a = Color.alpha(bg) / 255f
         val tri1 = Path().apply { moveTo(r.left, r.top); lineTo(r.right, r.top); lineTo(r.left, r.bottom); close() }
@@ -99,7 +115,7 @@ object Origami {
 
     private fun txt(tf: android.graphics.Typeface, size: Float, col: Int, t: Tone, al: Paint.Align = Paint.Align.LEFT) =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            typeface = tf; textSize = size; color = col; textAlign = al
+            typeface = tf; textSize = size * Combo.textMul; color = col; textAlign = al
             if (t.shadow) setShadowLayer(size * .08f, 0f, size * .04f, 0x99000000.toInt())
         }
 
@@ -170,7 +186,9 @@ object Origami {
                         val path = Path().apply { moveTo(q[0], q[1]); lineTo(q[2], q[3]); lineTo(q[4], q[5]); lineTo(q[6], q[7]); close() }
                         sh.color = if (i == 1) dark else base
                         cv.drawPath(path, sh)
-                        cv.save(); cv.clipPath(path); mesh(cv, RectF(q[0], 0f, q[2], Hf), 77 + i, 3, 1.5f)
+                        cv.save(); cv.clipPath(path)
+                        if (t.ruled) ruled(cv, RectF(q[0], 0f, q[2], Hf), 1f)
+                        mesh(cv, RectF(q[0], 0f, q[2], Hf), 77 + i, 3, 1.5f)
                         // panel içinde kata doğru koyulaşan gölge: katlanmanın derinliği
                         val g = if (i == 1) android.graphics.LinearGradient(q[0], 0f, q[2], 0f, 0x38000000, 0x00000000, android.graphics.Shader.TileMode.CLAMP)
                                 else android.graphics.LinearGradient(q[0], 0f, q[2], 0f, 0x22FFFFFF, 0x30000000, android.graphics.Shader.TileMode.CLAMP)
@@ -227,6 +245,7 @@ object Origami {
                     val r = RectF(ox + pad, oy + pad, ox + s - pad, oy + s - pad)
                     val sh = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = t.bg; setShadowLayer(s * .04f, 0f, s * .02f, 0x80000000.toInt()) }
                     cv.drawRect(r, sh)
+                    if (t.ruled) { cv.save(); cv.clipRect(r); ruled(cv, r, 1f); cv.restore() }
                     val tri = Path().apply { moveTo(r.left, r.top); lineTo(r.right, r.top); lineTo(r.left, r.bottom); close() }
                     cv.drawPath(tri, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE; alpha = 14 })
                     cv.drawLine(r.right, r.top, r.left, r.bottom, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.BLACK; alpha = 64; strokeWidth = 2f })
