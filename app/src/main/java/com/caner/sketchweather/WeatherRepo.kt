@@ -31,10 +31,13 @@ object WeatherRepo {
 
     val DETAIL_NAMES = arrayOf("Mahalle / semt", "İlçe", "Şehir", "Sokak")
     fun detail(c: Context) = Cfg.int(c, "locDetail", 0).coerceIn(0, 3)
-    private fun part(c: Context, k: String) = prefs(c).getString(k, null)?.takeIf { it.isNotBlank() }
+    /** "Acıbadem Mahallesi" -> "Acıbadem" */
+    private val SUFFIX = Regex("\\s+(Mahallesi|Mahalle|Mah\\.?|Mh\\.?)$", RegexOption.IGNORE_CASE)
+    fun short(name: String): String = name.replace(SUFFIX, "").trim().ifEmpty { name }
+    private fun part(c: Context, k: String) = prefs(c).getString(k, null)?.takeIf { it.isNotBlank() }?.let { short(it) }
     /** Seçilen ayrıntı düzeyine göre konum adı; veri yoksa bir üst düzeye düşer. */
     fun city(c: Context): String {
-        val base = prefs(c).getString("city", null) ?: "İstanbul"
+        val base = short(prefs(c).getString("city", null) ?: "İstanbul")
         return when (detail(c)) {
             1 -> part(c, "locDist") ?: part(c, "locCity") ?: base
             2 -> part(c, "locCity") ?: base
@@ -48,7 +51,7 @@ object WeatherRepo {
             1 -> part(c, "locCity")
             2 -> null
             3 -> part(c, "locSub") ?: part(c, "locDist")
-            else -> part(c, "locDist") ?: prefs(c).getString("city2", null)
+            else -> part(c, "locDist") ?: prefs(c).getString("city2", null)?.let { short(it) }
         } ?: ""
         return if (v == city(c)) "" else v
     }
