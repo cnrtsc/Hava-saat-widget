@@ -83,27 +83,60 @@ object WeatherRepo {
     }
 
     /** Konumu kaydeder; şehir adını gerektiğinde yeniden bulur. */
-    fun saveLocation(c: Context, loc: Location) {
+    /** OpenStreetMap ters adres: semt/mahalle düzeyinde ayrıntı verir (ör. Fuhlsbüttel, Caferağa). */
+    private fun osmAddress(lat: Double, lon: Double): JSONObject? = try {
+        val url = String.format(Locale.US, "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=%.5f&lon=%.5f&zoom=17&addressdetails=1&accept-language=tr", lat, lon)
+        val con = URL(url).openConnection() as HttpURLConnection
+        con.connectTimeout = 10000; con.readTimeout = 10000
+        con.setRequestProperty("User-Agent", "HavaSaat/1.0 (personal weather widget)")
+        val txt = try { con.inputStream.bufferedReader().use { it.readText() } } finally { con.disconnect() }
+        JSONObject(txt).optJSONObject("address")
+    } catch (e: Exception) { null }
+
+    /**
+     * OpenStreetMap (Nominatim) ile semt düzeyinde adres: Fuhlsbüttel, Caferağa Mahallesi / Kadıköy gibi.
+     * Dönen: sokak, mahalle/semt, ilçe, şehir.
+     */
+    private fun osmName(lat: Double, lon: Double): Array<String>? = try {
+        val url = String.format(Locale.US, "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=%.5f&lon=%.5f&zoom=17&addressdetails=1&accept-language=tr", lat, lon)
+        val con = URL(url).openConnection() as HttpURLConnection
+        con.setRequestProperty("User-Agent", "HavaSaat/1.0 (kisisel widget uygulamasi)")
+        con.connectTimeout = 10000; con.readTimeout = 10000
+        val txt = try { con.inputStream.bufferedReader().use { it.readText() } } finally { con.disconnect() }
+        val a = JSONObject(txt).getJSONObject("address")
+        fun f(vararg k: String) = k.firstNotNullOfOrNull { key -> a.optString(key, "").takeIf { it.isNotBlank() } } ?: ""
+        arrayOf(
+            f("road", "pedestrian", "footway"),
+            f("suburb", "quarter", "neighbourhood", "village", "hamlet", "town"),
+            f("city_district", "borough", "district", "town", "county", "municipality"),
+            f("city", "province", "state")
+        )
+    } catch (e: Exception) { null }
+
+    fun saveLocation(c: Context, loc: Location, forceName: Boolean = false) {
         val p = prefs(c)
         val oldLat = p.getFloat("nameLat", 999f).toDouble()
         val oldLon = p.getFloat("nameLon", 999f).toDouble()
         val res = FloatArray(1)
-        val far = oldLat > 900 || run {
-            Location.distanceBetween(oldLat, oldLon, loc.latitude, loc.longitude, res); res[0] > 2000f
+        val far = forceName || oldLat > 900 || p.getInt("nameVer", 0) < 2 || run {
+            Location.distanceBetween(oldLat, oldLon, loc.latitude, loc.longitude, res); res[0] > 300f
         }
         val e = p.edit().putFloat("lat", loc.latitude.toFloat()).putFloat("lon", loc.longitude.toFloat())
         if (far) {
-            val a = try {
+            val osm = osmName(loc.latitude, loc.longitude)
+            val a = if (osm != null && osm[1].isNotEmpty()) null else try {
                 @Suppress("DEPRECATION")
                 Geocoder(c, Locale("tr", "TR")).getFromLocation(loc.latitude, loc.longitude, 1)?.firstOrNull()
             } catch (ex: Exception) { null }
-            val name = a?.subLocality ?: a?.locality ?: a?.subAdminArea ?: a?.adminArea
+            val street = osm?.get(0)?.takeIf { it.isNotEmpty() } ?: a?.thoroughfare ?: ""
+            val sub = osm?.get(1)?.takeIf { it.isNotEmpty() } ?: a?.subLocality ?: ""
+            val dist = osm?.get(2)?.takeIf { it.isNotEmpty() } ?: a?.subAdminArea ?: a?.locality ?: ""
+            val city = osm?.get(3)?.takeIf { it.isNotEmpty() } ?: a?.adminArea ?: a?.locality ?: ""
+            val name = listOf(sub, dist, city).firstOrNull { it.isNotEmpty() }
             if (name != null) {
-                val big = a?.locality ?: a?.adminArea
-                e.putString("city", name).putString("city2", if (big != null && big != name) big else a?.adminArea ?: "")
-                    .putString("locStreet", a?.thoroughfare ?: "").putString("locSub", a?.subLocality ?: "")
-                    .putString("locDist", a?.subAdminArea ?: a?.locality ?: "").putString("locCity", a?.adminArea ?: a?.locality ?: "")
-                    .putFloat("nameLat", loc.latitude.toFloat()).putFloat("nameLon", loc.longitude.toFloat())
+                e.putString("city", name).putString("city2", listOf(dist, city).firstOrNull { it.isNotEmpty() && it != name } ?: "")
+                    .putString("locStreet", street).putString("locSub", sub).putString("locDist", dist).putString("locCity", city)
+                    .putFloat("nameLat", loc.latitude.toFloat()).putFloat("nameLon", loc.longitude.toFloat()).putInt("nameVer", 2)
             }
         }
         e.apply()
@@ -132,7 +165,8 @@ object WeatherRepo {
     }
 
     fun fetch(c: Context): Weather {
-        if (useLocation(c)) freshLocation(c)?.let { saveLocation(c, it) }
+        val forceName = prefs(c).getLong("locAt", 1L) == 0L
+        if (useLocation(c)) freshLocation(c)?.let { saveLocation(c, it, forceName) }
         val p = prefs(c)
         val lat = p.getFloat("lat", 41.0082f)
         val lon = p.getFloat("lon", 28.9784f)
