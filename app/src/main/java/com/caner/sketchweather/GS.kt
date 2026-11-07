@@ -694,4 +694,175 @@ object GS {
         }
         return b
     }
+    /* ================= Konsept serisi (v27): ikon kahraman, çapraz, gün halkası, takvim, kemer, yığın, bilet ================= */
+    const val F_HERO = 50; const val F_DIAG = 51; const val F_RING = 52; const val F_CAL = 53; const val F_ARCH = 54; const val F_STACK = 55; const val F_TICKET = 56
+    private val F_LIGHT = setOf(F_DIAG, F_CAL, F_TICKET)
+
+    fun render4(c: Context, w: Weather?, wdp: Int, hdp: Int, kind: Int): Bitmap {
+        val k = 2.5f
+        val Wi = (wdp.coerceIn(60, 560) * k).toInt(); val Hi = (hdp.coerceIn(40, 560) * k).toInt()
+        val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
+        val cv = Canvas(b)
+        val light = kind in F_LIGHT
+        Ink.setBg(if (light) IVORY else NIGHT)
+        val ink = Ink.get(c, Ink.TEXT) ?: if (light) Color.rgb(30, 24, 28) else Color.rgb(245, 245, 245)
+        val sub = Ink.get(c, Ink.SUB) ?: if (light) Color.rgb(140, 130, 122) else Color.rgb(150, 150, 158)
+        val thin = Typeface.create(c.resources.getFont(R.font.f_outfit_c), Typeface.NORMAL)
+        val bold = Typeface.create(c.resources.getFont(R.font.f_outfitb_c), Typeface.NORMAL)
+        val id = Cfg.current(); val pr = WeatherRepo.prefs(c)
+        val hasFont = id != null && pr.contains(Cfg.wkey(id, "font"))
+        val clockCol = Ink.get(c, Ink.CLOCK) ?: ink
+        val x = X(c, w, Wi.toFloat(), Hi.toFloat(), !light, ink, sub, clockCol, Ink.get(c, Ink.TEMP) ?: ink, Ink.get(c, Ink.LOC) ?: sub,
+            if (hasFont) Style.clockTypeface(c, Style.font(c)) else thin, boldFor(c, bold), Style.textTypeface(c, if (hasFont) Style.font(c) else 1))
+        begin(c)
+        val W = x.W; val H = x.H; val s = min(W, H)
+        val city = WeatherRepo.city(c); val showLoc = Combo.show(c, "loc")
+        val tStr = if (w != null) "${w.temp}°" else "--°"
+        val desc = descShort(x); val time = now("HH:mm")
+        val crimG = { l: Float, t: Float, r: Float, btm: Float -> Paint(Paint.ANTI_ALIAS_FLAG).apply { shader = LinearGradient(l, t, l, btm, Color.rgb(170, 22, 52), Color.rgb(120, 10, 34), Shader.TileMode.CLAMP); alpha = (x.op * 255).toInt() } }
+        fun solid(col: Int) = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = col; alpha = (x.op * 255).toInt() }
+        fun tempP(size: Float, col: Int = x.temp) = txt(x.clockTf, size * Ink.tempScale(c), col).apply { typeface = bold }
+        when (kind) {
+            F_HERO -> {
+                val sx = W / 1280f; val sy = H / 560f; val u = min(sx, sy)
+                pill(cv, x, RectF(24 * sx, 24 * sy, W - 24 * sx, H - 24 * sy), 56 * u, solid(NIGHT))
+                val cr = min(210 * u, (H - 140 * sy) / 2); val ccx = 70 * sx + cr; val ccy = H / 2
+                cv.drawCircle(ccx, ccy, cr, Paint(Paint.ANTI_ALIAS_FLAG).apply { shader = LinearGradient(0f, ccy - cr, 0f, ccy + cr, Color.rgb(40, 40, 46), Color.rgb(26, 26, 30), Shader.TileMode.CLAMP); alpha = (x.op * 255).toInt() })
+                eIcon(cv, x, ccx, ccy, cr * 1.55f)
+                val bx = ccx + cr + 76 * sx
+                if (lineStyle(c) != 4) { cv.drawRect(bx, H * .21f, bx + 6 * u, H / 2, Paint().apply { color = GOLD }); cv.drawRect(bx, H / 2, bx + 6 * u, H * .79f, Paint().apply { color = CRIM }) }
+                val tx = bx + 48 * sx; val maxW = W - 150 * sx - tx
+                if (showLoc) cv.drawText(city.uppercase(tr), tx, 150 * sy, fitP(capsP(x, 24 * u, x.loc), city.uppercase(tr), maxW))
+                eClock(cv, x, time, tx - 10 * sx, 330 * sy, 170 * u, W - 60 * sx - tx, Paint.Align.LEFT, clockCol)
+                val tp = fitP(tempP(64 * u), tStr, 160 * sx); cv.drawText(tStr, tx, 420 * sy, tp)
+                val line2 = listOf(desc, dt(x, "EEE d MMMM")).filter { it.isNotEmpty() }.joinToString(" · ")
+                val l2x = tx + tp.measureText(tStr) + 30 * sx
+                cv.drawText(line2, l2x, 420 * sy, fitP(txt(x.textTf, 28 * u, sub), line2, W - 60 * sx - l2x))
+                logoAt(cv, x, W - 120 * sx, 118 * sy, 44 * u)
+            }
+            F_DIAG -> {
+                val m = s * .043f; val r = RectF(m, m, W - m, H - m); val rad = s * .115f
+                pill(cv, x, r, rad, solid(IVORY))
+                cv.save(); cv.clipPath(Path().apply { addRoundRect(r, rad, rad, Path.Direction.CW) })
+                cv.drawPath(Path().apply { moveTo(0f, 0f); lineTo(W, 0f); lineTo(0f, H * .62f); close() }, crimG(0f, 0f, W, H * .62f))
+                if (lineStyle(c) != 4) cv.drawLine(W, 0f, 0f, H * .62f, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = GOLD; strokeWidth = s * .014f })
+                cv.restore()
+                logoAt(cv, x, s * .214f, s * .214f, s * .082f)
+                eIcon(cv, x, W - s * .25f, H * .55f, s * .27f)
+                eClock(cv, x, time, W - s * .107f, H * .807f, s * .186f, W * .62f, Paint.Align.RIGHT, Ink.get(c, Ink.CLOCK) ?: Color.rgb(30, 24, 28))
+                val bl = listOfNotNull(tStr, if (showLoc) city.uppercase(tr) else null).joinToString(" · ")
+                cv.drawText(bl, s * .143f, H * .893f, fitP(capsP(x, s * .039f, Ink.get(c, Ink.SUB) ?: Color.rgb(140, 130, 122)), bl, W * .7f))
+            }
+            F_RING -> {
+                val m = s * .043f; pill(cv, x, RectF(m, m, W - m, H - m), s * .115f, solid(NIGHT))
+                val cx = W / 2; val cy = H / 2; val r = s * .357f
+                val ring = RectF(cx - r, cy - r, cx + r, cy + r)
+                val st = s * .018f
+                cv.drawArc(ring, 0f, 360f, false, Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = st; color = Color.rgb(48, 48, 54) })
+                val rise = Mod.hm(w?.sunrise) ?: 420; val set = Mod.hm(w?.sunset) ?: 1140
+                val cal = java.util.Calendar.getInstance(); val nowM = cal.get(java.util.Calendar.HOUR_OF_DAY) * 60 + cal.get(java.util.Calendar.MINUTE)
+                val day = nowM in rise..set
+                val f = if (day) (nowM - rise).toFloat() / (set - rise) else ((nowM - set + 1440) % 1440).toFloat() / (1440 - (set - rise))
+                val sweep = 360f * f.coerceIn(0.01f, 1f)
+                cv.drawArc(ring, -90f, sweep, false, Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                    style = Paint.Style.STROKE; strokeWidth = st; strokeCap = Paint.Cap.ROUND
+                    shader = android.graphics.SweepGradient(cx, cy, intArrayOf(GOLD, CRIM, GOLD), floatArrayOf(0f, .75f, 1f)).also { g -> val mtx = android.graphics.Matrix(); mtx.setRotate(-90f, cx, cy); g.setLocalMatrix(mtx) }
+                })
+                val a = Math.toRadians((-90 + sweep).toDouble())
+                cv.drawCircle(cx + r * cos(a).toFloat(), cy + r * sin(a).toFloat(), st * 1.3f, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE })
+                eIcon(cv, x, cx, cy - s * .154f, s * .23f)
+                eClock(cv, x, time, cx, cy + s * .082f, s * .164f, r * 1.4f, Paint.Align.CENTER, clockCol)
+                val left = if (day) set - nowM else ((rise - nowM) + 1440) % 1440
+                val lbl = "$tStr · " + (if (day) "GÜN BATIMINA " else "GÜN DOĞUMUNA ") + (if (left >= 60) "${left / 60} SA" else "$left DK")
+                cv.drawText(lbl, cx, cy + s * .18f, fitP(capsP(x, s * .032f, sub, Paint.Align.CENTER), lbl, r * 1.5f))
+            }
+            F_CAL -> {
+                val m = s * .043f
+                for ((i, sh) in listOf(.12f, .06f).withIndex()) {
+                    val off = (2 - i) * s * .0125f
+                    cv.drawRoundRect(RectF(m + off, s * .071f + off, W - m - off, H - m + off), s * .07f, s * .07f, solid(shade(IVORY, -sh)))
+                }
+                val r = RectF(m, s * .071f, W - m, H - m)
+                pill(cv, x, r, s * .07f, solid(IVORY))
+                val hb = s * .304f
+                cv.save(); cv.clipPath(Path().apply { addRoundRect(r, s * .07f, s * .07f, Path.Direction.CW) })
+                cv.drawRect(r.left, r.top, r.right, hb, crimG(0f, r.top, W, hb))
+                if (lineStyle(c) != 4) cv.drawRect(r.left, hb, r.right, hb + s * .011f, Paint().apply { color = GOLD })
+                cv.restore()
+                val ringP = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(190, 192, 200) }
+                for (i in 0 until 5) {
+                    val rx = W * .196f + i * (W * .608f / 4)
+                    cv.drawCircle(rx, s * .12f, s * .016f, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.rgb(60, 10, 20) })
+                    cv.drawRoundRect(RectF(rx - s * .007f, s * .046f, rx + s * .007f, s * .128f), s * .007f, s * .007f, ringP)
+                }
+                val pad = s * .125f
+                cv.drawText(now("EEEE").uppercase(tr), pad, s * .25f, fitP(capsP(x, s * .046f, Color.rgb(255, 230, 232)), now("EEEE").uppercase(tr), W * .45f))
+                cv.drawText(now("d MMMM").uppercase(tr), W - pad, s * .25f, fitP(txt(bold, s * .046f, Color.WHITE, Paint.Align.RIGHT).apply { letterSpacing = .1f }, now("d MMMM").uppercase(tr), W * .4f))
+                eClock(cv, x, time, pad, H * .607f, s * .214f, W - pad * 2, Paint.Align.LEFT, Ink.get(c, Ink.CLOCK) ?: Color.rgb(30, 24, 28))
+                val ib = s * .2f
+                eIcon(cv, x, pad + ib / 2, H * .8f, ib)
+                cv.drawText(tStr, pad + ib * 1.1f, H * .8f + s * .035f, fitP(tempP(s * .096f, Ink.get(c, Ink.TEMP) ?: Color.rgb(30, 24, 28)), tStr, W * .3f))
+                logoAt(cv, x, W - s * .196f, H * .8f, s * .082f)
+            }
+            F_ARCH -> {
+                val m = s * .043f; pill(cv, x, RectF(m, m, W - m, H - m), s * .107f, solid(NIGHT))
+                val l = s * .143f; val r = W - l; val top = s * .143f; val base = H * .56f
+                val arch = Path().apply { moveTo(l, base); lineTo(l, top + (r - l) / 2); arcTo(RectF(l, top, r, top + (r - l)), 180f, 180f); lineTo(r, base); close() }
+                val (cc, _) = WeatherRepo.conditionColor(w)
+                cv.drawPath(arch, Paint(Paint.ANTI_ALIAS_FLAG).apply { shader = LinearGradient(0f, top, 0f, base, shade(cc, -.35f), shade(cc, .15f), Shader.TileMode.CLAMP) })
+                if (lineStyle(c) != 4) { cv.drawRect(l, base, (l + r) / 2, base + s * .011f, Paint().apply { color = GOLD }); cv.drawRect((l + r) / 2, base, r, base + s * .011f, Paint().apply { color = CRIM }) }
+                eIcon(cv, x, W / 2, (top + base) / 2 + s * .03f, min(r - l, base - top) * .78f)
+                eClock(cv, x, time, W / 2, H * .762f, s * .232f, W * .8f, Paint.Align.CENTER, clockCol)
+                val l2 = listOf(tStr, desc.uppercase(tr)).filter { it.isNotEmpty() }.joinToString(" · ")
+                cv.drawText(l2, W / 2, H * .845f, fitP(capsP(x, s * .043f, sub, Paint.Align.CENTER), l2, W * .8f))
+                logoAt(cv, x, W / 2, H * .917f, s * .06f)
+            }
+            F_STACK -> {
+                val sx = W / 1280f; val sy = H / 560f; val u = min(sx, sy)
+                cv.save(); cv.rotate(-6f, 980 * sx, 280 * sy)
+                val br = RectF(720 * sx, 50 * sy, 1230 * sx, 500 * sy)
+                pill(cv, x, br, 48 * u, Paint(Paint.ANTI_ALIAS_FLAG).apply { shader = LinearGradient(0f, br.top, 0f, br.bottom, GOLD, Color.rgb(230, 190, 90), Shader.TileMode.CLAMP); alpha = (x.op * 255).toInt() })
+                val ib = min(230 * u, br.height() * .52f)
+                eIcon(cv, x, 1000 * sx, 250 * sy, ib)
+                cv.drawText(tStr, 1000 * sx, 440 * sy, fitP(tempP(70 * u, Ink.get(c, Ink.TEMP) ?: Color.rgb(110, 8, 28)).apply { textAlign = Paint.Align.CENTER }, tStr, 220 * sx))
+                cv.restore()
+                val fr = RectF(40 * sx, 40 * sy, 800 * sx, 520 * sy)
+                pill(cv, x, fr, 48 * u, solid(NIGHT))
+                if (showLoc) cv.drawText(city.uppercase(tr), 100 * sx, 130 * sy, fitP(capsP(x, 24 * u, x.loc), city.uppercase(tr), 540 * sx))
+                cv.drawText(dt(x, "EEEE · d MMMM").uppercase(tr), 100 * sx, 164 * sy, fitP(capsP(x, 20 * u, sub), dt(x, "EEEE · d MMMM").uppercase(tr), 540 * sx))
+                eClock(cv, x, time, 90 * sx, 380 * sy, 190 * u, 640 * sx, Paint.Align.LEFT, clockCol)
+                rule(cv, x, 100 * sx, 740 * sx, 430 * sy, 4 * u, .3f)
+                val d0 = w?.days?.firstOrNull()
+                val l3 = listOfNotNull(desc.takeIf { it.isNotEmpty() }, d0?.let { "Y ${it.max}° D ${it.min}°" }).joinToString(" · ")
+                cv.drawText(l3, 100 * sx, 480 * sy, fitP(txt(x.textTf, 26 * u, sub), l3, 640 * sx))
+                logoAt(cv, x, 720 * sx, 120 * sy, 40 * u)
+            }
+            else -> { // F_TICKET
+                val sx = W / 1280f; val sy = H / 240f; val u = min(sx, sy)
+                val r = RectF(24 * sx, 34 * sy, W - 24 * sx, H - 34 * sy); val rad = 28 * u
+                val body = Path().apply { addRoundRect(r, rad, rad, Path.Direction.CW) }
+                val cutX = 300 * sx; val nr = 16 * u
+                body.op(Path().apply { addCircle(cutX, r.top, nr, Path.Direction.CW); addCircle(cutX, r.bottom, nr, Path.Direction.CW) }, Path.Op.DIFFERENCE)
+                val sh = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb((80 * x.op).toInt(), 0, 0, 0); maskFilter = BlurMaskFilter(14 * u, BlurMaskFilter.Blur.NORMAL) }
+                if (x.op > .05f) { cv.save(); cv.translate(0f, 8 * u); cv.drawPath(body, sh); cv.restore() }
+                cv.drawPath(body, solid(IVORY))
+                cv.save(); cv.clipPath(body); cv.drawRect(0f, 0f, cutX, H, crimG(0f, r.top, cutX, r.bottom)); cv.restore()
+                val dp = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = GOLD; strokeWidth = 3 * u; pathEffect = android.graphics.DashPathEffect(floatArrayOf(7 * u, 7 * u), 0f) }
+                cv.drawLine(cutX, r.top + nr * 1.4f, cutX, r.bottom - nr * 1.4f, dp)
+                logoAt(cv, x, 162 * sx, H / 2, 54 * u)
+                val head = listOfNotNull(if (showLoc) city.uppercase(tr) else null, dt(x, "EEE d MMMM").uppercase(tr).takeIf { it.isNotEmpty() }).joinToString("  ·  ")
+                cv.drawText(head, 350 * sx, 98 * sy, fitP(capsP(x, 20 * u, Ink.get(c, Ink.SUB) ?: Color.rgb(140, 130, 122)), head, 470 * sx))
+                eClock(cv, x, time, 344 * sx, 176 * sy, 92 * u, 450 * sx, Paint.Align.LEFT, Ink.get(c, Ink.CLOCK) ?: Color.rgb(30, 24, 28))
+                val ib = 120 * u
+                eIcon(cv, x, 900 * sx, H / 2, ib)
+                cv.drawText(tStr, 900 * sx + ib * .6f, H / 2 + 60 * u * .36f, fitP(tempP(60 * u, Ink.get(c, Ink.TEMP) ?: Color.rgb(30, 24, 28)), tStr, W - 170 * sx - (900 * sx + ib * .6f)))
+                if (lineStyle(c) != 4) { cv.drawRect(W - 140 * sx, 70 * sy, W - 134 * sx, H - 70 * sy, Paint().apply { color = GOLD }); cv.drawRect(W - 130 * sx, 70 * sy, W - 124 * sx, H - 70 * sy, Paint().apply { color = CRIM }) }
+            }
+        }
+        return b
+    }
+    private fun shade(col: Int, f: Float): Int {
+        val t = if (f < 0) Color.BLACK else Color.WHITE; val a = kotlin.math.abs(f)
+        return Color.rgb((Color.red(col) + (Color.red(t) - Color.red(col)) * a).toInt(), (Color.green(col) + (Color.green(t) - Color.green(col)) * a).toInt(), (Color.blue(col) + (Color.blue(t) - Color.blue(col)) * a).toInt())
+    }
 }

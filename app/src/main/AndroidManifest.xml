@@ -348,6 +348,34 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_twol" />
         </receiver>
+        <receiver android:name=".W_Gs4Hero" android:exported="true" android:label="İkon kahraman">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs4_hero" />
+        </receiver>
+        <receiver android:name=".W_Gs4Diag" android:exported="true" android:label="Çapraz kare">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs4_diag" />
+        </receiver>
+        <receiver android:name=".W_Gs4Ring" android:exported="true" android:label="Gün halkası">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs4_ring" />
+        </receiver>
+        <receiver android:name=".W_Gs4Cal" android:exported="true" android:label="Takvim yaprağı GS">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs4_cal" />
+        </receiver>
+        <receiver android:name=".W_Gs4Arch" android:exported="true" android:label="Kemer pencere">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs4_arch" />
+        </receiver>
+        <receiver android:name=".W_Gs4Stack" android:exported="true" android:label="Kart yığını GS">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs4_stack" />
+        </receiver>
+        <receiver android:name=".W_Gs4Ticket" android:exported="true" android:label="Bilet GS">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs4_ticket" />
+        </receiver>
         <receiver android:name=".W_Noktamatris" android:exported="true" android:label="Nokta matris">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_noktamatris" />

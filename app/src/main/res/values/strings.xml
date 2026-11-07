@@ -97,4 +97,11 @@
     <string name="desc_gs3_editl">Zarif editoryal fildişi · 4x2</string>
     <string name="desc_gs3_twod">Zarif şerit siyah · 4x1</string>
     <string name="desc_gs3_twol">Zarif şerit fildişi · 4x1</string>
+    <string name="desc_gs4_hero">İkon kahraman · 4x2</string>
+    <string name="desc_gs4_diag">Çapraz kare · 2x2</string>
+    <string name="desc_gs4_ring">Gün halkası · 2x2</string>
+    <string name="desc_gs4_cal">Takvim yaprağı GS · 2x2</string>
+    <string name="desc_gs4_arch">Kemer pencere · 2x3</string>
+    <string name="desc_gs4_stack">Kart yığını GS · 4x2</string>
+    <string name="desc_gs4_ticket">Bilet GS · 4x1</string>
 </resources>

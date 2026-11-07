@@ -55,6 +55,13 @@ class W_Cumle : BaseWidget()
 class W_Pil : BaseWidget()
 class W_Takvim : BaseWidget()
 class W_Kilitince : BaseWidget()
+class W_Gs4Hero : BaseWidget()
+class W_Gs4Diag : BaseWidget()
+class W_Gs4Ring : BaseWidget()
+class W_Gs4Cal : BaseWidget()
+class W_Gs4Arch : BaseWidget()
+class W_Gs4Stack : BaseWidget()
+class W_Gs4Ticket : BaseWidget()
 class W_Gs3Sqd : BaseWidget()
 class W_Gs3Sql : BaseWidget()
 class W_Gs3Round : BaseWidget()
@@ -171,6 +178,13 @@ object Registry {
         Entry(W_Gs3Editl::class.java, "Zarif editoryal fildişi", R.layout.w_gs3_editl, "w", R.drawable.prev_gs3_editl),
         Entry(W_Gs3Twod::class.java, "Zarif şerit siyah", R.layout.w_gs3_twod, "c", R.drawable.prev_gs3_twod),
         Entry(W_Gs3Twol::class.java, "Zarif şerit fildişi", R.layout.w_gs3_twol, "c", R.drawable.prev_gs3_twol),
+        Entry(W_Gs4Hero::class.java, "İkon kahraman", R.layout.w_gs4_hero, "w", R.drawable.prev_gs4_hero),
+        Entry(W_Gs4Diag::class.java, "Çapraz kare", R.layout.w_gs4_diag, "s", R.drawable.prev_gs4_diag),
+        Entry(W_Gs4Ring::class.java, "Gün halkası", R.layout.w_gs4_ring, "s", R.drawable.prev_gs4_ring),
+        Entry(W_Gs4Cal::class.java, "Takvim yaprağı GS", R.layout.w_gs4_cal, "s", R.drawable.prev_gs4_cal),
+        Entry(W_Gs4Arch::class.java, "Kemer pencere", R.layout.w_gs4_arch, "d", R.drawable.prev_gs4_arch),
+        Entry(W_Gs4Stack::class.java, "Kart yığını GS", R.layout.w_gs4_stack, "w", R.drawable.prev_gs4_stack),
+        Entry(W_Gs4Ticket::class.java, "Bilet GS", R.layout.w_gs4_ticket, "c", R.drawable.prev_gs4_ticket),
         Entry(W_CZarf::class.java, "Zarf", R.layout.w_card_zarf, "w", R.drawable.prev_czarf),
         Entry(W_CPola::class.java, "Polaroid", R.layout.w_card_pola, "w", R.drawable.prev_cpola),
         Entry(W_CBilet::class.java, "Bilet", R.layout.w_card_bilet, "w", R.drawable.prev_cbilet),

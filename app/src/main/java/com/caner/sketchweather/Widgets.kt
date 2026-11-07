@@ -124,6 +124,13 @@ object Widgets {
         R.layout.w_gs3_editl to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_gs3_twod to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_gs3_twol to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs4_hero to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs4_diag to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs4_ring to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs4_cal to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs4_arch to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs4_stack to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs4_ticket to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_zarf to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_pola to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_bilet to Spec(30f, 30f, 11f, "EEE"),
@@ -148,6 +155,13 @@ object Widgets {
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
     )
     private val DIAL_LAYOUTS = setOf(
+        R.layout.w_gs4_ticket,
+        R.layout.w_gs4_stack,
+        R.layout.w_gs4_arch,
+        R.layout.w_gs4_cal,
+        R.layout.w_gs4_ring,
+        R.layout.w_gs4_diag,
+        R.layout.w_gs4_hero,
         R.layout.w_gs3_twol,
         R.layout.w_gs3_twod,
         R.layout.w_gs3_editl,
@@ -682,6 +696,13 @@ object Widgets {
             R.layout.w_gs3_editl -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render3(c, w, wdp, hdp, GS.E_EDIT_L)))
             R.layout.w_gs3_twod -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render3(c, w, wdp, hdp, GS.E_TWO_D)))
             R.layout.w_gs3_twol -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render3(c, w, wdp, hdp, GS.E_TWO_L)))
+            R.layout.w_gs4_hero -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render4(c, w, wdp, hdp, GS.F_HERO)))
+            R.layout.w_gs4_diag -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render4(c, w, wdp, hdp, GS.F_DIAG)))
+            R.layout.w_gs4_ring -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render4(c, w, wdp, hdp, GS.F_RING)))
+            R.layout.w_gs4_cal -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render4(c, w, wdp, hdp, GS.F_CAL)))
+            R.layout.w_gs4_arch -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render4(c, w, wdp, hdp, GS.F_ARCH)))
+            R.layout.w_gs4_stack -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render4(c, w, wdp, hdp, GS.F_STACK)))
+            R.layout.w_gs4_ticket -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render4(c, w, wdp, hdp, GS.F_TICKET)))
             R.layout.w_card_zarf -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.ZARF)))
             R.layout.w_card_pola -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.POLA)))
             R.layout.w_card_bilet -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.BILET)))
