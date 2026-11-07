@@ -55,6 +55,16 @@ class W_Cumle : BaseWidget()
 class W_Pil : BaseWidget()
 class W_Takvim : BaseWidget()
 class W_Kilitince : BaseWidget()
+class W_Gs2Lined : BaseWidget()
+class W_Gs2Linew : BaseWidget()
+class W_Gs2Split : BaseWidget()
+class W_Gs2Score : BaseWidget()
+class W_Gs2Jerw : BaseWidget()
+class W_Gs2Jerd : BaseWidget()
+class W_Gs2Clear : BaseWidget()
+class W_Gs2Grad : BaseWidget()
+class W_Gs2Cleand : BaseWidget()
+class W_Gs2Cleanw : BaseWidget()
 class W_Hizlibakis : BaseWidget()
 class W_HizlibakisGenis : BaseWidget()
 class W_GsBeyaz : BaseWidget()
@@ -129,6 +139,16 @@ object Registry {
         Entry(W_GsSiyahSerit::class.java, "Sarı-kırmızı siyah (şerit)", R.layout.w_gs_black, "c", R.drawable.prev_gsb_st),
         Entry(W_Hizlibakis::class.java, "Hızlı bakış", R.layout.w_glance, "s", R.drawable.prev_glance),
         Entry(W_HizlibakisGenis::class.java, "Hızlı bakış (geniş)", R.layout.w_glance, "w", R.drawable.prev_glance_w),
+        Entry(W_Gs2Lined::class.java, "Sade çizgi siyah", R.layout.w_gs2_lined, "c", R.drawable.prev_gs2_lined),
+        Entry(W_Gs2Linew::class.java, "Sade çizgi beyaz", R.layout.w_gs2_linew, "c", R.drawable.prev_gs2_linew),
+        Entry(W_Gs2Split::class.java, "İki renk kapsül", R.layout.w_gs2_split, "c", R.drawable.prev_gs2_split),
+        Entry(W_Gs2Score::class.java, "Skor bandı", R.layout.w_gs2_score, "c", R.drawable.prev_gs2_score),
+        Entry(W_Gs2Jerw::class.java, "Forma çizgileri beyaz", R.layout.w_gs2_jerw, "c", R.drawable.prev_gs2_jerw),
+        Entry(W_Gs2Jerd::class.java, "Forma çizgileri siyah", R.layout.w_gs2_jerd, "c", R.drawable.prev_gs2_jerd),
+        Entry(W_Gs2Clear::class.java, "Saydam sarı-kırmızı", R.layout.w_gs2_clear, "c", R.drawable.prev_gs2_clear),
+        Entry(W_Gs2Grad::class.java, "Bordo degrade", R.layout.w_gs2_grad, "c", R.drawable.prev_gs2_grad),
+        Entry(W_Gs2Cleand::class.java, "Sade geniş siyah", R.layout.w_gs2_cleand, "w", R.drawable.prev_gs2_cleand),
+        Entry(W_Gs2Cleanw::class.java, "Sade geniş beyaz", R.layout.w_gs2_cleanw, "w", R.drawable.prev_gs2_cleanw),
         Entry(W_CZarf::class.java, "Zarf", R.layout.w_card_zarf, "w", R.drawable.prev_czarf),
         Entry(W_CPola::class.java, "Polaroid", R.layout.w_card_pola, "w", R.drawable.prev_cpola),
         Entry(W_CBilet::class.java, "Bilet", R.layout.w_card_bilet, "w", R.drawable.prev_cbilet),

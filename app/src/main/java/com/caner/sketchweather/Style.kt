@@ -30,7 +30,7 @@ object Style {
     )
     val BG_NAMES = arrayOf("Koyu", "Açık", "Şeffaf", "Renkli (palet)")
     val BGS = intArrayOf(R.drawable.bg_dark, R.drawable.bg_light, R.drawable.bg_none, R.drawable.shape_round)
-    val SHAPE_NAMES = arrayOf("Klasik", "Geometrik", "Minimal", "Balon", "Blok", "Ufuk", "Nokta", "Bauhaus", "Retro 70'ler", "Çıkartma", "Organik", "Risograf", "Gerçekçi", "Pencere", "Manzara", "Soyut", "Yazı", "Nokta matris", "Damga", "Kil", "Yapı taşı", "Origami", "Fotogerçekçi", "Modern degrade", "Vintage", "Piksel")
+    val SHAPE_NAMES = arrayOf("Klasik", "Geometrik", "Minimal", "Balon", "Blok", "Ufuk", "Nokta", "Bauhaus", "Retro 70'ler", "Çıkartma", "Organik", "Risograf", "Gerçekçi", "Pencere", "Manzara", "Soyut", "Yazı", "Nokta matris", "Damga", "Kil", "Yapı taşı", "Origami", "Fotogerçekçi", "Modern degrade", "Vintage", "Piksel", "Nesneler (şemsiye, kardan adam)")
     /** Eski kayıtlarda 7 = Gerçekçi idi; artık 12. Bir kez çevrilir. */
     fun migrate(c: Context) {
         val p = WeatherRepo.prefs(c)

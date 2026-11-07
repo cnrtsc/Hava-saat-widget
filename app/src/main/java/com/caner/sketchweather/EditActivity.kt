@@ -74,6 +74,7 @@ class EditActivity : Activity() {
         R.layout.w_asym_big, R.layout.w_asym_edit, R.layout.w_asym_vert, R.layout.w_asym_collage -> "asym"
         R.layout.w_card_zarf, R.layout.w_card_pola, R.layout.w_card_bilet, R.layout.w_card_takvimy, R.layout.w_card_akor, R.layout.w_card_etiket, R.layout.w_card_yigin -> "card"
         R.layout.w_anim -> "anim"
+        R.layout.w_gs2_lined, R.layout.w_gs2_linew, R.layout.w_gs2_split, R.layout.w_gs2_score, R.layout.w_gs2_jerw, R.layout.w_gs2_jerd, R.layout.w_gs2_clear, R.layout.w_gs2_grad, R.layout.w_gs2_cleand, R.layout.w_gs2_cleanw -> "gs"
         R.layout.w_glance -> "glance"
         R.layout.w_gs_white, R.layout.w_gs_black -> "gs"
         R.layout.w_th_dot, R.layout.w_th_flip, R.layout.w_th_swiss, R.layout.w_th_prog, R.layout.w_th_term, R.layout.w_th_paper,
@@ -254,7 +255,6 @@ class EditActivity : Activity() {
                 row(s, "Logo görünümü", "Şeffaf arka planlı (PNG) logolar dairesiz de güzel durur.")
                 chips(s, GS.LOGO_BG_NAMES, read { GS.logoBg(this) }) { putI("gsLogoBg", it) }
                 s.addView(Ui.slider(this, { "Logo boyutu: %${50 + it * 120 / 100}" }, (read { GS.logoSize(this) } - 50) * 100 / 120) { putI("gsLogoSize", 50 + it * 120 / 100) })
-                s.addView(Ui.check(this, "Logonun üstünde 4 yıldız", read { GS.stars(this) }) { putB("gsStars", it) })
                 s.addView(Ui.check(this, "Konum", read { Combo.show(this, "loc") }) { putB("show_loc", it) })
             }
             "anim" -> {

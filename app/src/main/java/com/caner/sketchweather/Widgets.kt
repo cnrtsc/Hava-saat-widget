@@ -103,6 +103,16 @@ object Widgets {
         R.layout.w_gs_white to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_gs_black to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_glance to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs2_lined to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs2_linew to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs2_split to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs2_score to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs2_jerw to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs2_jerd to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs2_clear to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs2_grad to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs2_cleand to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs2_cleanw to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_zarf to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_pola to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_bilet to Spec(30f, 30f, 11f, "EEE"),
@@ -127,6 +137,16 @@ object Widgets {
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
     )
     private val DIAL_LAYOUTS = setOf(
+        R.layout.w_gs2_cleanw,
+        R.layout.w_gs2_cleand,
+        R.layout.w_gs2_grad,
+        R.layout.w_gs2_clear,
+        R.layout.w_gs2_jerd,
+        R.layout.w_gs2_jerw,
+        R.layout.w_gs2_score,
+        R.layout.w_gs2_split,
+        R.layout.w_gs2_linew,
+        R.layout.w_gs2_lined,
         R.layout.w_glance,
         R.layout.w_gs_black,
         R.layout.w_gs_white,
@@ -619,6 +639,16 @@ object Widgets {
             R.layout.w_gs_white -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render(c, w, wdp, hdp, GS.WHITE)))
             R.layout.w_gs_black -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render(c, w, wdp, hdp, GS.BLACK)))
             R.layout.w_glance -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Glance.render(c, w, wdp, hdp)))
+            R.layout.w_gs2_lined -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render2(c, w, wdp, hdp, GS.LINE_D)))
+            R.layout.w_gs2_linew -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render2(c, w, wdp, hdp, GS.LINE_W)))
+            R.layout.w_gs2_split -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render2(c, w, wdp, hdp, GS.SPLIT)))
+            R.layout.w_gs2_score -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render2(c, w, wdp, hdp, GS.SCORE)))
+            R.layout.w_gs2_jerw -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render2(c, w, wdp, hdp, GS.JER_W)))
+            R.layout.w_gs2_jerd -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render2(c, w, wdp, hdp, GS.JER_D)))
+            R.layout.w_gs2_clear -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render2(c, w, wdp, hdp, GS.CLEAR)))
+            R.layout.w_gs2_grad -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render2(c, w, wdp, hdp, GS.GRAD)))
+            R.layout.w_gs2_cleand -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render2(c, w, wdp, hdp, GS.CLEAN_D)))
+            R.layout.w_gs2_cleanw -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render2(c, w, wdp, hdp, GS.CLEAN_W)))
             R.layout.w_card_zarf -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.ZARF)))
             R.layout.w_card_pola -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.POLA)))
             R.layout.w_card_bilet -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.BILET)))

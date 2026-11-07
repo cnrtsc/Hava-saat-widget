@@ -264,6 +264,46 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_glance_w" />
         </receiver>
+        <receiver android:name=".W_Gs2Lined" android:exported="true" android:label="Sade çizgi siyah">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs2_lined" />
+        </receiver>
+        <receiver android:name=".W_Gs2Linew" android:exported="true" android:label="Sade çizgi beyaz">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs2_linew" />
+        </receiver>
+        <receiver android:name=".W_Gs2Split" android:exported="true" android:label="İki renk kapsül">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs2_split" />
+        </receiver>
+        <receiver android:name=".W_Gs2Score" android:exported="true" android:label="Skor bandı">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs2_score" />
+        </receiver>
+        <receiver android:name=".W_Gs2Jerw" android:exported="true" android:label="Forma çizgileri beyaz">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs2_jerw" />
+        </receiver>
+        <receiver android:name=".W_Gs2Jerd" android:exported="true" android:label="Forma çizgileri siyah">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs2_jerd" />
+        </receiver>
+        <receiver android:name=".W_Gs2Clear" android:exported="true" android:label="Saydam sarı-kırmızı">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs2_clear" />
+        </receiver>
+        <receiver android:name=".W_Gs2Grad" android:exported="true" android:label="Bordo degrade">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs2_grad" />
+        </receiver>
+        <receiver android:name=".W_Gs2Cleand" android:exported="true" android:label="Sade geniş siyah">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs2_cleand" />
+        </receiver>
+        <receiver android:name=".W_Gs2Cleanw" android:exported="true" android:label="Sade geniş beyaz">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs2_cleanw" />
+        </receiver>
         <receiver android:name=".W_Noktamatris" android:exported="true" android:label="Nokta matris">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_noktamatris" />

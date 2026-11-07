@@ -76,4 +76,14 @@
     <string name="desc_gsb_st">Sarı-kırmızı siyah (şerit) · 4x1</string>
     <string name="desc_glance">Hızlı bakış · 2x2</string>
     <string name="desc_glance_w">Hızlı bakış (geniş) · 4x2</string>
+    <string name="desc_gs2_lined">Sade çizgi siyah · 4x1</string>
+    <string name="desc_gs2_linew">Sade çizgi beyaz · 4x1</string>
+    <string name="desc_gs2_split">İki renk kapsül · 4x1</string>
+    <string name="desc_gs2_score">Skor bandı · 4x1</string>
+    <string name="desc_gs2_jerw">Forma çizgileri beyaz · 4x1</string>
+    <string name="desc_gs2_jerd">Forma çizgileri siyah · 4x1</string>
+    <string name="desc_gs2_clear">Saydam sarı-kırmızı · 4x1</string>
+    <string name="desc_gs2_grad">Bordo degrade · 4x1</string>
+    <string name="desc_gs2_cleand">Sade geniş siyah · 4x2</string>
+    <string name="desc_gs2_cleanw">Sade geniş beyaz · 4x2</string>
 </resources>
