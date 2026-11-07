@@ -55,6 +55,17 @@ class W_Cumle : BaseWidget()
 class W_Pil : BaseWidget()
 class W_Takvim : BaseWidget()
 class W_Kilitince : BaseWidget()
+class W_Gs3Sqd : BaseWidget()
+class W_Gs3Sql : BaseWidget()
+class W_Gs3Round : BaseWidget()
+class W_Gs3Minid : BaseWidget()
+class W_Gs3Minil : BaseWidget()
+class W_Gs3Towd : BaseWidget()
+class W_Gs3Towl : BaseWidget()
+class W_Gs3Editd : BaseWidget()
+class W_Gs3Editl : BaseWidget()
+class W_Gs3Twod : BaseWidget()
+class W_Gs3Twol : BaseWidget()
 class W_Gs2Lined : BaseWidget()
 class W_Gs2Linew : BaseWidget()
 class W_Gs2Split : BaseWidget()
@@ -90,7 +101,7 @@ class W_CYiginKare : BaseWidget()
 class Entry(val cls: Class<out BaseWidget>, val label: String, val layout: Int, val size: String, val preview: Int)
 
 object Registry {
-    val SIZE_TITLES = mapOf("m" to "Mini · ek bilgi şeridi", "t" to "Uzun · 4x3", "w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "l" to "Büyük · 5x2")
+    val SIZE_TITLES = mapOf("m" to "Mini · ek bilgi şeridi", "t" to "Uzun · 4x3", "w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "d" to "Dikey · 2x3", "k" to "Küçük · 2x1", "l" to "Büyük · 5x2")
     val ALL = listOf(
         Entry(W_Origamikart::class.java, "Origami kart", R.layout.w_ori_card, "w", R.drawable.prev_origamikart),
         Entry(W_Origamiserit::class.java, "Origami şerit", R.layout.w_ori_strip, "c", R.drawable.prev_origamiserit),
@@ -149,6 +160,17 @@ object Registry {
         Entry(W_Gs2Grad::class.java, "Bordo degrade", R.layout.w_gs2_grad, "c", R.drawable.prev_gs2_grad),
         Entry(W_Gs2Cleand::class.java, "Sade geniş siyah", R.layout.w_gs2_cleand, "w", R.drawable.prev_gs2_cleand),
         Entry(W_Gs2Cleanw::class.java, "Sade geniş beyaz", R.layout.w_gs2_cleanw, "w", R.drawable.prev_gs2_cleanw),
+        Entry(W_Gs3Sqd::class.java, "Zarif kare siyah", R.layout.w_gs3_sqd, "s", R.drawable.prev_gs3_sqd),
+        Entry(W_Gs3Sql::class.java, "Zarif kare fildişi", R.layout.w_gs3_sql, "s", R.drawable.prev_gs3_sql),
+        Entry(W_Gs3Round::class.java, "Zarif yuvarlak", R.layout.w_gs3_round, "s", R.drawable.prev_gs3_round),
+        Entry(W_Gs3Minid::class.java, "Zarif küçük siyah", R.layout.w_gs3_minid, "k", R.drawable.prev_gs3_minid),
+        Entry(W_Gs3Minil::class.java, "Zarif küçük fildişi", R.layout.w_gs3_minil, "k", R.drawable.prev_gs3_minil),
+        Entry(W_Gs3Towd::class.java, "Zarif dikey siyah", R.layout.w_gs3_towd, "d", R.drawable.prev_gs3_towd),
+        Entry(W_Gs3Towl::class.java, "Zarif dikey fildişi", R.layout.w_gs3_towl, "d", R.drawable.prev_gs3_towl),
+        Entry(W_Gs3Editd::class.java, "Zarif editoryal siyah", R.layout.w_gs3_editd, "w", R.drawable.prev_gs3_editd),
+        Entry(W_Gs3Editl::class.java, "Zarif editoryal fildişi", R.layout.w_gs3_editl, "w", R.drawable.prev_gs3_editl),
+        Entry(W_Gs3Twod::class.java, "Zarif şerit siyah", R.layout.w_gs3_twod, "c", R.drawable.prev_gs3_twod),
+        Entry(W_Gs3Twol::class.java, "Zarif şerit fildişi", R.layout.w_gs3_twol, "c", R.drawable.prev_gs3_twol),
         Entry(W_CZarf::class.java, "Zarf", R.layout.w_card_zarf, "w", R.drawable.prev_czarf),
         Entry(W_CPola::class.java, "Polaroid", R.layout.w_card_pola, "w", R.drawable.prev_cpola),
         Entry(W_CBilet::class.java, "Bilet", R.layout.w_card_bilet, "w", R.drawable.prev_cbilet),

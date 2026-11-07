@@ -533,4 +533,165 @@ object GS {
             cv.drawText("${d.max}° ${d.min}°", cx, 512 * sy, txt(x.textTf, 24 * s, x.ink, Paint.Align.CENTER))
         }
     }
+    /* ================= Zarif seri (v26): geniş boşluk, büyük ikon, ince sarı-kırmızı çizgi ================= */
+    const val E_SQ_D = 30; const val E_SQ_L = 31; const val E_ROUND = 32; const val E_MINI_D = 33; const val E_MINI_L = 34
+    const val E_TOWER_D = 35; const val E_TOWER_L = 36; const val E_EDIT_D = 37; const val E_EDIT_L = 38; const val E_TWO_D = 39; const val E_TWO_L = 40
+    private val E_LIGHT = setOf(E_SQ_L, E_MINI_L, E_TOWER_L, E_EDIT_L, E_TWO_L)
+    private val GOLD = Color.rgb(214, 170, 74); private val CRIM = Color.rgb(150, 18, 46)
+    private val IVORY = Color.rgb(247, 242, 232); private val NIGHT = Color.rgb(16, 16, 18)
+    val LINE_NAMES = arrayOf("Tasarımdaki", "Simetrik", "Asimetrik", "Ters asimetrik", "Yok")
+    fun lineStyle(c: Context) = Cfg.int(c, "gsLine", 0).coerceIn(0, LINE_NAMES.size - 1)
+
+    /** Sarı-kırmızı çizgi; def = tasarımın varsayılan bölünmesi (0.5 simetrik). */
+    private fun rule(cv: Canvas, x: X, l: Float, r: Float, y: Float, h: Float, def: Float) {
+        val split = when (lineStyle(x.c)) { 1 -> .5f; 2 -> .22f; 3 -> .78f; 4 -> return; else -> def }
+        val m = l + (r - l) * split
+        cv.drawRect(l, y, m, y + h, Paint().apply { color = GOLD; alpha = 255 })
+        cv.drawRect(m, y, r, y + h, Paint().apply { color = CRIM })
+    }
+    private fun hairline(cv: Canvas, x0: Float, y0: Float, x1: Float, y1: Float, col: Int, w: Float) = cv.drawLine(x0, y0, x1, y1, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = col; strokeWidth = w })
+    private fun capsP(x: X, size: Float, col: Int, al: Paint.Align = Paint.Align.LEFT) = txt(x.textTf, size, col, al).apply { letterSpacing = .2f }
+    /** Saat (ince yazı, kutuya sığar). */
+    private fun eClock(cv: Canvas, x: X, t: String, xx: Float, base: Float, size: Float, maxW: Float, al: Paint.Align, col: Int) {
+        val p = Lock.clockPaintTf(x.c, x.clockTf, size, col, Combo.Look(0, col, col, col, false, 0)).apply { textAlign = al }
+        val m = Ink.measure(x.c, t, p); if (m > maxW && m > 0) p.textSize *= maxW / m
+        if (lowOp) p.setShadowLayer(p.textSize * .06f, 0f, p.textSize * .03f, 0x99000000.toInt())
+        Ink.time(x.c, cv, t, xx, base, p)
+    }
+    /** İkon kutusu: büyütme ayarı kutu içinde kalır, diğer öğelere taşmaz. */
+    private fun eIcon(cv: Canvas, x: X, cx: Float, cy: Float, box: Float) {
+        val w = x.w ?: return
+        val drawn = min(box * x.isc, box * 1.25f)
+        Combo.icon(x.c, cv, Style.iconPref(x.c, 0, 6, w.code, w.isDay), cx, cy, drawn / x.isc)
+    }
+
+    fun render3(c: Context, w: Weather?, wdp: Int, hdp: Int, kind: Int): Bitmap {
+        val k = 2.5f
+        val Wi = (wdp.coerceIn(60, 560) * k).toInt(); val Hi = (hdp.coerceIn(40, 560) * k).toInt()
+        val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
+        val cv = Canvas(b)
+        val light = kind in E_LIGHT
+        val bgCol = if (light) IVORY else NIGHT
+        Ink.setBg(bgCol)
+        val ink = Ink.get(c, Ink.TEXT) ?: if (light) Color.rgb(30, 24, 28) else Color.rgb(245, 245, 245)
+        val sub = Ink.get(c, Ink.SUB) ?: if (light) Color.rgb(130, 120, 112) else Color.rgb(150, 150, 158)
+        val thin = Typeface.create(c.resources.getFont(R.font.f_outfit_c), Typeface.NORMAL)
+        val bold = Typeface.create(c.resources.getFont(R.font.f_outfitb_c), Typeface.NORMAL)
+        val id = Cfg.current(); val pr = WeatherRepo.prefs(c)
+        val hasFont = id != null && pr.contains(Cfg.wkey(id, "font"))
+        val clockCol = Ink.get(c, Ink.CLOCK) ?: ink
+        val x = X(c, w, Wi.toFloat(), Hi.toFloat(), !light, ink, sub, clockCol, Ink.get(c, Ink.TEMP) ?: ink, Ink.get(c, Ink.LOC) ?: sub,
+            if (hasFont) Style.clockTypeface(c, Style.font(c)) else thin, boldFor(c, bold), Style.textTypeface(c, if (hasFont) Style.font(c) else 1))
+        begin(c)
+        val hl = if (light) Color.rgb(222, 214, 204) else Color.rgb(56, 56, 62)
+        val accent = if (light) CRIM else GOLD
+        val W = x.W; val H = x.H; val s = min(W, H)
+        val city = WeatherRepo.city(c)
+        val showLoc = Combo.show(c, "loc")
+        val tStr = if (w != null) "${w.temp}°" else "--°"
+        val desc = descShort(x)
+        val time = now("HH:mm")
+        fun bg(r: RectF, rad: Float) = pill(cv, x, r, rad, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = bgCol })
+        when (kind) {
+            E_SQ_D, E_SQ_L -> {
+                val m = s * .043f; bg(RectF(m, m, W - m, H - m), s * .115f)
+                val p = s * .13f
+                logoAt(cv, x, p + s * .07f, p + s * .07f, s * .068f)
+                eIcon(cv, x, W - p - s * .1f, p + s * .08f, s * .2f)
+                eClock(cv, x, time, W / 2, H * .59f, s * .27f, W - p * 2, Paint.Align.CENTER, clockCol)
+                rule(cv, x, p, W - p, H * .665f, s * .008f, .5f)
+                val tp = fitP(txt(x.clockTf, s * .1f * Ink.tempScale(c), x.temp).apply { typeface = bold }, tStr, W * .3f)
+                cv.drawText(tStr, p, H * .83f, tp)
+                val dx = p + tp.measureText(tStr) + s * .04f
+                cv.drawText(desc, dx, H * .83f, fitP(txt(x.textTf, s * .046f, sub), desc, W * .5f - dx))
+                if (showLoc) cv.drawText(city.uppercase(tr), W - p, H * .81f, fitP(capsP(x, s * .033f, x.loc, Paint.Align.RIGHT), city.uppercase(tr), W * .4f))
+                cv.drawText(dt(x, "EEE d MMM").uppercase(tr), W - p, H * .86f, fitP(capsP(x, s * .033f, sub, Paint.Align.RIGHT), dt(x, "EEE d MMM").uppercase(tr), W * .4f))
+            }
+            E_ROUND -> {
+                val cx = W / 2; val cy = H / 2; val r = s * .446f
+                val sh = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb((110 * x.op).toInt(), 0, 0, 0); maskFilter = BlurMaskFilter(s * .03f, BlurMaskFilter.Blur.NORMAL) }
+                if (x.op > .05f) cv.drawCircle(cx, cy + s * .02f, r, sh)
+                cv.drawCircle(cx, cy, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = bgCol; alpha = (x.op * 255).toInt() })
+                val rr = r - s * .046f; val arc = RectF(cx - rr, cy - rr, cx + rr, cy + rr)
+                val ap = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE; strokeWidth = s * .011f; strokeCap = Paint.Cap.ROUND }
+                if (lineStyle(c) != 4) {
+                    val split = when (lineStyle(c)) { 2 -> 100f; 3 -> 220f; else -> 160f }
+                    ap.color = GOLD; cv.drawArc(arc, 100f, split, false, ap)
+                    ap.color = CRIM; cv.drawArc(arc, 100f + split + 20f, 340f - split - 20f + 0f, false, ap)
+                }
+                logoAt(cv, x, cx, cy - s * .236f, s * .064f)
+                eClock(cv, x, time, cx, cy + s * .075f, s * .21f, rr * 1.5f, Paint.Align.CENTER, clockCol)
+                val tp = txt(x.clockTf, s * .082f * Ink.tempScale(c), x.temp).apply { typeface = bold }
+                val ib = s * .135f; val rowW = ib + s * .02f + tp.measureText(tStr)
+                eIcon(cv, x, cx - rowW / 2 + ib / 2, cy + s * .21f, ib)
+                cv.drawText(tStr, cx - rowW / 2 + ib + s * .02f, cy + s * .21f + tp.textSize * .36f, tp)
+                if (showLoc) cv.drawText(city.uppercase(tr), cx, cy + s * .34f, fitP(capsP(x, s * .032f, x.loc, Paint.Align.CENTER), city.uppercase(tr), rr * 1.1f))
+            }
+            E_MINI_D, E_MINI_L -> {
+                val r = RectF(W * .043f, H * .125f, W * .957f, H * .875f); bg(r, r.height() / 2)
+                val lx = r.left + r.height() * .5f
+                logoAt(cv, x, lx, H / 2, r.height() * .3f)
+                val sep = lx + r.height() * .5f
+                hairline(cv, sep, H * .35f, sep, H * .65f, hl, s * .008f)
+                val ib = r.height() * .62f; val icx = r.right - r.height() * .48f
+                eIcon(cv, x, icx, H / 2, ib)
+                eClock(cv, x, time, sep + W * .05f, H / 2 + r.height() * .2f, r.height() * .62f, icx - ib * .6f - sep - W * .08f, Paint.Align.LEFT, clockCol)
+            }
+            E_TOWER_D, E_TOWER_L -> {
+                val m = s * .043f; bg(RectF(m, m, W - m, H - m), s * .115f)
+                logoAt(cv, x, W / 2, H * .167f, s * .1f)
+                if (showLoc) cv.drawText(city.uppercase(tr), W / 2, H * .3f, fitP(capsP(x, s * .04f, x.loc, Paint.Align.CENTER), city.uppercase(tr), W * .78f))
+                val hh = now("HH"); val mm = now("mm")
+                eClock(cv, x, hh, W / 2, H * .524f, s * .34f, W * .78f, Paint.Align.CENTER, clockCol)
+                eClock(cv, x, mm, W / 2, H * .726f, s * .34f, W * .78f, Paint.Align.CENTER, Ink.get(c, Ink.MIN) ?: accent)
+                rule(cv, x, W * .21f, W * .79f, H * .774f, s * .008f, .25f)
+                val ib = s * .2f
+                eIcon(cv, x, W * .34f, H * .876f, ib)
+                val tp = fitP(txt(x.clockTf, s * .1f * Ink.tempScale(c), x.temp).apply { typeface = bold }, tStr, W * .3f)
+                cv.drawText(tStr, W * .34f + ib * .62f, H * .876f + tp.textSize * .36f, tp)
+            }
+            E_EDIT_D, E_EDIT_L -> {
+                val sx = W / 1280f; val sy = H / 560f; val u = min(sx, sy)
+                bg(RectF(24 * sx, 24 * sy, W - 24 * sx, H - 24 * sy), 56 * u)
+                if (showLoc) cv.drawText(city.uppercase(tr), 80 * sx, 112 * sy, fitP(capsP(x, 24 * u, x.loc), city.uppercase(tr), W * .6f))
+                cv.drawText(dt(x, "EEEE · d MMMM").uppercase(tr), 80 * sx, 146 * sy, fitP(capsP(x, 20 * u, sub), dt(x, "EEEE · d MMMM").uppercase(tr), W * .6f))
+                logoAt(cv, x, W - 130 * sx, 118 * sy, 48 * u)
+                eClock(cv, x, time, 72 * sx, 400 * sy, 220 * u, 660 * sx, Paint.Align.LEFT, clockCol)
+                val ib = 190 * u
+                eIcon(cv, x, 860 * sx, 316 * sy, ib)
+                val tx = 860 * sx + ib * .56f
+                val tp = fitP(txt(x.clockTf, 96 * u * Ink.tempScale(c), x.temp).apply { typeface = bold }, tStr, W - 80 * sx - tx)
+                cv.drawText(tStr, tx, 350 * sy, tp)
+                cv.drawText(desc, tx + 4 * sx, 392 * sy, fitP(txt(x.textTf, 26 * u, sub), desc, W - 80 * sx - tx))
+                hairline(cv, 80 * sx, 445 * sy, W - 80 * sx, 445 * sy, hl, 2 * u)
+                rule(cv, x, 80 * sx, W - 80 * sx, 443 * sy, 4 * u, .18f)
+                if (Combo.show(c, "fc")) {
+                    val days = w?.days?.drop(1)?.take(3) ?: emptyList()
+                    for ((i, d) in days.withIndex()) {
+                        val xx = 80 * sx + i * 260 * sx
+                        cv.drawText(dayName(d).uppercase(tr), xx, 492 * sy, capsP(x, 18 * u, sub))
+                        Combo.icon(c, cv, Style.iconPref(c, 0, 6, d.code, true), xx + 140 * sx, 500 * sy, 40 * u)
+                        cv.drawText("${d.max}° / ${d.min}°", xx, 526 * sy, txt(x.textTf, 26 * u, ink))
+                    }
+                }
+            }
+            else -> { // E_TWO
+                val sx = W / 1280f; val sy = H / 240f; val u = min(sx, sy)
+                val r = RectF(24 * sx, 30 * sy, W - 24 * sx, H - 30 * sy); bg(r, r.height() / 2)
+                eClock(cv, x, time, 96 * sx, 160 * sy, 104 * u, 300 * sx, Paint.Align.LEFT, clockCol)
+                hairline(cv, 420 * sx, 78 * sy, 420 * sx, 162 * sy, hl, 2 * u)
+                if (showLoc) cv.drawText(city.uppercase(tr), 464 * sx, 112 * sy, fitP(capsP(x, 22 * u, x.loc), city.uppercase(tr), 300 * sx))
+                cv.drawText(dt(x, "EEE d MMMM"), 464 * sx, 160 * sy, fitP(txt(x.textTf, 26 * u, ink), dt(x, "EEE d MMMM"), 300 * sx))
+                val ib = 104 * u
+                eIcon(cv, x, 860 * sx, H / 2, ib)
+                cv.drawText(tStr, 860 * sx + ib * .58f, H / 2 + 52 * u * .36f, fitP(txt(x.clockTf, 52 * u * Ink.tempScale(c), x.temp).apply { typeface = bold }, tStr, 150 * sx))
+                if (lineStyle(c) != 4) {
+                    cv.drawRect(W - 220 * sx, 86 * sy, W - 215 * sx, 158 * sy, Paint().apply { color = GOLD })
+                    cv.drawRect(W - 213 * sx, 86 * sy, W - 208 * sx, 158 * sy, Paint().apply { color = CRIM })
+                }
+                logoAt(cv, x, W - 120 * sx, H / 2, 46 * u)
+            }
+        }
+        return b
+    }
 }

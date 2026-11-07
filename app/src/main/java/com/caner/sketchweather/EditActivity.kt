@@ -74,6 +74,7 @@ class EditActivity : Activity() {
         R.layout.w_asym_big, R.layout.w_asym_edit, R.layout.w_asym_vert, R.layout.w_asym_collage -> "asym"
         R.layout.w_card_zarf, R.layout.w_card_pola, R.layout.w_card_bilet, R.layout.w_card_takvimy, R.layout.w_card_akor, R.layout.w_card_etiket, R.layout.w_card_yigin -> "card"
         R.layout.w_anim -> "anim"
+        R.layout.w_gs3_sqd, R.layout.w_gs3_sql, R.layout.w_gs3_round, R.layout.w_gs3_minid, R.layout.w_gs3_minil, R.layout.w_gs3_towd, R.layout.w_gs3_towl, R.layout.w_gs3_editd, R.layout.w_gs3_editl, R.layout.w_gs3_twod, R.layout.w_gs3_twol -> "gs"
         R.layout.w_gs2_lined, R.layout.w_gs2_linew, R.layout.w_gs2_split, R.layout.w_gs2_score, R.layout.w_gs2_jerw, R.layout.w_gs2_jerd, R.layout.w_gs2_clear, R.layout.w_gs2_grad, R.layout.w_gs2_cleand, R.layout.w_gs2_cleanw -> "gs"
         R.layout.w_glance -> "glance"
         R.layout.w_gs_white, R.layout.w_gs_black -> "gs"
@@ -170,7 +171,7 @@ class EditActivity : Activity() {
                 setOnLongClickListener { hideToggle(Hide.DESIGN, dk, e.label); true }
                 if (e == cur) background = GradientDrawable().apply { setStroke(dp(2), Ui.ACCENT); cornerRadius = dp(12).toFloat() }
                 setOnClickListener { p.edit().putInt("ov_$wid", idx).apply(); sendBroadcast(Widgets.refreshIntent(this@EditActivity)); build() }
-                addView(ImageView(this@EditActivity).apply { setImageResource(e.preview); adjustViewBounds = true; layoutParams = LinearLayout.LayoutParams(dp(if (size == "s") 96 else 180), -2) })
+                addView(ImageView(this@EditActivity).apply { setImageResource(e.preview); adjustViewBounds = true; layoutParams = LinearLayout.LayoutParams(dp(if (size == "s" || size == "d" || size == "k") 96 else 180), -2) })
                 addView(TextView(this@EditActivity).apply { text = e.label; setTextColor(if (e == cur) Ui.ACCENT else Ui.FG); textSize = 12f })
             })
         }
@@ -255,6 +256,8 @@ class EditActivity : Activity() {
                 row(s, "Logo görünümü", "Şeffaf arka planlı (PNG) logolar dairesiz de güzel durur.")
                 chips(s, GS.LOGO_BG_NAMES, read { GS.logoBg(this) }) { putI("gsLogoBg", it) }
                 s.addView(Ui.slider(this, { "Logo boyutu: %${50 + it * 120 / 100}" }, (read { GS.logoSize(this) } - 50) * 100 / 120) { putI("gsLogoSize", 50 + it * 120 / 100) })
+                row(s, "Sarı-kırmızı çizgi", "Zarif serideki ince çizginin bölünüşü.")
+                chips(s, GS.LINE_NAMES, read { GS.lineStyle(this) }) { putI("gsLine", it) }
                 row(s, "Gösterilecekler")
                 s.addView(Ui.check(this, "Konum", read { Combo.show(this, "loc") }) { putB("show_loc", it) })
                 s.addView(Ui.check(this, "Tarih", read { Combo.show(this, "date") }) { putB("show_date", it) })

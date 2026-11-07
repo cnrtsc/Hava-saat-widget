@@ -204,7 +204,7 @@ class MainActivity : Activity() {
             if (list.isEmpty()) continue
             s.addView(Ui.label(this, title))
             val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-            list.forEach { row.addView(cell(it, if (size == "s") 110 else 210)) }
+            list.forEach { row.addView(cell(it, if (size == "s" || size == "d" || size == "k") 110 else 210)) }
             s.addView(android.widget.HorizontalScrollView(this).apply { addView(row) })
         }
         root.addView(s)

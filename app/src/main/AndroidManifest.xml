@@ -304,6 +304,50 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs2_cleanw" />
         </receiver>
+        <receiver android:name=".W_Gs3Sqd" android:exported="true" android:label="Zarif kare siyah">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_sqd" />
+        </receiver>
+        <receiver android:name=".W_Gs3Sql" android:exported="true" android:label="Zarif kare fildişi">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_sql" />
+        </receiver>
+        <receiver android:name=".W_Gs3Round" android:exported="true" android:label="Zarif yuvarlak">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_round" />
+        </receiver>
+        <receiver android:name=".W_Gs3Minid" android:exported="true" android:label="Zarif küçük siyah">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_minid" />
+        </receiver>
+        <receiver android:name=".W_Gs3Minil" android:exported="true" android:label="Zarif küçük fildişi">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_minil" />
+        </receiver>
+        <receiver android:name=".W_Gs3Towd" android:exported="true" android:label="Zarif dikey siyah">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_towd" />
+        </receiver>
+        <receiver android:name=".W_Gs3Towl" android:exported="true" android:label="Zarif dikey fildişi">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_towl" />
+        </receiver>
+        <receiver android:name=".W_Gs3Editd" android:exported="true" android:label="Zarif editoryal siyah">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_editd" />
+        </receiver>
+        <receiver android:name=".W_Gs3Editl" android:exported="true" android:label="Zarif editoryal fildişi">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_editl" />
+        </receiver>
+        <receiver android:name=".W_Gs3Twod" android:exported="true" android:label="Zarif şerit siyah">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_twod" />
+        </receiver>
+        <receiver android:name=".W_Gs3Twol" android:exported="true" android:label="Zarif şerit fildişi">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs3_twol" />
+        </receiver>
         <receiver android:name=".W_Noktamatris" android:exported="true" android:label="Nokta matris">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_noktamatris" />

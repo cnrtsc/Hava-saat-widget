@@ -86,4 +86,15 @@
     <string name="desc_gs2_grad">Bordo degrade · 4x1</string>
     <string name="desc_gs2_cleand">Sade geniş siyah · 4x2</string>
     <string name="desc_gs2_cleanw">Sade geniş beyaz · 4x2</string>
+    <string name="desc_gs3_sqd">Zarif kare siyah · 2x2</string>
+    <string name="desc_gs3_sql">Zarif kare fildişi · 2x2</string>
+    <string name="desc_gs3_round">Zarif yuvarlak · 2x2</string>
+    <string name="desc_gs3_minid">Zarif küçük siyah · 2x1</string>
+    <string name="desc_gs3_minil">Zarif küçük fildişi · 2x1</string>
+    <string name="desc_gs3_towd">Zarif dikey siyah · 2x3</string>
+    <string name="desc_gs3_towl">Zarif dikey fildişi · 2x3</string>
+    <string name="desc_gs3_editd">Zarif editoryal siyah · 4x2</string>
+    <string name="desc_gs3_editl">Zarif editoryal fildişi · 4x2</string>
+    <string name="desc_gs3_twod">Zarif şerit siyah · 4x1</string>
+    <string name="desc_gs3_twol">Zarif şerit fildişi · 4x1</string>
 </resources>
