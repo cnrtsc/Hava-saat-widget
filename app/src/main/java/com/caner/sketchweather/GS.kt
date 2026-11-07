@@ -45,7 +45,25 @@ object GS {
 
     private class X(val c: Context, val w: Weather?, val W: Float, val H: Float, val dark: Boolean,
                     val ink: Int, val sub: Int, val clock: Int, val temp: Int, val loc: Int,
-                    val clockTf: Typeface, val boldTf: Typeface, val textTf: Typeface)
+                    val clockTf: Typeface, val boldTf: Typeface, val textTf: Typeface) {
+        val op = Style.opacity(c) / 100f
+        val isc = Style.iconScale(c)
+    }
+    /** Çizim sırasında geçerli olan yazı ayarları (tek iş parçacığında çizildiği için güvenli). */
+    private var lowOp = false
+    private var fakeBoldTf: Typeface? = null
+
+    /** Konum/başlık için kalın yazı tipi: kullanıcı yazı tipi seçtiyse o (kalınlaştırılmış), yoksa Outfit Bold. */
+    private fun boldFor(c: Context, bold: Typeface): Typeface {
+        val id = Cfg.current(); val pr = WeatherRepo.prefs(c)
+        val custom = id != null && (pr.contains(Cfg.wkey(id, "font")) || pr.contains(Cfg.wkey(id, "textFont")))
+        if (!custom) { fakeBoldTf = null; return bold }
+        val tf = Style.textTypeface(c, Style.font(c)); fakeBoldTf = tf; return tf
+    }
+    private fun begin(c: Context) {
+        lowOp = Style.opacity(c) < 45
+        if (lowOp) Ink.setBg(null)
+    }
 
     fun render(c: Context, w: Weather?, wdp: Int, hdp: Int, style: Int): Bitmap {
         val k = 2.5f
@@ -62,7 +80,8 @@ object GS {
         val bold = Typeface.create(c.resources.getFont(R.font.f_outfitb_c), Typeface.NORMAL)
         val x = X(c, w, Wi.toFloat(), Hi.toFloat(), dark, ink, sub,
             Ink.get(c, Ink.CLOCK) ?: if (dark) Color.WHITE else BORDO, Ink.get(c, Ink.TEMP) ?: if (dark) Color.WHITE else BORDO,
-            Ink.get(c, Ink.LOC) ?: ink, if (hasFont) Style.clockTypeface(c, Style.font(c)) else bold, bold, Style.textTypeface(c, if (hasFont) Style.font(c) else 1))
+            Ink.get(c, Ink.LOC) ?: ink, if (hasFont) Style.clockTypeface(c, Style.font(c)) else bold, boldFor(c, bold), Style.textTypeface(c, if (hasFont) Style.font(c) else 1))
+        begin(c)
         val ratio = x.H / x.W
         when {
             ratio < .36f -> strip(cv, x)
@@ -78,11 +97,12 @@ object GS {
         val r = RectF(m, m, x.W - m, x.H - m * 1.6f)
         val rad = min(x.W, x.H) * .1f
         val p = Path().apply { addRoundRect(r, rad, rad, Path.Direction.CW) }
-        val sh = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(if (x.dark) 120 else 60, 0, 0, 0); maskFilter = BlurMaskFilter(m * 1.4f, BlurMaskFilter.Blur.NORMAL) }
-        cv.save(); cv.translate(0f, m * .6f); cv.drawPath(p, sh); cv.restore()
+        val sh = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(((if (x.dark) 120 else 60) * x.op).toInt(), 0, 0, 0); maskFilter = BlurMaskFilter(m * 1.4f, BlurMaskFilter.Blur.NORMAL) }
+        if (x.op > .05f) { cv.save(); cv.translate(0f, m * .6f); cv.drawPath(p, sh); cv.restore() }
         val fill = Paint(Paint.ANTI_ALIAS_FLAG)
         if (x.dark) fill.shader = LinearGradient(0f, r.top, 0f, r.bottom, Color.rgb(22, 22, 24), Color.rgb(6, 6, 8), Shader.TileMode.CLAMP)
         else fill.color = Color.WHITE
+        fill.alpha = (x.op * 255).toInt()
         cv.drawPath(p, fill)
         return p
     }
@@ -123,7 +143,10 @@ object GS {
     }
 
     private fun txt(tf: Typeface, size: Float, col: Int, al: Paint.Align = Paint.Align.LEFT) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        typeface = tf; textSize = size; color = col; textAlign = al; Ink.shadowOverride(this)
+        typeface = tf; textSize = size * Combo.textMul; color = col; textAlign = al
+        if (fakeBoldTf != null && tf === fakeBoldTf) isFakeBoldText = true
+        if (lowOp) setShadowLayer(textSize * .08f, 0f, textSize * .04f, 0x99000000.toInt())
+        Ink.shadowOverride(this)
     }
     private fun fitP(p: Paint, t: String, maxW: Float): Paint { val m = p.measureText(t); if (m > maxW && m > 0) p.textSize *= maxW / m; return p }
     private fun clockP(x: X, size: Float, maxW: Float): Paint {
@@ -217,26 +240,28 @@ object GS {
         val cp = clockP(x, 164 * s, ((if (x.dark) 612 else 620) - (if (x.dark) 104 else 110) - 34) * sx)
         Ink.time(x.c, cv, now("HH:mm"), (if (x.dark) 104 else 110) * sx, clockY, cp)
         val dateY = clockY + 44 * sy
-        calIcon(cv, 214 * sx, dateY, 26 * s, x.sub)
-        cv.drawText(now("d MMMM EEEE"), 258 * sx, dateY, fitP(txt(x.textTf, 28 * s, x.sub), now("d MMMM EEEE"), 330 * sx))
+        if (Combo.show(x.c, "date")) calIcon(cv, 214 * sx, dateY, 26 * s, x.sub)
+        if (Combo.show(x.c, "date")) cv.drawText(now("d MMMM EEEE"), 258 * sx, dateY, fitP(txt(x.textTf, 28 * s, x.sub), now("d MMMM EEEE"), 330 * sx))
         // ayraç
         val divX = (if (x.dark) 612 else 620) * sx
         cv.drawLine(divX, clockY - 136 * sy, divX, clockY + 40 * sy, Paint().apply { color = if (x.dark) YEL else Color.rgb(220, 214, 216); strokeWidth = (if (x.dark) 3 else 2) * s })
         // hava
         val w = x.w
         val iconY = clockY - 78 * sy
-        if (w != null) ic(cv, x, w.code, w.isDay, divX + 92 * sx, iconY, 98 * s)
+        val iE = 98 * s * x.isc
+        if (w != null) ic(cv, x, w.code, w.isDay, divX + 43 * sx + iE / 2, iconY, 98 * s)
         val tStr = if (w != null) "${w.temp}°" else "--°"
-        cv.drawText(tStr, divX + 162 * sx, iconY + 26 * sy, txt(x.clockTf, 76 * s * Ink.tempScale(x.c), x.temp))
+        val tX = divX + 43 * sx + iE + 20 * sx
+        cv.drawText(tStr, tX, iconY + 26 * sy, fitP(txt(x.clockTf, 76 * s * Ink.tempScale(x.c), x.temp), tStr, W - 230 * sx - tX))
         val today = w?.days?.firstOrNull()
-        if (today != null) cv.drawText("Y ${today.max}°   D ${today.min}°", divX + 166 * sx, iconY + 66 * sy, txt(x.textTf, 26 * s, x.sub))
+        if (today != null) cv.drawText("Y ${today.max}°   D ${today.min}°", tX + 4 * sx, iconY + 66 * sy, fitP(txt(x.textTf, 26 * s, x.sub), "Y ${today.max}°   D ${today.min}°", W - 230 * sx - tX))
         stats(cv, x, divX + 44 * sx, dateY, 26 * s, if (x.dark) Color.rgb(220, 220, 226) else Color.rgb(70, 64, 70),
             if (x.dark) Color.rgb(80, 80, 86) else Color.rgb(220, 214, 216), W - divX - 200 * sx)
         // logo + yıldızlar
         val lx = W - 140 * sx; val ly = if (x.dark) 156 * sy else 186 * sy
         logoAt(cv, x, lx, ly, 64 * s)
         // tahmin
-        val days = w?.days?.drop(1)?.take(3) ?: emptyList()
+        val days = if (Combo.show(x.c, "fc")) w?.days?.drop(1)?.take(3) ?: emptyList() else emptyList()
         if (!x.dark) {
             val pill = RectF(70 * sx, H - 132 * sy, W - 70 * sx, H - 52 * sy)
             cv.drawRoundRect(pill, 40 * s, 40 * s, Paint(Paint.ANTI_ALIAS_FLAG).apply { shader = LinearGradient(pill.left, 0f, pill.right, 0f, Color.rgb(200, 28, 56), RED_B, Shader.TileMode.CLAMP) })
@@ -255,11 +280,11 @@ object GS {
             val x0 = l + i * cw; val cx = x0 + cw / 2
             val dp = txt(x.boldTf, 28 * s, hiCol); val hp = txt(x.boldTf, 28 * s, hiCol); val lp = txt(x.textTf, 28 * s, loCol)
             val dn = dayName(d); val hi = "${d.max}°"; val lo = "${d.min}°"
-            val iconS = 50 * s; val gap = 12 * s
+            val iconS = 50 * s * x.isc; val gap = 12 * s
             val total = dp.measureText(dn) + gap + iconS + gap + hp.measureText(hi) + gap * .8f + lp.measureText(lo)
             var xx = cx - total / 2
             cv.drawText(dn, xx, y, dp); xx += dp.measureText(dn) + gap
-            ic(cv, x, d.code, true, xx + iconS / 2, y - 12 * s, iconS); xx += iconS + gap
+            ic(cv, x, d.code, true, xx + iconS / 2, y - 12 * s, 50 * s); xx += iconS + gap
             cv.drawText(hi, xx, y, hp); xx += hp.measureText(hi) + gap * .8f
             cv.drawText(lo, xx, y, lp)
             if (i > 0) cv.drawLine(x0, sepT, x0, sepB, Paint().apply { color = sepCol; strokeWidth = 2f })
@@ -285,12 +310,14 @@ object GS {
         logoAt(cv, x, W - 112 * s, 130 * s, 58 * s)
         Ink.time(x.c, cv, now("HH:mm"), L, H * .68f, clockP(x, 132 * s, W - L * 2))
         val w = x.w
-        if (w != null) ic(cv, x, w.code, w.isDay, L + 36 * s, H * .83f, 70 * s)
+        val iE = 70 * s * x.isc
+        if (w != null) ic(cv, x, w.code, w.isDay, L + iE / 2, H * .83f, 70 * s)
         val tp = txt(x.clockTf, 54 * s * Ink.tempScale(x.c), x.temp)
         val tStr = if (w != null) "${w.temp}°" else "--°"
-        cv.drawText(tStr, L + 80 * s, H * .87f, tp)
+        val tX0 = L + iE + 10 * s
+        cv.drawText(tStr, tX0, H * .87f, tp)
         val desc = w?.let { WeatherRepo.label(it.code) } ?: ""
-        val dx = L + 80 * s + tp.measureText(tStr) + 16 * s
+        val dx = tX0 + tp.measureText(tStr) + 16 * s
         cv.drawText(desc, dx, H * .87f, fitP(txt(x.textTf, 28 * s, x.sub), desc, W - dx - L * .6f))
     }
 
@@ -312,11 +339,10 @@ object GS {
         pin(cv, L + 12 * s, 102 * s, 12 * s, x.loc, if (x.dark) Color.rgb(12, 12, 14) else Color.WHITE)
         val city = WeatherRepo.city(x.c)
         if (Combo.show(x.c, "loc")) cv.drawText(city, L + 34 * s, 104 * s, fitP(txt(x.boldTf, 34 * s, x.loc), city, W * .3f - L - 50 * s))
-        cv.drawText(now("d MMMM EEEE"), L + 36 * s, 144 * s, fitP(txt(x.textTf, 24 * s, x.sub), now("d MMMM EEEE"), W * .3f - L - 50 * s))
+        if (Combo.show(x.c, "date")) cv.drawText(now("d MMMM EEEE"), L + 36 * s, 144 * s, fitP(txt(x.textTf, 24 * s, x.sub), now("d MMMM EEEE"), W * .3f - L - 50 * s))
         Ink.time(x.c, cv, now("HH:mm"), W * .32f, 160 * s, clockP(x, 112 * s, W * .27f))
         val w = x.w
-        if (w != null) ic(cv, x, w.code, w.isDay, W * .62f, 118 * s, 70 * s)
-        cv.drawText(if (w != null) "${w.temp}°" else "--°", W * .62f + 44 * s, 140 * s, txt(x.clockTf, 60 * s * Ink.tempScale(x.c), x.temp))
+        weatherIn(cv, x, W * .62f - 35 * s, 118 * s, 70 * s, 60 * s, x.temp, W * .25f)
         logoAt(cv, x, W - 112 * s, H / 2, 58 * s)
     }
     /* ================= Sade seri (v24): her öğenin kendi alanı var ================= */
@@ -338,14 +364,16 @@ object GS {
         val bold = Typeface.create(c.resources.getFont(R.font.f_outfitb_c), Typeface.NORMAL)
         val clockCol = Ink.get(c, Ink.CLOCK) ?: if (dark) Color.WHITE else BORDO
         val x = X(c, w, Wi.toFloat(), Hi.toFloat(), dark, ink, sub, clockCol, Ink.get(c, Ink.TEMP) ?: clockCol,
-            Ink.get(c, Ink.LOC) ?: ink, if (hasFont) Style.clockTypeface(c, Style.font(c)) else bold, bold, Style.textTypeface(c, if (hasFont) Style.font(c) else 1))
+            Ink.get(c, Ink.LOC) ?: ink, if (hasFont) Style.clockTypeface(c, Style.font(c)) else bold, boldFor(c, bold), Style.textTypeface(c, if (hasFont) Style.font(c) else 1))
+        begin(c)
         if (kind == CLEAN_D || kind == CLEAN_W) clean(cv, x) else strip2(cv, x, kind)
         return b
     }
 
     private fun pill(cv: Canvas, x: X, r: RectF, rad: Float, fill: Paint) {
-        val sh = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(if (x.dark) 110 else 60, 0, 0, 0); maskFilter = BlurMaskFilter(min(x.W, x.H) * .04f, BlurMaskFilter.Blur.NORMAL) }
-        cv.save(); cv.translate(0f, min(x.W, x.H) * .025f); cv.drawRoundRect(r, rad, rad, sh); cv.restore()
+        val sh = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(((if (x.dark) 110 else 60) * x.op).toInt(), 0, 0, 0); maskFilter = BlurMaskFilter(min(x.W, x.H) * .04f, BlurMaskFilter.Blur.NORMAL) }
+        if (x.op > .05f) { cv.save(); cv.translate(0f, min(x.W, x.H) * .025f); cv.drawRoundRect(r, rad, rad, sh); cv.restore() }
+        fill.alpha = (x.op * 255).toInt()
         cv.drawRoundRect(r, rad, rad, fill)
     }
     private fun underline(cv: Canvas, r: RectF, rad: Float, h: Float) {
@@ -364,11 +392,12 @@ object GS {
     /** İkon + derece; sol kenardan başlar, kullanılan genişliği döndürür. */
     private fun weatherIn(cv: Canvas, x: X, l: Float, cy: Float, iconS: Float, tSize: Float, col: Int, maxW: Float): Float {
         val w = x.w
-        if (w != null) ic(cv, x, w.code, w.isDay, l + iconS / 2, cy, iconS)
+        val eff = iconS * x.isc   // ikon büyütülünce derece de sağa kayar, üst üste binmez
+        if (w != null) ic(cv, x, w.code, w.isDay, l + eff / 2, cy, iconS)
         val t = if (w != null) "${w.temp}°" else "--°"
-        val tp = fitP(txt(x.clockTf, tSize * Ink.tempScale(x.c), col), t, maxW - iconS * 1.05f)
-        cv.drawText(t, l + iconS * 1.05f, cy + tp.textSize * .36f, tp)
-        return iconS * 1.05f + tp.measureText(t)
+        val tp = fitP(txt(x.clockTf, tSize * Ink.tempScale(x.c), col), t, max(maxW - eff * 1.05f, tSize))
+        cv.drawText(t, l + eff * 1.05f, cy + tp.textSize * .36f, tp)
+        return eff * 1.05f + tp.measureText(t)
     }
     private fun placeIn(cv: Canvas, x: X, l: Float, y1: Float, y2: Float, size: Float, maxW: Float, locCol: Int, subCol: Int, second: String, pinCol: Int? = null, hole: Int = Color.BLACK) {
         val city = WeatherRepo.city(x.c)
@@ -377,7 +406,8 @@ object GS {
         if (Combo.show(x.c, "loc")) cv.drawText(city, xx, y1, fitP(txt(x.boldTf, size, locCol), city, maxW - (xx - l)))
         cv.drawText(second, l, y2, fitP(txt(x.textTf, size * .72f, subCol), second, maxW))
     }
-    private fun descShort(x: X) = x.w?.let { WeatherRepo.label(it.code) } ?: ""
+    private fun descShort(x: X) = if (!Combo.show(x.c, "desc")) "" else x.w?.let { WeatherRepo.label(it.code) } ?: ""
+    private fun dt(x: X, f: String) = if (Combo.show(x.c, "date")) now(f) else ""
 
     private fun strip2(cv: Canvas, x: X, kind: Int) {
         val W = x.W; val H = x.H
@@ -385,7 +415,7 @@ object GS {
         val r = RectF(24 * sx, 30 * sy, W - 24 * sx, H - 30 * sy)
         val rad = r.height() / 2
         val cy = H / 2
-        val dateLine = now("EEE, d MMMM") + (descShort(x).takeIf { it.isNotEmpty() }?.let { " · $it" } ?: "")
+        val dateLine = listOfNotNull(dt(x, "EEE, d MMMM").takeIf { it.isNotEmpty() }, descShort(x).takeIf { it.isNotEmpty() }).joinToString(" · ")
         when (kind) {
             LINE_D, LINE_W -> {
                 pill(cv, x, r, rad, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = if (x.dark) Color.rgb(14, 14, 16) else Color.WHITE })
@@ -407,7 +437,7 @@ object GS {
                 cv.drawPath(Path().apply { moveTo(380 * sx, 0f); lineTo(392 * sx, 0f); lineTo(342 * sx, H); lineTo(330 * sx, H); close() }, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = YEL })
                 cv.restore()
                 logoAt(cv, x, 120 * sx, cy, 54 * s)
-                placeIn(cv, x, 196 * sx, 112 * sy, 148 * sy, 30 * s, 128 * sx, Color.WHITE, Color.rgb(255, 205, 212), now("EEE d MMM"))
+                placeIn(cv, x, 196 * sx, 112 * sy, 148 * sy, 30 * s, 128 * sx, Color.WHITE, Color.rgb(255, 205, 212), dt(x, "EEE d MMM"))
                 clockIn(cv, x, 430 * sx, 160 * sy, 108 * s, 400 * sx)
                 weatherIn(cv, x, 860 * sx, 118 * sy, 84 * s, 66 * s, x.temp, 210 * sx)
                 val d0 = x.w?.days?.firstOrNull()
@@ -444,7 +474,7 @@ object GS {
                 for (i in 0 until 4) cv.drawRect(r.left + i * sw, r.top, r.left + (i + 1) * sw, r.bottom, Paint().apply { color = if (i % 2 == 0) YEL else RED })
                 cv.restore()
                 clockIn(cv, x, 150 * sx, 160 * sy, 108 * s, 300 * sx)
-                placeIn(cv, x, 480 * sx, 108 * sy, 146 * sy, 32 * s, 300 * sx, x.loc, x.sub, now("EEEE, d MMMM"))
+                placeIn(cv, x, 480 * sx, 108 * sy, 146 * sy, 32 * s, 300 * sx, x.loc, x.sub, dt(x, "EEEE, d MMMM"))
                 weatherIn(cv, x, 790 * sx, 118 * sy, 80 * s, 62 * s, x.temp, 260 * sx)
                 logoAt(cv, x, W - 130 * sx, cy, 58 * s)
             }
@@ -467,7 +497,7 @@ object GS {
                 sepLine(cv, 400 * sx, 80 * sy, 160 * sy, Color.argb(90, 255, 255, 255), 2 * s)
                 val used = weatherIn(cv, x, 440 * sx, 116 * sy, 76 * s, 62 * s, x.temp, 200 * sx)
                 val lx = 440 * sx + used + 40 * sx
-                placeIn(cv, x, lx, 108 * sy, 146 * sy, 32 * s, lcx - lr * 1.3f - lx, x.loc, x.sub, now("EEE, d MMMM"))
+                placeIn(cv, x, lx, 108 * sy, 146 * sy, 32 * s, lcx - lr * 1.3f - lx, x.loc, x.sub, dt(x, "EEE, d MMMM"))
                 logoAt(cv, x, lcx, cy, lr)
             }
         }
@@ -484,7 +514,7 @@ object GS {
         val divX = 760 * sx
         placeIn(cv, x, 80 * sx, 108 * sy, 146 * sy, 42 * s, divX - 140 * sx, x.loc, x.sub, descShort(x), if (x.dark) YEL else RED, holeC)
         clockIn(cv, x, 80 * sx, 360 * sy, 190 * s, divX - 140 * sx)
-        cv.drawText(now("EEEE, d MMMM"), 88 * sx, 420 * sy, fitP(txt(x.textTf, 30 * s, x.sub), now("EEEE, d MMMM"), divX - 160 * sx))
+        cv.drawText(dt(x, "EEEE, d MMMM"), 88 * sx, 420 * sy, fitP(txt(x.textTf, 30 * s, x.sub), dt(x, "EEEE, d MMMM"), divX - 160 * sx))
         sepLine(cv, divX, 70 * sy, 470 * sy, if (x.dark) Color.rgb(60, 60, 66) else Color.rgb(230, 224, 226), 2 * s)
         val rc = (divX + r.right) / 2
         logoAt(cv, x, rc, 150 * sy, 80 * s)
@@ -494,7 +524,7 @@ object GS {
             val hx = divX + 90 * sx + used + 30 * sx
             cv.drawText("Y ${d0.max}°", hx, 324 * sy, txt(x.textTf, 28 * s, x.sub)); cv.drawText("D ${d0.min}°", hx, 362 * sy, txt(x.textTf, 28 * s, x.sub))
         }
-        val days = x.w?.days?.drop(1)?.take(3) ?: emptyList()
+        val days = if (Combo.show(x.c, "fc")) x.w?.days?.drop(1)?.take(3) ?: emptyList() else emptyList()
         val cw = (r.right - 40 * sx - (divX + 40 * sx)) / 3
         for ((i, d) in days.withIndex()) {
             val cx = divX + 40 * sx + cw * (i + .5f)

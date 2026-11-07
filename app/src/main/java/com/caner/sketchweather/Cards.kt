@@ -145,13 +145,14 @@ object Cards {
             // hava sütunu
             val wx = wl + ww / 2
             if (top) {
-                ic(cv, x, wx, r.top + r.height() * .3f, r.height() * .42f)
+                ic(cv, x, wx, r.top + r.height() * (.3f - .1f * (Style.iconScale(x.c) - 1f).coerceAtLeast(0f)), r.height() * .42f)
                 cv.drawText(tempS(x), wx, r.top + r.height() * .76f, txt(x, r.height() * .22f * Ink.tempScale(x.c), x.temp, Paint.Align.CENTER).apply { typeface = x.clockTf })
                 if (showDesc(x)) cv.drawText(desc(x), wx, r.top + r.height() * .9f, fit(txt(x, r.height() * .075f, x.sub, Paint.Align.CENTER), desc(x), ww))
             } else {
                 val isz = r.height() * .34f
-                ic(cv, x, wl + isz * .55f, r.top + r.height() * .42f, isz)
-                cv.drawText(tempS(x), wl + ww, r.top + r.height() * .52f, txt(x, r.height() * .26f * Ink.tempScale(x.c), x.temp, Paint.Align.RIGHT).apply { typeface = x.clockTf })
+                val ie = isz * Style.iconScale(x.c)
+                ic(cv, x, wl + ie * .55f, r.top + r.height() * .42f, isz)
+                cv.drawText(tempS(x), wl + ww, r.top + r.height() * .52f, txt(x, r.height() * .26f * Ink.tempScale(x.c), x.temp, Paint.Align.RIGHT).apply { typeface = x.clockTf; val m = measureText(tempS(x)); val mx = ww - ie * 1.15f; if (m > mx && mx > 0) textSize *= mx / m })
                 if (showDesc(x)) cv.drawText(desc(x), wl + ww, r.top + r.height() * .7f, fit(txt(x, r.height() * .075f, x.sub, Paint.Align.RIGHT), desc(x), ww))
             }
             tomorrowLine(x)?.let { cv.drawText(it, wx, r.bottom - r.height() * .02f, fit(txt(x, r.height() * .065f, x.sub, Paint.Align.CENTER), it, ww)) }
@@ -167,10 +168,11 @@ object Cards {
                 ic(cv, x, cx + when (al) { 0 -> isz / 2; 2 -> -isz / 2; else -> 0f }, r.top + r.height() * .3f, isz)
                 tp.textAlign = ca; cv.drawText(tempS(x), cx, r.top + r.height() * .56f, tp)
             } else {
-                val rowW = isz + r.width() * .03f + tw
+                val ie = isz * Style.iconScale(x.c)
+                val rowW = ie + r.width() * .03f + tw
                 val sx = when (al) { 1 -> r.centerX() - rowW / 2; 2 -> r.right - rowW; else -> r.left }
-                ic(cv, x, sx + isz / 2, r.top + r.height() * .34f, isz)
-                cv.drawText(tempS(x), sx + isz + r.width() * .03f, r.top + r.height() * .41f, tp)
+                ic(cv, x, sx + ie / 2, r.top + r.height() * .34f, isz)
+                cv.drawText(tempS(x), sx + ie + r.width() * .03f, r.top + r.height() * .41f, tp)
                 if (showDesc(x)) cv.drawText(desc(x), cx, r.top + r.height() * .54f, fit(txt(x, r.height() * .06f, x.sub, ca), desc(x), r.width()))
             }
             val cp = clockFit(x, time, r.height() * .3f, x.ink, ca, r.width())

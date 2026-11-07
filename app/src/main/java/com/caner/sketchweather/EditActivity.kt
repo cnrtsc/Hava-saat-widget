@@ -255,7 +255,11 @@ class EditActivity : Activity() {
                 row(s, "Logo görünümü", "Şeffaf arka planlı (PNG) logolar dairesiz de güzel durur.")
                 chips(s, GS.LOGO_BG_NAMES, read { GS.logoBg(this) }) { putI("gsLogoBg", it) }
                 s.addView(Ui.slider(this, { "Logo boyutu: %${50 + it * 120 / 100}" }, (read { GS.logoSize(this) } - 50) * 100 / 120) { putI("gsLogoSize", 50 + it * 120 / 100) })
+                row(s, "Gösterilecekler")
                 s.addView(Ui.check(this, "Konum", read { Combo.show(this, "loc") }) { putB("show_loc", it) })
+                s.addView(Ui.check(this, "Tarih", read { Combo.show(this, "date") }) { putB("show_date", it) })
+                s.addView(Ui.check(this, "Hava durumu yazısı", read { Combo.show(this, "desc") }) { putB("show_desc", it) })
+                s.addView(Ui.check(this, "3 günlük tahmin (geniş tasarımlarda)", read { Combo.show(this, "fc") }) { putB("show_fc", it) })
             }
             "anim" -> {
                 val s = section("Animasyon", "Arka plan o anki havaya göre hareket eder. Saat ve yazılar dakikada bir yenilenir.")
@@ -385,6 +389,9 @@ class EditActivity : Activity() {
                 chips(s, Cards.PAPER_NAMES, read { Cards.paperIdx(this) }) { putI("cardPaper", it) }
                 if (read { Cards.paperIdx(this) } == 8) paletteRow(s)
             }
+            "gs" -> s.addView(TextView(this).apply {
+                text = "Siyah ya da beyaz zemini aşağıdaki doluluk ayarıyla saydamlaştırabilirsin; renk şeritleri ve logo yerinde kalır, yazılara okunaklılık için gölge eklenir."
+                setTextColor(Ui.MUTED); textSize = 12f })
             "origami" -> {
                 row(s, "Kağıt", "\"Havaya göre\" seçilirse kağıt hava durumuyla renk değiştirir.")
                 val map = intArrayOf(0, 1, 2, 4, 5, 6, 7)
