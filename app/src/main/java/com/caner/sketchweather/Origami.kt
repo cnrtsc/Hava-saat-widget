@@ -18,7 +18,7 @@ import kotlin.math.min
 /** Origami hava widget'ları: katlanmış kağıt zemin ve origami ikonlar. */
 object Origami {
     const val CARD = 0; const val STRIP = 1; const val SQUARE = 2; const val DIAG = 3
-    val PAPER_NAMES = arrayOf("Koyu kağıt", "Krem kağıt", "Havaya göre", "Şeffaf", "Defter kağıdı")
+    val PAPER_NAMES = arrayOf("Koyu kağıt", "Krem kağıt", "Havaya göre", "Şeffaf", "Defter kağıdı", "Yırtık karton", "Ataçlı kağıt", "Bantlı not")
     const val ICON_SET = 15
     private val tr = Locale("tr", "TR")
 
@@ -32,15 +32,19 @@ object Origami {
         return Style.iconPref(c, 0, 1, code, day)
     }
 
-    private class Tone(val bg: Int?, val ink: Int, val sub: Int, val shadow: Boolean, val ruled: Boolean = false)
+    private class Tone(val bg: Int?, val ink: Int, val sub: Int, val shadow: Boolean, val ruled: Boolean = false, val paperKind: Int = 0)
 
     private fun tone(c: Context, w: Weather?): Tone {
         val op = Style.opacity(c) / 100f
         fun a(col: Int) = Color.argb((255 * op).toInt(), Color.red(col), Color.green(col), Color.blue(col))
-        val light = paper(c) == 1 || paper(c) == 4
+        val light = paper(c) == 1 || paper(c) >= 4
+        Ink.setBg(when (paper(c)) {
+            0 -> Color.rgb(43, 49, 60); 1 -> Color.rgb(239, 230, 214); 4 -> Color.rgb(251, 250, 244); 5 -> Color.rgb(196, 158, 108)
+            6 -> Color.rgb(250, 249, 245); 7 -> Color.rgb(253, 240, 178); 2 -> WeatherRepo.conditionColor(w).first; else -> null
+        })
         // açık kağıtta açık renkli yazı seçiliyse okunmaz: koyu yazıya geç
         val tc = Style.textColor(c)?.let { if (light && lum(it) > .6) null else it }
-        fun subOf(def: Int) = tc?.let { Color.argb(200, Color.red(it), Color.green(it), Color.blue(it)) } ?: def
+        fun subOf(def: Int) = Ink.get(c, Ink.SUB) ?: tc?.let { Color.argb(200, Color.red(it), Color.green(it), Color.blue(it)) } ?: def
         return when (paper(c)) {
             1 -> Tone(a(Color.rgb(239, 230, 214)), tc ?: Color.rgb(42, 38, 34), subOf(Color.rgb(107, 98, 88)), false)
             4 -> Tone(a(Color.rgb(251, 250, 244)), tc ?: Color.rgb(30, 42, 74), subOf(Color.rgb(96, 104, 124)), false, true)
@@ -50,6 +54,7 @@ object Origami {
                 Tone(a(dk), tc ?: Color.WHITE, subOf(Color.rgb(220, 226, 236)), false)
             }
             3 -> Tone(null, tc ?: Color.WHITE, subOf(Color.rgb(226, 230, 238)), true)
+            5, 6, 7 -> { val (i1, i2) = Paper.ink(paper(c)); Tone(null, tc ?: i1, subOf(i2), false, false, paper(c)) }
             else -> Tone(a(Color.rgb(43, 49, 60)), tc ?: Color.WHITE, subOf(Color.rgb(201, 208, 219)), false)
         }
     }
@@ -117,6 +122,7 @@ object Origami {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             typeface = tf; textSize = size * Combo.textMul; color = col; textAlign = al
             if (t.shadow) setShadowLayer(size * .08f, 0f, size * .04f, 0x99000000.toInt())
+            Ink.shadowOverride(this)
         }
 
     private fun pin(c: Context, cv: Canvas, x: Float, base: Float, s: Float): Float {
@@ -135,6 +141,14 @@ object Origami {
         val cv = Canvas(b)
         val Wf = W.toFloat(); val Hf = H.toFloat()
         val t = tone(c, w)
+        // elle yapılmış kağıtlar: tüm alanı kaplayan parça, üstüne yazılar
+        if (t.paperKind > 0) {
+            val r = when (kind) {
+                SQUARE, DIAG -> { val s = min(Wf, Hf); RectF((Wf - s) / 2 + 6f, (Hf - s) / 2 + 6f, (Wf + s) / 2 - 6f, (Hf + s) / 2 - 6f) }
+                else -> RectF(6f, 6f, Wf - 6f, Hf - 6f)
+            }
+            Paper.draw(t.paperKind, cv, r, 23 + kind, Style.opacity(c) / 100f)
+        }
         val font = Style.font(c)
         val tf = Style.textTypeface(c, font)
         val cf = Style.clockTypeface(c, font)
@@ -148,15 +162,15 @@ object Origami {
             CARD -> {
                 card(cv, RectF(pad, pad, Wf - pad, Hf - pad), Hf * .15f, t, 41)
                 Combo.icon(c, cv, ic, Hf * .36f, Hf * .36f, Hf * .62f)
-                cv.drawText(temp, Hf * .72f, Hf * .42f, txt(cf, Hf * .28f, t.ink, t))
+                cv.drawText(temp, Hf * .72f, Hf * .42f, txt(cf, Hf * .28f * Ink.tempScale(c), Ink.get(c, Ink.TEMP) ?: t.ink, t))
                 cv.drawText(desc, Hf * .73f, Hf * .54f, txt(tf, Hf * .075f, t.ink, t))
                 w?.days?.firstOrNull()?.let { cv.drawText("Y ${it.max}°  D ${it.min}°", Hf * .73f, Hf * .64f, txt(tf, Hf * .065f, t.sub, t)) }
                 val right = Wf - Hf * .12f
-                val cp = txt(tf, Hf * .08f, t.ink, t, Paint.Align.RIGHT).apply { isFakeBoldText = true }
+                val cp = txt(tf, Hf * .08f, Ink.get(c, Ink.LOC) ?: t.ink, t, Paint.Align.RIGHT).apply { isFakeBoldText = true }
                 val cw = cp.measureText(city)
                 pin(c, cv, right - cw - Hf * .1f, Hf * .2f, Hf * .085f)
                 cv.drawText(city, right, Hf * .2f, cp)
-                cv.drawText(SimpleDateFormat("HH:mm", tr).format(now), right, Hf * .42f, Lock.clockPaint(c, Hf * .18f, t.ink, Combo.Look(0, t.ink, t.sub, t.ink, t.shadow, 0)).apply { textAlign = Paint.Align.RIGHT })
+                Ink.time(c, cv, SimpleDateFormat("HH:mm", tr).format(now), right, Hf * .42f, Lock.clockPaint(c, Hf * .18f, t.ink, Combo.Look(0, t.ink, t.sub, t.ink, t.shadow, 0)).apply { textAlign = Paint.Align.RIGHT })
                 cv.drawText(SimpleDateFormat("EEEE, d MMMM", tr).format(now), right, Hf * .52f, txt(tf, Hf * .062f, t.sub, t, Paint.Align.RIGHT))
                 cv.drawLine(Hf * .12f, Hf * .71f, Wf - Hf * .12f, Hf * .71f, Paint().apply { color = t.ink; alpha = 30; strokeWidth = 2f })
                 for (i in 0 until 3) {
@@ -204,7 +218,7 @@ object Origami {
                 val look = Combo.Look(0, t.ink, t.sub, t.ink, t.shadow, 0)
                 // 1. panel: konum (yükselen kat)
                 cv.save(); cv.rotate(deg, pad + third / 2, Hf / 2)
-                val cp = txt(tf, Hf * .18f, t.ink, t).apply { isFakeBoldText = true }
+                val cp = txt(tf, Hf * .18f, Ink.get(c, Ink.LOC) ?: t.ink, t).apply { isFakeBoldText = true }
                 val c2 = WeatherRepo.city2(c)
                 val blockW = Hf * .2f + cp.measureText(city)
                 val x0 = pad + (third - blockW) / 2
@@ -214,12 +228,12 @@ object Origami {
                 cv.restore()
                 // 2. panel: saat (alçalan kat, ortada)
                 cv.save(); cv.rotate(-deg, Wf / 2, Hf / 2)
-                cv.drawText(SimpleDateFormat("HH:mm", tr).format(now), Wf / 2, Hf * .58f, Lock.clockPaint(c, Hf * .38f, t.ink, look))
+                Ink.time(c, cv, SimpleDateFormat("HH:mm", tr).format(now), Wf / 2, Hf * .58f, Lock.clockPaint(c, Hf * .38f, t.ink, look))
                 cv.drawText(SimpleDateFormat("EEE, d MMM", tr).format(now), Wf / 2, Hf * .78f, txt(tf, Hf * .12f, t.sub, t, Paint.Align.CENTER))
                 cv.restore()
                 // 3. panel: hava (yükselen kat)
                 cv.save(); cv.rotate(deg, pad + 2.5f * third, Hf / 2)
-                val tp = txt(cf, Hf * .3f, t.ink, t)
+                val tp = txt(cf, Hf * .3f * Ink.tempScale(c), Ink.get(c, Ink.TEMP) ?: t.ink, t)
                 val iw = Hf * .7f
                 val gx = pad + 2 * third + (third - iw - tp.measureText(temp)) / 2
                 Combo.icon(c, cv, ic, gx + iw / 2, Hf / 2, iw)
@@ -230,12 +244,12 @@ object Origami {
                 val s = min(Wf, Hf)
                 val ox = (Wf - s) / 2; val oy = (Hf - s) / 2
                 card(cv, RectF(ox + pad, oy + pad, ox + s - pad, oy + s - pad), s * .16f, t, 9)
-                val cp = txt(tf, s * .075f, t.ink, t, Paint.Align.LEFT).apply { isFakeBoldText = true }
+                val cp = txt(tf, s * .075f, Ink.get(c, Ink.LOC) ?: t.ink, t, Paint.Align.LEFT).apply { isFakeBoldText = true }
                 val cw = cp.measureText(city) + s * .09f
                 val x1 = pin(c, cv, ox + (s - cw) / 2, oy + s * .17f, s * .075f)
                 cv.drawText(city, x1, oy + s * .17f, cp)
                 Combo.icon(c, cv, ic, ox + s / 2, oy + s * .46f, s * .54f)
-                cv.drawText(temp, ox + s / 2, oy + s * .83f, txt(cf, s * .18f, t.ink, t, Paint.Align.CENTER))
+                cv.drawText(temp, ox + s / 2, oy + s * .83f, txt(cf, s * .18f * Ink.tempScale(c), Ink.get(c, Ink.TEMP) ?: t.ink, t, Paint.Align.CENTER))
                 cv.drawText(desc, ox + s / 2, oy + s * .93f, txt(tf, s * .062f, t.sub, t, Paint.Align.CENTER))
             }
             else -> {
@@ -252,8 +266,8 @@ object Origami {
                 }
                 Combo.icon(c, cv, ic, ox + s * .3f, oy + s * .3f, s * .52f)
                 val right = ox + s * .92f
-                cv.drawText(temp, right, oy + s * .67f, txt(cf, s * .22f, t.ink, t, Paint.Align.RIGHT))
-                val cp = txt(tf, s * .07f, t.ink, t, Paint.Align.RIGHT).apply { isFakeBoldText = true }
+                cv.drawText(temp, right, oy + s * .67f, txt(cf, s * .22f * Ink.tempScale(c), Ink.get(c, Ink.TEMP) ?: t.ink, t, Paint.Align.RIGHT))
+                val cp = txt(tf, s * .07f, Ink.get(c, Ink.LOC) ?: t.ink, t, Paint.Align.RIGHT).apply { isFakeBoldText = true }
                 pin(c, cv, right - cp.measureText(city) - s * .085f, oy + s * .8f, s * .07f)
                 cv.drawText(city, right, oy + s * .8f, cp)
                 w?.days?.firstOrNull()?.let { cv.drawText("Y ${it.max}°  D ${it.min}°", right, oy + s * .9f, txt(tf, s * .058f, t.sub, t, Paint.Align.RIGHT)) }

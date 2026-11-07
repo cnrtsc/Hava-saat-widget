@@ -163,6 +163,107 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ikili" />
         </receiver>
+        <receiver android:name=".W_Devsaat" android:exported="true" android:label="Dev saat">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_devsaat" />
+        </receiver>
+        <receiver android:name=".W_Editoryal" android:exported="true" android:label="Editoryal">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_editoryal" />
+        </receiver>
+        <receiver android:name=".W_Dikey" android:exported="true" android:label="Dikey">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_dikey" />
+        </receiver>
+        <receiver android:name=".W_Kolaj" android:exported="true" android:label="Kolaj">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_kolaj" />
+        </receiver>
+        <receiver android:name=".W_CZarf" android:exported="true" android:label="Zarf">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_czarf" />
+        </receiver>
+        <receiver android:name=".W_CPola" android:exported="true" android:label="Polaroid">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cpola" />
+        </receiver>
+        <receiver android:name=".W_CBilet" android:exported="true" android:label="Bilet">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cbilet" />
+        </receiver>
+        <receiver android:name=".W_CTakvimy" android:exported="true" android:label="Takvim yaprağı">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ctakvimy" />
+        </receiver>
+        <receiver android:name=".W_CAkor" android:exported="true" android:label="Akordeon">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cakor" />
+        </receiver>
+        <receiver android:name=".W_CEtiket" android:exported="true" android:label="Etiket">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cetiket" />
+        </receiver>
+        <receiver android:name=".W_CYigin" android:exported="true" android:label="Kart yığını">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cyigin" />
+        </receiver>
+        <receiver android:name=".W_CPolaKare" android:exported="true" android:label="Polaroid (kare)">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cpola_sq" />
+        </receiver>
+        <receiver android:name=".W_CTakvimyKare" android:exported="true" android:label="Takvim yaprağı (kare)">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ctakvimy_sq" />
+        </receiver>
+        <receiver android:name=".W_CEtiketKare" android:exported="true" android:label="Etiket (kare)">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cetiket_sq" />
+        </receiver>
+        <receiver android:name=".W_CYiginKare" android:exported="true" android:label="Kart yığını (kare)">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_cyigin_sq" />
+        </receiver>
+        <receiver android:name=".W_Animli" android:exported="true" android:label="Animasyonlu hava">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_anim" />
+        </receiver>
+        <receiver android:name=".W_AnimliKare" android:exported="true" android:label="Animasyonlu hava (kare)">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_anim_sq" />
+        </receiver>
+        <provider android:name=".AnimProvider" android:authorities="${applicationId}.anim" android:exported="true" />
+        <receiver android:name=".W_GsBeyaz" android:exported="true" android:label="Sarı-kırmızı beyaz">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gsw" />
+        </receiver>
+        <receiver android:name=".W_GsBeyazKare" android:exported="true" android:label="Sarı-kırmızı beyaz (kare)">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gsw_sq" />
+        </receiver>
+        <receiver android:name=".W_GsBeyazSerit" android:exported="true" android:label="Sarı-kırmızı beyaz (şerit)">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gsw_st" />
+        </receiver>
+        <receiver android:name=".W_GsSiyah" android:exported="true" android:label="Sarı-kırmızı siyah">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gsb" />
+        </receiver>
+        <receiver android:name=".W_GsSiyahKare" android:exported="true" android:label="Sarı-kırmızı siyah (kare)">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gsb_sq" />
+        </receiver>
+        <receiver android:name=".W_GsSiyahSerit" android:exported="true" android:label="Sarı-kırmızı siyah (şerit)">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gsb_st" />
+        </receiver>
+        <receiver android:name=".W_Hizlibakis" android:exported="true" android:label="Hızlı bakış">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_glance" />
+        </receiver>
+        <receiver android:name=".W_HizlibakisGenis" android:exported="true" android:label="Hızlı bakış (geniş)">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_glance_w" />
+        </receiver>
         <receiver android:name=".W_Noktamatris" android:exported="true" android:label="Nokta matris">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_noktamatris" />

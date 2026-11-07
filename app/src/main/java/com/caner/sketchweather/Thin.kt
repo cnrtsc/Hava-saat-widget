@@ -101,7 +101,7 @@ object Thin {
                 val rx = mid + Hf * .25f
                 val x1 = pin(c, cv, rx, Hf * .36f, Hf * .15f)
                 cv.drawText("ŞU AN · $city", x1, Hf * .36f, fit(t(tf, Hf * .15f, sub), "ŞU AN · $city", inR - x1))
-                cv.drawText(SimpleDateFormat("HH:mm", tr).format(now), rx, Hf * .76f, clk)
+                Ink.time(c, cv, SimpleDateFormat("HH:mm", tr).format(now), rx, Hf * .76f, clk)
                 val lx = rx + clk.measureText(SimpleDateFormat("HH:mm", tr).format(now)) + Hf * .08f
                 Combo.icon(c, cv, icon, lx + Hf * .16f, Hf * .62f, Hf * .32f)
                 cv.drawText(temp, lx + Hf * .34f, Hf * .74f, t(tf, Hf * .2f, ink))

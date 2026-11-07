@@ -31,7 +31,45 @@ object Decor {
     fun radius(c: Context) = Cfg.int(c, "ubgRad", 2).coerceIn(0, RADIUS.size - 1)
     fun frame(c: Context) = Cfg.int(c, "ubgFrame", 0).coerceIn(0, FRAME_NAMES.size - 1)
     fun frameColor(c: Context) = Cfg.int(c, "ubgFrameCol", 0).coerceIn(0, FRAME_COLOR_NAMES.size - 1)
-    fun active(c: Context) = mode(c) > 0 || frame(c) > 0
+    val SHAPE_NAMES = arrayOf("Dikdörtgen", "Kurabiye", "Çiçek", "Kemer", "Hap", "Kesik köşe", "Damla", "Bilet")
+    fun shape(c: Context) = Cfg.int(c, "ubgShape", 0).coerceIn(0, SHAPE_NAMES.size - 1)
+    fun active(c: Context) = mode(c) > 0 || frame(c) > 0 || shape(c) > 0
+
+    /** Widget silüeti (Material 3 Expressive esinli şekiller). */
+    fun shapePath(kind: Int, r: RectF, rad: Float): Path {
+        val m = min(r.width(), r.height())
+        return when (kind) {
+            1, 2 -> {
+                val base = Path().apply { val rr = m * (if (kind == 1) .22f else .3f); addRoundRect(r, rr, rr, Path.Direction.CW) }
+                val pm = android.graphics.PathMeasure(base, true); val len = pm.length
+                val n = maxOf(8, (len / (m * (if (kind == 1) .2f else .42f))).toInt())
+                val amp = m * (if (kind == 1) .028f else .055f)
+                val out = Path(); val pos = FloatArray(2); val tan = FloatArray(2)
+                val steps = n * 16
+                for (i in 0..steps) {
+                    val d = len * i / steps; pm.getPosTan(d, pos, tan)
+                    val off = amp * (1 - kotlin.math.cos(2 * Math.PI * n * i / steps).toFloat()) / 2
+                    // saat yönündeki yolda içeri bakan normal: (-tan.y, tan.x)
+                    val nx = pos[0] - tan[1] * off; val ny = pos[1] + tan[0] * off
+                    if (i == 0) out.moveTo(nx, ny) else out.lineTo(nx, ny)
+                }
+                out.close(); out
+            }
+            3 -> Path().apply { val big = min(m / 2, r.width() / 2); val sm = m * .1f
+                addRoundRect(r, floatArrayOf(big, big, big, big, sm, sm, sm, sm), Path.Direction.CW) }
+            4 -> Path().apply { addRoundRect(r, m / 2, m / 2, Path.Direction.CW) }
+            5 -> { val ch = m * .22f
+                val p = Path().apply { moveTo(r.left + ch, r.top); lineTo(r.right - ch, r.top); lineTo(r.right, r.top + ch); lineTo(r.right, r.bottom - ch)
+                    lineTo(r.right - ch, r.bottom); lineTo(r.left + ch, r.bottom); lineTo(r.left, r.bottom - ch); lineTo(r.left, r.top + ch); close() }
+                val o = Path(); Paint().apply { pathEffect = android.graphics.CornerPathEffect(m * .08f) }.getFillPath(p, o); o }
+            6 -> Path().apply { val big = m * .42f; val sm = m * .06f
+                addRoundRect(r, floatArrayOf(big, big, big, big, sm, sm, big, big), Path.Direction.CW) }
+            7 -> { val p = Path().apply { addRoundRect(r, m * .12f, m * .12f, Path.Direction.CW) }
+                val nr = m * .09f
+                p.op(Path().apply { addCircle(r.left, r.centerY(), nr, Path.Direction.CW); addCircle(r.right, r.centerY(), nr, Path.Direction.CW) }, Path.Op.DIFFERENCE); p }
+            else -> Path().apply { addRoundRect(r, rad, rad, Path.Direction.CW) }
+        }
+    }
 
     /** Kaynak görselin arkasına zemin, önüne çerçeve ekler. */
     fun decorate(c: Context, w: Weather?, src: Bitmap): Bitmap {
@@ -41,7 +79,7 @@ object Decor {
         val k = 2.5f
         val r = RectF(3 * k, 3 * k, src.width - 3 * k, src.height - 3 * k)
         val rad = min(RADIUS[radius(c)] * k, min(r.width(), r.height()) / 2)
-        val clip = Path().apply { addRoundRect(r, rad, rad, Path.Direction.CW) }
+        val clip = shapePath(shape(c), r, rad)
         if (mode(c) > 0) {
             val layer = cv.saveLayerAlpha(0f, 0f, out.width.toFloat(), out.height.toFloat(), (op(c) * 2.55f).toInt())
             cv.save(); cv.clipPath(clip)
@@ -50,6 +88,12 @@ object Decor {
             cv.restoreToCount(layer)
         }
         cv.drawBitmap(src, 0f, 0f, null)
+        if (shape(c) > 0) {
+            val mask = Bitmap.createBitmap(out.width, out.height, Bitmap.Config.ALPHA_8)
+            Canvas(mask).drawPath(clip, Paint(Paint.ANTI_ALIAS_FLAG))
+            cv.drawBitmap(mask, 0f, 0f, Paint().apply { xfermode = android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.DST_IN) })
+            mask.recycle()
+        }
         if (frame(c) > 0) {
             val col = when (frameColor(c)) { 1 -> Color.BLACK; 2 -> Palette.get(c).accentLight; 3 -> 0xFFE3B65A.toInt(); else -> Color.WHITE }
             cv.drawPath(clip, Paint(Paint.ANTI_ALIAS_FLAG).apply {

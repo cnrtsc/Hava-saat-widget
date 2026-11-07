@@ -123,7 +123,7 @@ object SkyCard {
         }
         val now = Date()
         val cp = Lock.clockPaint(c, R * .42f, lk.ink, lk)
-        cv.drawText(SimpleDateFormat("HH:mm", tr).format(now), rcx, rcy + R * .1f, cp)
+        Ink.time(c, cv, SimpleDateFormat("HH:mm", tr).format(now), rcx, rcy + R * .1f, cp)
         cv.drawText(SimpleDateFormat("d MMMM EEEE", tr).format(now), rcx, rcy + R * .38f, Combo.text(tf, R * .13f, lk.sub, lk))
         // alt şerit
         val bar = RectF(card.left + pad, barTop + pad * .5f, card.right - pad, card.bottom - pad)

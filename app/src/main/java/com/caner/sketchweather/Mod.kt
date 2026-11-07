@@ -44,7 +44,7 @@ object Mod {
                 val now = Date()
                 cv.drawText(WeatherRepo.city(c), cx, cy - d * .22f, Combo.text(tf, d * .06f, lk.sub, lk))
                 val cp = Lock.clockPaint(c, d * .26f, lk.ink, lk)
-                cv.drawText(SimpleDateFormat("HH:mm", tr).format(now), cx, cy + d * .08f, cp)
+                Ink.time(c, cv, SimpleDateFormat("HH:mm", tr).format(now), cx, cy + d * .08f, cp)
                 cv.drawText(SimpleDateFormat("d MMMM EEEE", tr).format(now), cx, cy + d * .2f, Combo.text(tf, d * .05f, lk.sub, lk))
             }
             2, 3, 4 -> RoundW.content(c, cv, cx, cy, d, lk, w, which - 2)

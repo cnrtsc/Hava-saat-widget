@@ -99,6 +99,21 @@ object Widgets {
         R.layout.w_thin_rain to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_thin_sentence to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_minipills to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_anim to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs_white to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_gs_black to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_glance to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_card_zarf to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_card_pola to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_card_bilet to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_card_takvimy to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_card_akor to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_card_etiket to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_card_yigin to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_asym_big to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_asym_edit to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_asym_vert to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_asym_collage to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_th_dot to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_th_flip to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_th_swiss to Spec(30f, 30f, 11f, "EEE"),
@@ -112,10 +127,18 @@ object Widgets {
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
     )
     private val DIAL_LAYOUTS = setOf(
+        R.layout.w_glance,
+        R.layout.w_gs_black,
+        R.layout.w_gs_white,
+        R.layout.w_anim,
+        R.layout.w_card_zarf, R.layout.w_card_pola, R.layout.w_card_bilet, R.layout.w_card_takvimy, R.layout.w_card_akor, R.layout.w_card_etiket, R.layout.w_card_yigin,
+        R.layout.w_asym_big, R.layout.w_asym_edit, R.layout.w_asym_vert, R.layout.w_asym_collage,
         R.layout.w_thin_loc, R.layout.w_thin_home, R.layout.w_thin_rain, R.layout.w_thin_sentence, R.layout.w_minipills,
         R.layout.w_square1, R.layout.w_square2, R.layout.w_square5, R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo, R.layout.w_roundw0, R.layout.w_roundw1, R.layout.w_roundw2, R.layout.w_lock, R.layout.w_lockc, R.layout.w_duo, R.layout.w_mod_pil, R.layout.w_mod_ay, R.layout.w_mod_takvim, R.layout.w_strip, R.layout.w_graph, R.layout.w_bentox, R.layout.w_bentosq, R.layout.w_skycard, R.layout.w_pills, R.layout.w_ori_card, R.layout.w_ori_strip, R.layout.w_ori_square, R.layout.w_ori_diag, R.layout.w_thin_loc, R.layout.w_thin_home, R.layout.w_thin_rain, R.layout.w_thin_sentence, R.layout.w_minipills, R.layout.w_th_dot, R.layout.w_th_flip, R.layout.w_th_swiss, R.layout.w_th_prog, R.layout.w_th_term, R.layout.w_th_paper, R.layout.w_th_sector, R.layout.w_th_neu
     )
     private val PALETTE_LAYOUTS = setOf(
+        R.layout.w_card_zarf, R.layout.w_card_pola, R.layout.w_card_bilet, R.layout.w_card_takvimy, R.layout.w_card_akor, R.layout.w_card_etiket, R.layout.w_card_yigin,
+        R.layout.w_asym_big, R.layout.w_asym_edit, R.layout.w_asym_vert, R.layout.w_asym_collage,
         R.layout.w_wide6, R.layout.w_wide7, R.layout.w_wide8, R.layout.w_compact1, R.layout.w_compact2,
         R.layout.w_square1, R.layout.w_square2, R.layout.w_square3, R.layout.w_square4, R.layout.w_square5,
         R.layout.w_square6, R.layout.w_square7, R.layout.w_square8, R.layout.w_combo,
@@ -196,6 +219,7 @@ object Widgets {
     }
 
     fun renderAll(c: Context, w: Weather?) {
+        Style.migrate(c)
         val mgr = AppWidgetManager.getInstance(c)
         var any = false
         val p = WeatherRepo.prefs(c)
@@ -212,7 +236,7 @@ object Widgets {
                     hdp = when (e.size) { "s" -> 160; "c" -> 70; "m" -> 50; "t" -> 250; else -> 170 }
                 }
                 try {
-                    mgr.updateAppWidget(id, Cfg.with(id) { build(c, layout, w, wdp, hdp) })
+                    mgr.updateAppWidget(id, Cfg.with(id) { Ink.begin(c); build(c, layout, w, wdp, hdp) })
                 } catch (ex: Exception) {
                     // bir stil hata verse de diğerleri çizilsin
                 }
@@ -230,7 +254,7 @@ object Widgets {
     fun preview(c: Context, id: Int, wdp: Int, hdp: Int): RemoteViews? {
         val info = AppWidgetManager.getInstance(c).getAppWidgetInfo(id) ?: return null
         val e = Registry.ofClass(info.provider.className) ?: return null
-        return Cfg.with(id) { build(c, layoutFor(c, id, e), WeatherRepo.cached(c), wdp, hdp) }
+        return Cfg.with(id) { Ink.begin(c); build(c, layoutFor(c, id, e), WeatherRepo.cached(c), wdp, hdp) }
     }
 
     /** Saati her dakika başında yeniler. */
@@ -252,7 +276,7 @@ object Widgets {
         }
     }
 
-    private fun textBitmap(c: Context, text: String, tf: Typeface, sp: Float, color: Int, shadow: Boolean, fx: Int = 0): Bitmap {
+    private fun textBitmap(c: Context, text: String, tf: Typeface, sp: Float, color: Int, shadow: Boolean, fx: Int = 0, clock: Boolean = false): Bitmap {
         val dm = c.resources.displayMetrics
         val px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, dm)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.SUBPIXEL_TEXT_FLAG).apply {
@@ -262,12 +286,15 @@ object Widgets {
             if (shadow) setShadowLayer(px * 0.07f, 0f, px * 0.03f, 0x80000000.toInt())
         }
         Lock.applyFx(paint, fx, px, color)
+        Ink.shadowOverride(paint)
+        if (clock) Ink.applyClock(c, paint, px)
         val fm = paint.fontMetrics
-        val pad = when { fx == 4 -> px * .3f; fx == 5 || fx == 3 -> px * .2f; shadow || fx > 0 -> px * 0.12f; else -> 2f }
-        val w = ceil(paint.measureText(text) + pad * 2).toInt().coerceAtLeast(1)
+        val pad = when { fx == 4 -> px * .3f; fx == 5 || fx == 3 -> px * .2f; shadow || fx > 0 -> px * 0.12f; else -> 2f } + paint.strokeWidth
+        val tw = if (clock) Ink.measure(c, text, paint) else paint.measureText(text)
+        val w = ceil(tw + pad * 2).toInt().coerceAtLeast(1)
         val h = ceil(fm.descent - fm.ascent + pad * 2).toInt().coerceAtLeast(1)
         val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        Canvas(bmp).drawText(text, pad, pad - fm.ascent, paint)
+        if (clock) Ink.time(c, Canvas(bmp), text, pad, pad - fm.ascent, paint) else Canvas(bmp).drawText(text, pad, pad - fm.ascent, paint)
         bmp.density = dm.densityDpi
         return bmp
     }
@@ -588,6 +615,21 @@ object Widgets {
             R.layout.w_thin_rain -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Thin.render(c, w, wdp, hdp, Thin.RAIN)))
             R.layout.w_thin_sentence -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Thin.render(c, w, wdp, hdp, Thin.SENTENCE)))
             R.layout.w_minipills -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, MiniPills.render(c, w, wdp, hdp)))
+            R.layout.w_anim -> Anim.apply(c, v, w, wdp, hdp)
+            R.layout.w_gs_white -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render(c, w, wdp, hdp, GS.WHITE)))
+            R.layout.w_gs_black -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render(c, w, wdp, hdp, GS.BLACK)))
+            R.layout.w_glance -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Glance.render(c, w, wdp, hdp)))
+            R.layout.w_card_zarf -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.ZARF)))
+            R.layout.w_card_pola -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.POLA)))
+            R.layout.w_card_bilet -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.BILET)))
+            R.layout.w_card_takvimy -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.TAKVIM)))
+            R.layout.w_card_akor -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.AKOR)))
+            R.layout.w_card_etiket -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.ETIKET)))
+            R.layout.w_card_yigin -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.YIGIN)))
+            R.layout.w_asym_big -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Asym.render(c, w, wdp, hdp, Asym.BIG)))
+            R.layout.w_asym_edit -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Asym.render(c, w, wdp, hdp, Asym.EDIT)))
+            R.layout.w_asym_vert -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Asym.render(c, w, wdp, hdp, Asym.VERT)))
+            R.layout.w_asym_collage -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Asym.render(c, w, wdp, hdp, Asym.COLLAGE)))
             R.layout.w_th_dot -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.DOT)))
             R.layout.w_th_flip -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.FLIP)))
             R.layout.w_th_swiss -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Themes.render(c, w, wdp, hdp, Themes.SWISS)))
@@ -621,13 +663,18 @@ object Widgets {
             v.setTextColor(R.id.now_desc, pal.onContSub)
         }
 
+        Ink.get(c, Ink.CLOCK)?.let { clockCol = it; hourCol = it }
+        Ink.get(c, Ink.MIN)?.let { minCol = it } ?: run { if (Ink.style(c) == 1) minCol = Ink.get(c, Ink.ACC) ?: pal.accentLight }
+        Ink.get(c, Ink.SUB)?.let { dateCol = it }
+        Ink.get(c, Ink.TEMP)?.let { tempCol = it }
+        Ink.get(c, Ink.LOC)?.let { v.setTextColor(R.id.city, it); v.setInt(R.id.pin, "setColorFilter", it) }
         val cTf = if (handFont) Style.handTypeface(c) else clockTf
         if (handFont) { tempTf = cTf; dateTf = cTf }
         val fx = Style.clockFx(c)
-        v.setImageViewBitmap(R.id.clock, textBitmap(c, "$hh:$mm", cTf, spec.clock * csc, clockCol, shadow, fx))
+        v.setImageViewBitmap(R.id.clock, textBitmap(c, "$hh:$mm", cTf, spec.clock * csc, clockCol, shadow, fx, clock = true))
         home?.let { v.setImageViewBitmap(R.id.clock2, textBitmap(c, it, clockTf, spec.clock * csc, c1, shadow)) }
-        v.setImageViewBitmap(R.id.clock_h, textBitmap(c, hh, clockTf, spec.clock * csc, hourCol, shadow, fx))
-        v.setImageViewBitmap(R.id.clock_m, textBitmap(c, mm, clockTf, spec.clock * csc, minCol, shadow, fx))
+        v.setImageViewBitmap(R.id.clock_h, textBitmap(c, hh, clockTf, spec.clock * csc, hourCol, shadow, fx, clock = true))
+        v.setImageViewBitmap(R.id.clock_m, textBitmap(c, mm, clockTf, spec.clock * csc, minCol, shadow, fx, clock = true))
         v.setImageViewBitmap(R.id.date, textBitmap(c, dateStr, dateTf, spec.date * tsc, dateCol, shadow))
         v.setImageViewBitmap(R.id.now_temp, textBitmap(c, tempStr, tempTf, spec.temp * tsc, tempCol, shadow))
         if (handFont) v.setImageViewBitmap(R.id.feels_img, textBitmap(c, "hissedilen $feelsStr", cTf, 16f, feelsCol, false))

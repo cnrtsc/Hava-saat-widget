@@ -40,7 +40,7 @@ object Extra {
         val cp = Lock.clockPaint(c, H * .5f, lk.ink, lk).apply { textAlign = Paint.Align.LEFT }
         val time = SimpleDateFormat("HH:mm", tr).format(Date())
         val fm = cp.fontMetrics
-        cv.drawText(time, H * .35f, H / 2 - (fm.ascent + fm.descent) / 2, cp)
+        Ink.time(c, cv, time, H * .35f, H / 2 - (fm.ascent + fm.descent) / 2, cp)
         val x0 = H * .45f + cp.measureText(time) + H * .35f
         val x1 = W - H * .9f
         val y = H * .56f
@@ -78,7 +78,7 @@ object Extra {
         cv.drawText(WeatherRepo.city(c), pad, H * .16f, Combo.text(tf, H * .075f, lk.ink, lk, Paint.Align.LEFT))
         val sub = if (w != null) "${w.temp}°  ·  ${WeatherRepo.label(w.code)}" else "Yükleniyor…"
         cv.drawText(sub, pad, H * .26f, Combo.text(tf, H * .06f, lk.sub, lk, Paint.Align.LEFT))
-        cv.drawText(SimpleDateFormat("HH:mm", tr).format(Date()), W - pad, H * .24f, Lock.clockPaint(c, H * .16f, lk.ink, lk).apply { textAlign = Paint.Align.RIGHT })
+        Ink.time(c, cv, SimpleDateFormat("HH:mm", tr).format(Date()), W - pad, H * .24f, Lock.clockPaint(c, H * .16f, lk.ink, lk).apply { textAlign = Paint.Align.RIGHT })
         val hrs = w?.hours?.take(13) ?: return b
         if (hrs.size < 2) return b
         val top = H * .52f; val bot = H * .80f

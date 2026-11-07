@@ -12,11 +12,15 @@ import kotlin.math.min
 
 /** Kilit ekranı tarzı: üstte tarih + hava satırı, altında büyük saat (isteğe bağlı çerçeve). */
 object Lock {
-    fun clockPaint(c: Context, size: Float, color: Int, lk: Combo.Look): Paint {
+    fun clockPaint(c: Context, size: Float, color: Int, lk: Combo.Look): Paint = clockPaintTf(c, Style.clockTypeface(c, Style.font(c)), size, color, lk)
+
+    fun clockPaintTf(c: Context, tf: android.graphics.Typeface, size: Float, color: Int, lk: Combo.Look): Paint {
         val sz = size * Style.clockScale(c)
-        val p = Combo.text(Style.clockTypeface(c, Style.font(c)), size, color, lk)
+        val col = Ink.get(c, Ink.CLOCK) ?: color
+        val p = Combo.text(tf, size, col, lk)
         p.textSize = sz
-        applyFx(p, Style.clockFx(c), sz, color)
+        applyFx(p, Style.clockFx(c), sz, col)
+        Ink.applyClock(c, p, sz)
         return p
     }
 
@@ -72,7 +76,7 @@ object Lock {
             val fm = cp.fontMetrics
             val cy = H * .63f
             val base = cy - (fm.ascent + fm.descent) / 2
-            cv.drawText(time, W / 2f, base, cp)
+            Ink.time(c, cv, time, W / 2f, base, cp)
             if (Combo.rim(c)) {
                 val tw = cp.measureText(time)
                 val r = RectF(W / 2f - tw / 2 - size * .22f, cy - size * .52f, W / 2f + tw / 2 + size * .22f, cy + size * .52f)
@@ -84,11 +88,11 @@ object Lock {
             val size = min(H * .62f, W * .19f)
             val cp = clockPaint(c, size, lk.ink, lk).apply { textAlign = Paint.Align.LEFT }
             val fm = cp.fontMetrics
-            cv.drawText(time, 16 * k, H / 2f - (fm.ascent + fm.descent) / 2, cp)
+            Ink.time(c, cv, time, 16 * k, H / 2f - (fm.ascent + fm.descent) / 2, cp)
             val xr = W - 16 * k
             val tp = Combo.text(tf, H * .2f, lk.sub, lk, Paint.Align.RIGHT)
             cv.drawText(dateStr, xr, H * .40f, tp)
-            val tp2 = Combo.text(tf, H * .24f, lk.ink, lk, Paint.Align.RIGHT)
+            val tp2 = Combo.text(tf, H * .24f, Ink.get(c, Ink.TEMP) ?: lk.ink, lk, Paint.Align.RIGHT)
             cv.drawText(temp, xr, H * .76f, tp2)
             if (w != null) Combo.icon(c, cv, Style.icon(c, w.code, w.isDay), xr - tp2.measureText(temp) - H * .2f, H * .68f, H * .3f)
         }

@@ -33,6 +33,10 @@ class W_Yuvdetay : BaseWidget()
 class W_Yuv3gun : BaseWidget()
 class W_Kilit : BaseWidget()
 class W_Ikili : BaseWidget()
+class W_Devsaat : BaseWidget()
+class W_Editoryal : BaseWidget()
+class W_Dikey : BaseWidget()
+class W_Kolaj : BaseWidget()
 class W_Noktamatris : BaseWidget()
 class W_Flipsaat : BaseWidget()
 class W_Isvicre : BaseWidget()
@@ -51,6 +55,27 @@ class W_Cumle : BaseWidget()
 class W_Pil : BaseWidget()
 class W_Takvim : BaseWidget()
 class W_Kilitince : BaseWidget()
+class W_Hizlibakis : BaseWidget()
+class W_HizlibakisGenis : BaseWidget()
+class W_GsBeyaz : BaseWidget()
+class W_GsBeyazKare : BaseWidget()
+class W_GsBeyazSerit : BaseWidget()
+class W_GsSiyah : BaseWidget()
+class W_GsSiyahKare : BaseWidget()
+class W_GsSiyahSerit : BaseWidget()
+class W_Animli : BaseWidget()
+class W_AnimliKare : BaseWidget()
+class W_CZarf : BaseWidget()
+class W_CPola : BaseWidget()
+class W_CBilet : BaseWidget()
+class W_CTakvimy : BaseWidget()
+class W_CAkor : BaseWidget()
+class W_CEtiket : BaseWidget()
+class W_CYigin : BaseWidget()
+class W_CPolaKare : BaseWidget()
+class W_CTakvimyKare : BaseWidget()
+class W_CEtiketKare : BaseWidget()
+class W_CYiginKare : BaseWidget()
 
 class Entry(val cls: Class<out BaseWidget>, val label: String, val layout: Int, val size: String, val preview: Int)
 
@@ -90,6 +115,31 @@ object Registry {
         Entry(W_Yuv3gun::class.java, "Yuvarlak hava · 3 gün", R.layout.w_roundw2, "s", R.drawable.prev_yuv3gun),
         Entry(W_Kilit::class.java, "Kilit ekranı saati", R.layout.w_lock, "w", R.drawable.prev_kilit),
         Entry(W_Ikili::class.java, "İkili yuvarlak", R.layout.w_duo, "w", R.drawable.prev_ikili),
+        Entry(W_Devsaat::class.java, "Dev saat", R.layout.w_asym_big, "w", R.drawable.prev_devsaat),
+        Entry(W_Editoryal::class.java, "Editoryal", R.layout.w_asym_edit, "w", R.drawable.prev_editoryal),
+        Entry(W_Dikey::class.java, "Dikey", R.layout.w_asym_vert, "s", R.drawable.prev_dikey),
+        Entry(W_Kolaj::class.java, "Kolaj", R.layout.w_asym_collage, "w", R.drawable.prev_kolaj),
+        Entry(W_Animli::class.java, "Animasyonlu hava", R.layout.w_anim, "w", R.drawable.prev_anim),
+        Entry(W_AnimliKare::class.java, "Animasyonlu hava (kare)", R.layout.w_anim, "s", R.drawable.prev_anim_sq),
+        Entry(W_GsBeyaz::class.java, "Sarı-kırmızı beyaz", R.layout.w_gs_white, "w", R.drawable.prev_gsw),
+        Entry(W_GsBeyazKare::class.java, "Sarı-kırmızı beyaz (kare)", R.layout.w_gs_white, "s", R.drawable.prev_gsw_sq),
+        Entry(W_GsBeyazSerit::class.java, "Sarı-kırmızı beyaz (şerit)", R.layout.w_gs_white, "c", R.drawable.prev_gsw_st),
+        Entry(W_GsSiyah::class.java, "Sarı-kırmızı siyah", R.layout.w_gs_black, "w", R.drawable.prev_gsb),
+        Entry(W_GsSiyahKare::class.java, "Sarı-kırmızı siyah (kare)", R.layout.w_gs_black, "s", R.drawable.prev_gsb_sq),
+        Entry(W_GsSiyahSerit::class.java, "Sarı-kırmızı siyah (şerit)", R.layout.w_gs_black, "c", R.drawable.prev_gsb_st),
+        Entry(W_Hizlibakis::class.java, "Hızlı bakış", R.layout.w_glance, "s", R.drawable.prev_glance),
+        Entry(W_HizlibakisGenis::class.java, "Hızlı bakış (geniş)", R.layout.w_glance, "w", R.drawable.prev_glance_w),
+        Entry(W_CZarf::class.java, "Zarf", R.layout.w_card_zarf, "w", R.drawable.prev_czarf),
+        Entry(W_CPola::class.java, "Polaroid", R.layout.w_card_pola, "w", R.drawable.prev_cpola),
+        Entry(W_CBilet::class.java, "Bilet", R.layout.w_card_bilet, "w", R.drawable.prev_cbilet),
+        Entry(W_CTakvimy::class.java, "Takvim yaprağı", R.layout.w_card_takvimy, "w", R.drawable.prev_ctakvimy),
+        Entry(W_CAkor::class.java, "Akordeon", R.layout.w_card_akor, "w", R.drawable.prev_cakor),
+        Entry(W_CEtiket::class.java, "Etiket", R.layout.w_card_etiket, "w", R.drawable.prev_cetiket),
+        Entry(W_CYigin::class.java, "Kart yığını", R.layout.w_card_yigin, "w", R.drawable.prev_cyigin),
+        Entry(W_CPolaKare::class.java, "Polaroid (kare)", R.layout.w_card_pola, "s", R.drawable.prev_cpola_sq),
+        Entry(W_CTakvimyKare::class.java, "Takvim yaprağı (kare)", R.layout.w_card_takvimy, "s", R.drawable.prev_ctakvimy_sq),
+        Entry(W_CEtiketKare::class.java, "Etiket (kare)", R.layout.w_card_etiket, "s", R.drawable.prev_cetiket_sq),
+        Entry(W_CYiginKare::class.java, "Kart yığını (kare)", R.layout.w_card_yigin, "s", R.drawable.prev_cyigin_sq),
         Entry(W_Noktamatris::class.java, "Nokta matris", R.layout.w_th_dot, "w", R.drawable.prev_noktamatris),
         Entry(W_Flipsaat::class.java, "Retro flip saat", R.layout.w_th_flip, "w", R.drawable.prev_flipsaat),
         Entry(W_Isvicre::class.java, "İsviçre saat", R.layout.w_th_swiss, "w", R.drawable.prev_isvicre),

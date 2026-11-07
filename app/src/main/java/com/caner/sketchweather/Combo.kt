@@ -52,17 +52,20 @@ object Combo {
         val sub = if (onLight) (if (col == 2) pal.onContSub else Color.rgb(88, 94, 104)) else Color.rgb(222, 228, 236)
         val accent = if (onLight) pal.accent else pal.accentLight
         val rimCol = if (onLight) Color.argb(50, 0, 0, 0) else Color.argb(90, 255, 255, 255)
+        if (a >= .45f) Ink.setBg(base)
+        val acc = Ink.get(c, Ink.ACC) ?: accent
         val tc = Style.textColor(c)
         if (tc != null) {
-            val subTc = Color.argb(200, Color.red(tc), Color.green(tc), Color.blue(tc))
-            return Look(fill, tc, subTc, accent, a < .45f, rimCol)
+            val subTc = Ink.get(c, Ink.SUB) ?: Color.argb(200, Color.red(tc), Color.green(tc), Color.blue(tc))
+            return Look(fill, tc, subTc, acc, a < .45f, rimCol)
         }
-        return Look(fill, ink, sub, accent, a < .45f, rimCol)
+        return Look(fill, ink, Ink.get(c, Ink.SUB) ?: sub, acc, a < .45f, rimCol)
     }
 
     fun paint(color: Int, lk: Look) = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         this.color = color
         if (lk.shadow) setShadowLayer(6f, 0f, 2f, 0x90000000.toInt())
+        Ink.shadowOverride(this)
     }
 
     var textMul = 1f

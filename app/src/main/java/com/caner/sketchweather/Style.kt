@@ -7,25 +7,41 @@ object Style {
     val FONT_NAMES = arrayOf(
         "Sistem", "Outfit", "Manrope", "Poppins", "Bebas Neue",
         "Space Grotesk", "DM Serif", "Josefin Sans", "Urbanist", "El yazısı",
-        "Çift çizgi", "Neon çizgi", "Kabartma", "Mono", "Yuvarlak", "Inter"
+        "Çift çizgi", "Neon çizgi", "Kabartma", "Mono", "Yuvarlak", "Inter",
+        "Unbounded", "Syne", "Dar grotesk", "Fraunces", "Space Mono", "Righteous", "Archivo Black",
+        "Nokta (Doto)", "Big Shoulders", "JetBrains Mono", "Climate Crisis", "Gloock"
     )
     private val CLOCK_FONTS = intArrayOf(
         0, R.font.f_outfit_c, R.font.f_manrope_c, R.font.f_poppins_c, R.font.f_bebas_c,
         R.font.f_grotesk_c, R.font.f_serif_c, R.font.f_josefin_c, R.font.f_urbanist_c, R.font.f_hand_c,
-        R.font.f_train_c, R.font.f_monoton_c, R.font.f_rampart_c, R.font.f_mono_c, R.font.f_quick_c, R.font.f_inter_c
+        R.font.f_train_c, R.font.f_monoton_c, R.font.f_rampart_c, R.font.f_mono_c, R.font.f_quick_c, R.font.f_inter_c,
+        R.font.f_unbounded_c, R.font.f_syne_c, R.font.f_bricolage_c, R.font.f_fraunces_c, R.font.f_spacemono_c, R.font.f_righteous_c, R.font.f_archivo_c,
+        R.font.f_doto_c, R.font.f_shoulders_c, R.font.f_jetbrains_c, R.font.f_climate_c, R.font.f_gloock_c
     )
     private val TEXT_FONTS = intArrayOf(
         0, R.font.f_outfit_t, R.font.f_manrope_t, R.font.f_poppins_t, R.font.f_bebas_t,
         R.font.f_grotesk_t, R.font.f_serif_t, R.font.f_josefin_t, R.font.f_urbanist_t, R.font.f_hand_t,
-        R.font.f_outfit_t, R.font.f_outfit_t, R.font.f_outfit_t, R.font.f_mono_t, R.font.f_quick_t, R.font.f_inter_t
+        R.font.f_outfit_t, R.font.f_outfit_t, R.font.f_outfit_t, R.font.f_mono_t, R.font.f_quick_t, R.font.f_inter_t,
+        R.font.f_unbounded_t, R.font.f_syne_t, R.font.f_bricolage_t, R.font.f_fraunces_t, R.font.f_spacemono_t, R.font.f_syne_t, R.font.f_bricolage_t,
+        R.font.f_doto_t, R.font.f_shoulders_t, R.font.f_jetbrains_t, R.font.f_outfit_t, R.font.f_gloock_c
     )
     val BG_NAMES = arrayOf("Koyu", "Açık", "Şeffaf", "Renkli (palet)")
     val BGS = intArrayOf(R.drawable.bg_dark, R.drawable.bg_light, R.drawable.bg_none, R.drawable.shape_round)
-    val SHAPE_NAMES = arrayOf("Klasik", "Geometrik", "Minimal", "Balon", "Blok", "Ufuk", "Nokta", "Gerçekçi")
+    val SHAPE_NAMES = arrayOf("Klasik", "Geometrik", "Minimal", "Balon", "Blok", "Ufuk", "Nokta", "Bauhaus", "Retro 70'ler", "Çıkartma", "Organik", "Risograf", "Gerçekçi", "Pencere", "Manzara", "Soyut", "Yazı", "Nokta matris", "Damga", "Kil")
+    /** Eski kayıtlarda 7 = Gerçekçi idi; artık 12. Bir kez çevrilir. */
+    fun migrate(c: Context) {
+        val p = WeatherRepo.prefs(c)
+        if (p.getInt("iconVer", 0) >= 2) return
+        val e = p.edit()
+        for ((k, v) in p.all) if (k.endsWith("iconShape") && v == 7) e.putInt(k, 12)
+        e.putInt("iconVer", 2).apply()
+    }
+    /** Kendi stili olan şekiller (stil seçimi yok) */
+    fun fixedStyle(shape: Int) = shape >= 7
     val ICON_STYLE_NAMES = arrayOf("Düz", "Origami", "Eskiz", "Suluboya", "Çizgi", "Kil 3D", "Gradyan", "Neon", "Kesik kağıt", "Pastel")
     fun iconShape(c: Context) = Cfg.int(c, "iconShape", 0).coerceIn(0, SHAPE_NAMES.size - 1)
     fun iconStyle(c: Context) = Cfg.int(c, "iconStyle", 6).coerceIn(0, ICON_STYLE_NAMES.size - 1)
-    fun row(shape: Int, style: Int): IntArray = if (shape >= 7) IconTable.ROWS[70] else IconTable.ROWS[shape * 10 + style]
+    fun row(shape: Int, style: Int): IntArray = if (shape >= 7) IconTable.ROWS[(70 + shape - 7).coerceAtMost(IconTable.ROWS.size - 1)] else IconTable.ROWS[shape * 10 + style]
     fun iconOf(shape: Int, style: Int, code: Int, day: Boolean): Int = row(shape, style)[WeatherRepo.iconIndex(code, day)]
     /** Widget'a özel ikon seçimi yoksa tasarımın önerdiği şekil/stil kullanılır. */
     fun iconPref(c: Context, defShape: Int, defStyle: Int, code: Int, day: Boolean): Int {
@@ -54,7 +70,7 @@ object Style {
     val TEXT_COLOR_NAMES = arrayOf("Otomatik", "Beyaz", "Siyah", "Krem", "Palet rengi", "Açık mavi", "Turuncu")
     fun textColorIdx(c: Context) = get(c, "textColor", 0, TEXT_COLOR_NAMES.size)
     /** 0 = otomatik (null döner) */
-    fun textColor(c: Context): Int? = when (textColorIdx(c)) {
+    fun textColor(c: Context): Int? = Ink.get(c, Ink.TEXT) ?: when (textColorIdx(c)) {
         1 -> 0xFFFFFFFF.toInt(); 2 -> 0xFF1A1C22.toInt(); 3 -> 0xFFF3E6CF.toInt()
         4 -> Palette.get(c).accentLight; 5 -> 0xFFA9D4FF.toInt(); 6 -> 0xFFFFB24A.toInt()
         else -> null
