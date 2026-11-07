@@ -376,6 +376,50 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_gs4_ticket" />
         </receiver>
+        <receiver android:name=".W_ProSd" android:exported="true" android:label="Pro küçük koyu">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_sd" />
+        </receiver>
+        <receiver android:name=".W_ProSl" android:exported="true" android:label="Pro küçük açık">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_sl" />
+        </receiver>
+        <receiver android:name=".W_ProMd" android:exported="true" android:label="Pro orta koyu">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_md" />
+        </receiver>
+        <receiver android:name=".W_ProMl" android:exported="true" android:label="Pro orta açık">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_ml" />
+        </receiver>
+        <receiver android:name=".W_ProM3d" android:exported="true" android:label="Pro orta + 3 gün koyu">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_m3d" />
+        </receiver>
+        <receiver android:name=".W_ProM3l" android:exported="true" android:label="Pro orta + 3 gün açık">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_m3l" />
+        </receiver>
+        <receiver android:name=".W_ProLd" android:exported="true" android:label="Pro büyük koyu">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_ld" />
+        </receiver>
+        <receiver android:name=".W_ProLl" android:exported="true" android:label="Pro büyük açık">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_ll" />
+        </receiver>
+        <receiver android:name=".W_ProTd" android:exported="true" android:label="Pro ince koyu">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_td" />
+        </receiver>
+        <receiver android:name=".W_ProTl" android:exported="true" android:label="Pro ince açık">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_tl" />
+        </receiver>
+        <receiver android:name=".W_ProG" android:exported="true" android:label="Pro bir bakışta">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_g" />
+        </receiver>
         <receiver android:name=".W_Noktamatris" android:exported="true" android:label="Nokta matris">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_noktamatris" />

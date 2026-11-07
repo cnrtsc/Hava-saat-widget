@@ -104,4 +104,15 @@
     <string name="desc_gs4_arch">Kemer pencere · 2x3</string>
     <string name="desc_gs4_stack">Kart yığını GS · 4x2</string>
     <string name="desc_gs4_ticket">Bilet GS · 4x1</string>
+    <string name="desc_pro_sd">Pro küçük koyu · 2x2</string>
+    <string name="desc_pro_sl">Pro küçük açık · 2x2</string>
+    <string name="desc_pro_md">Pro orta koyu · 4x2</string>
+    <string name="desc_pro_ml">Pro orta açık · 4x2</string>
+    <string name="desc_pro_m3d">Pro orta + 3 gün koyu · 4x3</string>
+    <string name="desc_pro_m3l">Pro orta + 3 gün açık · 4x3</string>
+    <string name="desc_pro_ld">Pro büyük koyu · 4x4</string>
+    <string name="desc_pro_ll">Pro büyük açık · 4x4</string>
+    <string name="desc_pro_td">Pro ince koyu · 4x1</string>
+    <string name="desc_pro_tl">Pro ince açık · 4x1</string>
+    <string name="desc_pro_g">Pro bir bakışta · 4x2</string>
 </resources>

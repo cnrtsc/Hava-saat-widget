@@ -55,6 +55,17 @@ class W_Cumle : BaseWidget()
 class W_Pil : BaseWidget()
 class W_Takvim : BaseWidget()
 class W_Kilitince : BaseWidget()
+class W_ProSd : BaseWidget()
+class W_ProSl : BaseWidget()
+class W_ProMd : BaseWidget()
+class W_ProMl : BaseWidget()
+class W_ProM3d : BaseWidget()
+class W_ProM3l : BaseWidget()
+class W_ProLd : BaseWidget()
+class W_ProLl : BaseWidget()
+class W_ProTd : BaseWidget()
+class W_ProTl : BaseWidget()
+class W_ProG : BaseWidget()
 class W_Gs4Hero : BaseWidget()
 class W_Gs4Diag : BaseWidget()
 class W_Gs4Ring : BaseWidget()
@@ -108,7 +119,7 @@ class W_CYiginKare : BaseWidget()
 class Entry(val cls: Class<out BaseWidget>, val label: String, val layout: Int, val size: String, val preview: Int)
 
 object Registry {
-    val SIZE_TITLES = mapOf("m" to "Mini · ek bilgi şeridi", "t" to "Uzun · 4x3", "w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "d" to "Dikey · 2x3", "k" to "Küçük · 2x1", "l" to "Büyük · 5x2")
+    val SIZE_TITLES = mapOf("m" to "Mini · ek bilgi şeridi", "t" to "Uzun · 4x3", "w" to "Geniş · 4x2", "c" to "İnce · 4x1", "s" to "Kare · 2x2", "d" to "Dikey · 2x3", "x" to "Büyük · 4x4", "k" to "Küçük · 2x1", "l" to "Büyük · 5x2")
     val ALL = listOf(
         Entry(W_Origamikart::class.java, "Origami kart", R.layout.w_ori_card, "w", R.drawable.prev_origamikart),
         Entry(W_Origamiserit::class.java, "Origami şerit", R.layout.w_ori_strip, "c", R.drawable.prev_origamiserit),
@@ -185,6 +196,17 @@ object Registry {
         Entry(W_Gs4Arch::class.java, "Kemer pencere", R.layout.w_gs4_arch, "d", R.drawable.prev_gs4_arch),
         Entry(W_Gs4Stack::class.java, "Kart yığını GS", R.layout.w_gs4_stack, "w", R.drawable.prev_gs4_stack),
         Entry(W_Gs4Ticket::class.java, "Bilet GS", R.layout.w_gs4_ticket, "c", R.drawable.prev_gs4_ticket),
+        Entry(W_ProSd::class.java, "Pro küçük koyu", R.layout.w_pro_sd, "s", R.drawable.prev_pro_sd),
+        Entry(W_ProSl::class.java, "Pro küçük açık", R.layout.w_pro_sl, "s", R.drawable.prev_pro_sl),
+        Entry(W_ProMd::class.java, "Pro orta koyu", R.layout.w_pro_md, "w", R.drawable.prev_pro_md),
+        Entry(W_ProMl::class.java, "Pro orta açık", R.layout.w_pro_ml, "w", R.drawable.prev_pro_ml),
+        Entry(W_ProM3d::class.java, "Pro orta + 3 gün koyu", R.layout.w_pro_m3d, "t", R.drawable.prev_pro_m3d),
+        Entry(W_ProM3l::class.java, "Pro orta + 3 gün açık", R.layout.w_pro_m3l, "t", R.drawable.prev_pro_m3l),
+        Entry(W_ProLd::class.java, "Pro büyük koyu", R.layout.w_pro_ld, "x", R.drawable.prev_pro_ld),
+        Entry(W_ProLl::class.java, "Pro büyük açık", R.layout.w_pro_ll, "x", R.drawable.prev_pro_ll),
+        Entry(W_ProTd::class.java, "Pro ince koyu", R.layout.w_pro_td, "c", R.drawable.prev_pro_td),
+        Entry(W_ProTl::class.java, "Pro ince açık", R.layout.w_pro_tl, "c", R.drawable.prev_pro_tl),
+        Entry(W_ProG::class.java, "Pro bir bakışta", R.layout.w_pro_g, "w", R.drawable.prev_pro_g),
         Entry(W_CZarf::class.java, "Zarf", R.layout.w_card_zarf, "w", R.drawable.prev_czarf),
         Entry(W_CPola::class.java, "Polaroid", R.layout.w_card_pola, "w", R.drawable.prev_cpola),
         Entry(W_CBilet::class.java, "Bilet", R.layout.w_card_bilet, "w", R.drawable.prev_cbilet),

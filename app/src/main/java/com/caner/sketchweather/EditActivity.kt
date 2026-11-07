@@ -74,6 +74,7 @@ class EditActivity : Activity() {
         R.layout.w_asym_big, R.layout.w_asym_edit, R.layout.w_asym_vert, R.layout.w_asym_collage -> "asym"
         R.layout.w_card_zarf, R.layout.w_card_pola, R.layout.w_card_bilet, R.layout.w_card_takvimy, R.layout.w_card_akor, R.layout.w_card_etiket, R.layout.w_card_yigin -> "card"
         R.layout.w_anim -> "anim"
+        R.layout.w_pro_sd, R.layout.w_pro_sl, R.layout.w_pro_md, R.layout.w_pro_ml, R.layout.w_pro_m3d, R.layout.w_pro_m3l, R.layout.w_pro_ld, R.layout.w_pro_ll, R.layout.w_pro_td, R.layout.w_pro_tl, R.layout.w_pro_g -> "gs"
         R.layout.w_gs4_hero, R.layout.w_gs4_diag, R.layout.w_gs4_ring, R.layout.w_gs4_cal, R.layout.w_gs4_arch, R.layout.w_gs4_stack, R.layout.w_gs4_ticket -> "gs"
         R.layout.w_gs3_sqd, R.layout.w_gs3_sql, R.layout.w_gs3_round, R.layout.w_gs3_minid, R.layout.w_gs3_minil, R.layout.w_gs3_towd, R.layout.w_gs3_towl, R.layout.w_gs3_editd, R.layout.w_gs3_editl, R.layout.w_gs3_twod, R.layout.w_gs3_twol -> "gs"
         R.layout.w_gs2_lined, R.layout.w_gs2_linew, R.layout.w_gs2_split, R.layout.w_gs2_score, R.layout.w_gs2_jerw, R.layout.w_gs2_jerd, R.layout.w_gs2_clear, R.layout.w_gs2_grad, R.layout.w_gs2_cleand, R.layout.w_gs2_cleanw -> "gs"
@@ -263,7 +264,10 @@ class EditActivity : Activity() {
                 s.addView(Ui.check(this, "Konum", read { Combo.show(this, "loc") }) { putB("show_loc", it) })
                 s.addView(Ui.check(this, "Tarih", read { Combo.show(this, "date") }) { putB("show_date", it) })
                 s.addView(Ui.check(this, "Hava durumu yazısı", read { Combo.show(this, "desc") }) { putB("show_desc", it) })
-                s.addView(Ui.check(this, "3 günlük tahmin (geniş tasarımlarda)", read { Combo.show(this, "fc") }) { putB("show_fc", it) })
+                s.addView(Ui.check(this, "Hissedilen sıcaklık", read { Combo.show(this, "feels") }) { putB("show_feels", it) })
+                s.addView(Ui.check(this, "En yüksek / en düşük", read { Combo.show(this, "hl") }) { putB("show_hl", it) })
+                s.addView(Ui.check(this, "Yağış ihtimali", read { Combo.show(this, "rain") }) { putB("show_rain", it) })
+                s.addView(Ui.check(this, "3 günlük tahmin (büyük tasarımlarda)", read { Combo.show(this, "fc") }) { putB("show_fc", it) })
             }
             "anim" -> {
                 val s = section("Animasyon", "Arka plan o anki havaya göre hareket eder. Saat ve yazılar dakikada bir yenilenir.")

@@ -865,4 +865,206 @@ object GS {
         val t = if (f < 0) Color.BLACK else Color.WHITE; val a = kotlin.math.abs(f)
         return Color.rgb((Color.red(col) + (Color.red(t) - Color.red(col)) * a).toInt(), (Color.green(col) + (Color.green(t) - Color.green(col)) * a).toInt(), (Color.blue(col) + (Color.blue(t) - Color.blue(col)) * a).toInt())
     }
+    /* ================= Pro seri (v28): gerçek widget düzeni ================= */
+    const val P_SMALL_D = 60; const val P_SMALL_L = 61; const val P_MED_D = 62; const val P_MED_L = 63; const val P_MED3_D = 64; const val P_MED3_L = 65
+    const val P_LARGE_D = 66; const val P_LARGE_L = 67; const val P_STRIP_D = 68; const val P_STRIP_L = 69; const val P_GLANCE = 70
+    private val P_LIGHT = setOf(P_SMALL_L, P_MED_L, P_MED3_L, P_LARGE_L, P_STRIP_L)
+    private val P_RED = Color.rgb(169, 4, 50); private val P_YEL = Color.rgb(253, 185, 18)
+
+    private class PX(val x: X, val sx: Float, val sy: Float, val u: Float, val ink: Int, val sub: Int, val hair: Int, val track: Int, val chip: Int, val bg: Int)
+
+    fun render5(c: Context, w: Weather?, wdp: Int, hdp: Int, kind: Int): Bitmap {
+        val k = 2.5f
+        val Wi = (wdp.coerceIn(60, 560) * k).toInt(); val Hi = (hdp.coerceIn(40, 560) * k).toInt()
+        val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
+        val cv = Canvas(b)
+        val light = kind in P_LIGHT
+        val glance = kind == P_GLANCE
+        val bgCol = if (light) Color.WHITE else Color.rgb(20, 20, 22)
+        Ink.setBg(if (glance) null else bgCol)
+        val ink = Ink.get(c, Ink.TEXT) ?: if (light) Color.rgb(24, 22, 26) else Color.rgb(245, 245, 247)
+        val sub = Ink.get(c, Ink.SUB) ?: if (glance) Color.rgb(235, 235, 240) else if (light) Color.rgb(120, 116, 122) else Color.rgb(152, 152, 160)
+        val thin = Typeface.create(c.resources.getFont(R.font.f_outfit_c), Typeface.NORMAL)
+        val bold = Typeface.create(c.resources.getFont(R.font.f_outfitb_c), Typeface.NORMAL)
+        val id = Cfg.current(); val pr = WeatherRepo.prefs(c)
+        val hasFont = id != null && pr.contains(Cfg.wkey(id, "font"))
+        val clockCol = Ink.get(c, Ink.CLOCK) ?: if (glance) Color.WHITE else ink
+        val x = X(c, w, Wi.toFloat(), Hi.toFloat(), !light, ink, sub, clockCol, Ink.get(c, Ink.TEMP) ?: ink, Ink.get(c, Ink.LOC) ?: ink,
+            if (hasFont) Style.clockTypeface(c, Style.font(c)) else if (glance) thin else bold, boldFor(c, bold), Style.textTypeface(c, if (hasFont) Style.font(c) else 1))
+        begin(c)
+        if (glance) lowOp = true
+        val (rw, rh) = when (kind) {
+            P_SMALL_D, P_SMALL_L -> 170f to 170f; P_MED_D, P_MED_L -> 350f to 170f; P_MED3_D, P_MED3_L -> 350f to 250f
+            P_LARGE_D, P_LARGE_L -> 350f to 350f; P_STRIP_D, P_STRIP_L -> 350f to 80f; else -> 350f to 150f
+        }
+        val sx = x.W / (rw * k); val sy = x.H / (rh * k); val u = min(sx, sy) * k
+        val px = PX(x, sx * k, sy * k, u, ink, sub, if (light) Color.rgb(230, 228, 232) else Color.rgb(52, 52, 58),
+            if (light) Color.rgb(236, 234, 238) else Color.rgb(48, 48, 54), if (light) Color.rgb(246, 244, 247) else Color.rgb(32, 32, 36), bgCol)
+        if (!glance) {
+            val rad = 22 * u
+            pill(cv, x, RectF(0f, 0f, x.W, x.H - 3 * u).also { it.inset(2 * u, 2 * u) }, rad, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = bgCol })
+        }
+        when (kind) {
+            P_SMALL_D, P_SMALL_L -> proSmall(cv, px)
+            P_MED_D, P_MED_L -> proMed(cv, px, false)
+            P_MED3_D, P_MED3_L -> proMed(cv, px, true)
+            P_LARGE_D, P_LARGE_L -> proLarge(cv, px)
+            P_STRIP_D, P_STRIP_L -> proStrip(cv, px)
+            else -> proGlance(cv, px)
+        }
+        return b
+    }
+
+    // yardımcılar (dp → px: X ekseni sx, Y ekseni sy, boyut u)
+    private fun PX.hx(v: Float) = v * sx
+    private fun PX.vy(v: Float) = v * sy
+    private fun PX.fr(v: Float) = x.W - v * sx
+    private fun PX.tx(t: String, xx: Float, yy: Float, size: Float, col: Int, b: Boolean = false, al: Paint.Align = Paint.Align.LEFT, maxW: Float = 0f) {
+        if (t.isEmpty()) return
+        val p = txt(if (b) x.boldTf else x.textTf, size * u, col, al)
+        if (maxW > 0) fitP(p, t, maxW)
+        cvRef!!.drawText(t, xx, yy, p)
+    }
+    private var cvRef: Canvas? = null
+    private fun PX.accentBar(xx: Float, yy: Float, wdp: Float, h: Float = 3f) {
+        if (lineStyle(x.c) == 4) return
+        val split = when (lineStyle(x.c)) { 1 -> .5f; 3 -> .78f; else -> .45f }
+        val cv = cvRef!!; val r = h * u / 2
+        cv.drawRoundRect(RectF(xx, yy, xx + wdp * u * split, yy + h * u), r, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = P_YEL })
+        cv.drawRoundRect(RectF(xx + wdp * u * split, yy, xx + wdp * u, yy + h * u), r, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = P_RED })
+    }
+    private fun PX.header(showLogo: Boolean = true) {
+        val cv = cvRef!!
+        if (Combo.show(x.c, "loc")) {
+            pin(cv, hx(21f), vy(24f), 5.2f * u, Ink.get(x.c, Ink.LOC) ?: if (x.dark) P_YEL else P_RED, bg)
+            tx(WeatherRepo.city(x.c), hx(30f), vy(24f), 14f, x.loc, true, maxW = x.W - hx(30f) - hx(48f))
+        }
+        if (showLogo) logoAt(cv, x, fr(27f), vy(19f), 11f * u)
+    }
+    private fun PX.clock(xx: Float, base: Float, size: Float, maxW: Float, al: Paint.Align = Paint.Align.LEFT) {
+        val p = Lock.clockPaintTf(x.c, x.clockTf, size * u, x.clock, Combo.Look(0, x.clock, x.clock, x.clock, false, 0)).apply { textAlign = al }
+        val m = Ink.measure(x.c, now("HH:mm"), p); if (m > maxW && m > 0) p.textSize *= maxW / m
+        if (lowOp) p.setShadowLayer(p.textSize * .05f, 0f, p.textSize * .025f, 0x99000000.toInt())
+        Ink.time(x.c, cvRef!!, now("HH:mm"), xx, base, p)
+    }
+    /** İkon kutusu; büyütme ayarı en fazla %25 taşar. */
+    private fun PX.icon(code: Int, day: Boolean, cx: Float, cy: Float, sizeDp: Float) {
+        val box = sizeDp * u; val drawn = min(box * x.isc, box * 1.25f)
+        Combo.icon(x.c, cvRef!!, Style.iconPref(x.c, 0, 6, code, day), cx, cy, drawn / x.isc)
+    }
+    private fun PX.temp(): String = x.w?.let { "${it.temp}°" } ?: "--°"
+    private fun PX.desc(): String = descShort(x)
+    private fun PX.extras(): List<String> {
+        val w = x.w ?: return emptyList(); val out = ArrayList<String>()
+        if (Combo.show(x.c, "feels") && w.feels != null) out.add("His ${w.feels}°")
+        val d0 = w.days.firstOrNull()
+        if (Combo.show(x.c, "hl") && d0 != null) out.add("Y ${d0.max}° D ${d0.min}°")
+        if (Combo.show(x.c, "rain") && w.rainChance != null) out.add("Yağış %${w.rainChance}")
+        return out
+    }
+    private fun PX.dateStr(long: Boolean = true) = dt(x, if (long) "EEEE, d MMMM" else "EEE d MMM")
+
+    private fun proSmall(cv: Canvas, p: PX) = with(p) {
+        cvRef = cv; header()
+        clock(hx(15f), vy(84f), 46f, x.W - hx(30f))
+        accentBar(hx(16f), vy(94f), 34f)
+        tx(dateStr(), hx(16f), vy(113f), 12f, sub, maxW = x.W - hx(32f))
+        val w = x.w
+        if (w != null) icon(w.code, w.isDay, hx(33f), vy(139f), 36f)
+        val tp = fitP(txt(bold(x), 24f * u * Ink.tempScale(x.c), x.temp), temp(), hx(60f))
+        cv.drawText(temp(), hx(33f) + 18f * u * min(x.isc, 1.25f) + 4 * u, vy(150f), tp)
+        val ex = extras().filter { !it.startsWith("Y ") }.take(2)
+        ex.forEachIndexed { i, t -> tx(t, fr(16f), vy(140f + i * 16f), 11f, sub, al = Paint.Align.RIGHT, maxW = hx(64f)) }
+    }
+    private fun bold(x: X) = x.boldTf.let { if (fakeBoldTf != null) it else Typeface.create(x.c.resources.getFont(R.font.f_outfitb_c), Typeface.NORMAL) }
+
+    private fun proMed(cv: Canvas, p: PX, three: Boolean) = with(p) {
+        cvRef = cv; header()
+        val leftW = x.W * .56f
+        clock(hx(15f), vy(98f), 56f, leftW - hx(20f))
+        accentBar(hx(16f), vy(110f), 36f)
+        tx(dateStr(), hx(16f), vy(132f), 13f, sub, maxW = leftW - hx(20f))
+        val w = x.w
+        val rx = fr(16f)
+        val tp = fitP(txt(bold(x), 40f * u * Ink.tempScale(x.c), x.temp, Paint.Align.RIGHT), temp(), hx(90f))
+        cv.drawText(temp(), rx, vy(96f), tp)
+        val tW = tp.measureText(temp())
+        if (w != null) icon(w.code, w.isDay, rx - tW - 10 * u - 32f * u * min(x.isc, 1.25f), vy(82f), 64f)
+        tx(desc(), rx, vy(118f), 12f, ink, al = Paint.Align.RIGHT, maxW = x.W - leftW)
+        val exY = if (three) vy(136f) else vy(150f)
+        tx(extras().joinToString("  ·  "), rx, exY, 11f, sub, al = Paint.Align.RIGHT, maxW = x.W - leftW + hx(30f))
+        if (three && Combo.show(x.c, "fc")) {
+            cv.drawRect(hx(16f), vy(158f), fr(16f), vy(158f) + max(1f, u * .5f), Paint().apply { color = hair })
+            val days = w?.days?.drop(1)?.take(3) ?: emptyList()
+            val cw = (x.W - hx(32f)) / 3
+            for ((i, d) in days.withIndex()) {
+                val cx = hx(16f) + cw * (i + .5f)
+                tx(dayName(d), cx, vy(182f), 12f, sub, al = Paint.Align.CENTER)
+                icon(d.code, true, cx, vy(204f), 28f)
+                tx("${d.max}°  ${d.min}°", cx, vy(234f), 13f, ink, true, Paint.Align.CENTER, cw * .9f)
+                if (i > 0) cv.drawRect(hx(16f) + cw * i, vy(172f), hx(16f) + cw * i + max(1f, u * .5f), vy(236f), Paint().apply { color = hair })
+            }
+        }
+    }
+
+    private fun proLarge(cv: Canvas, p: PX) = with(p) {
+        cvRef = cv; header()
+        clock(hx(15f), vy(108f), 72f, x.W - hx(30f))
+        accentBar(hx(16f), vy(122f), 40f)
+        tx(dateStr(), hx(16f), vy(146f), 14f, sub, maxW = x.W - hx(32f))
+        val box = RectF(hx(16f), vy(166f), fr(16f), vy(236f))
+        cv.drawRoundRect(box, 16 * u, 16 * u, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = chip; alpha = (x.op * 255).toInt().coerceAtLeast(40) })
+        val w = x.w
+        if (w != null) icon(w.code, w.isDay, hx(54f), vy(201f), 58f)
+        val tp = fitP(txt(bold(x), 40f * u * Ink.tempScale(x.c), x.temp), temp(), hx(70f))
+        val tX = hx(54f) + 29f * u * min(x.isc, 1.25f) + 8 * u
+        cv.drawText(temp(), tX, vy(214f), tp)
+        val ix = max(hx(160f), tX + tp.measureText(temp()) + 14 * u)
+        tx(desc(), ix, vy(196f), 14f, ink, true, maxW = box.right - ix - hx(10f))
+        tx(extras().joinToString("  ·  "), ix, vy(218f), 11f, sub, maxW = box.right - ix - hx(10f))
+        if (!Combo.show(x.c, "fc")) return@with
+        val days = w?.days?.drop(1)?.take(3) ?: return@with
+        if (days.isEmpty()) return@with
+        val lo = days.minOf { it.min }; val hi = days.maxOf { it.max }.coerceAtLeast(lo + 1)
+        val bx0 = hx(150f); val bx1 = fr(50f)
+        for ((i, d) in days.withIndex()) {
+            val y = vy(266f + i * 30f)
+            tx(dayName(d), hx(16f), y + 5 * u, 14f, ink)
+            icon(d.code, true, hx(92f), y, 26f)
+            tx("${d.min}°", bx0 - 10 * u, y + 5 * u, 13f, sub, al = Paint.Align.RIGHT)
+            tx("${d.max}°", fr(16f), y + 5 * u, 13f, ink, true, Paint.Align.RIGHT)
+            cv.drawRoundRect(RectF(bx0, y - 2 * u, bx1, y + 2 * u), 2 * u, 2 * u, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = track })
+            val a = bx0 + (bx1 - bx0) * (d.min - lo) / (hi - lo).toFloat(); val bb = bx0 + (bx1 - bx0) * (d.max - lo) / (hi - lo).toFloat()
+            cv.drawRoundRect(RectF(a, y - 2 * u, max(bb, a + 4 * u), y + 2 * u), 2 * u, 2 * u, Paint(Paint.ANTI_ALIAS_FLAG).apply { shader = LinearGradient(a, 0f, bb, 0f, P_YEL, P_RED, Shader.TileMode.CLAMP) })
+        }
+    }
+
+    private fun proStrip(cv: Canvas, p: PX) = with(p) {
+        cvRef = cv
+        clock(hx(16f), vy(52f), 34f, hx(100f))
+        accentBar(hx(17f), vy(60f), 26f, 2.5f)
+        cv.drawRect(hx(122f), vy(22f), hx(122f) + max(1f, u * .5f), vy(58f), Paint().apply { color = hair })
+        val w = x.w
+        if (w != null) icon(w.code, w.isDay, hx(152f), vy(40f), 36f)
+        val tX = hx(152f) + 18f * u * min(x.isc, 1.25f) + 4 * u
+        val tp = fitP(txt(bold(x), 22f * u * Ink.tempScale(x.c), x.temp), temp(), hx(40f)); cv.drawText(temp(), tX, vy(48f), tp)
+        val lx = max(hx(214f), tX + tp.measureText(temp()) + 12 * u)
+        val maxW = fr(44f) - lx
+        if (Combo.show(x.c, "loc")) tx(WeatherRepo.city(x.c), lx, vy(36f), 13f, x.loc, true, maxW = maxW)
+        val l2 = listOfNotNull(dateStr(false).takeIf { it.isNotEmpty() }, x.w?.rainChance?.takeIf { Combo.show(x.c, "rain") }?.let { "Yağış %$it" }).joinToString(" · ")
+        tx(l2, lx, vy(54f), 11f, sub, maxW = maxW)
+        logoAt(cv, x, fr(27f), x.H / 2, 11f * u)
+    }
+
+    private fun proGlance(cv: Canvas, p: PX) = with(p) {
+        cvRef = cv
+        clock(hx(16f), vy(74f), 64f, x.W * .8f)
+        accentBar(hx(18f), vy(86f), 40f)
+        tx(dateStr(), hx(16f), vy(110f), 16f, Color.WHITE, true, maxW = x.W - hx(32f))
+        val w = x.w
+        if (w != null) icon(w.code, w.isDay, hx(28f), vy(129f), 26f)
+        val line = listOfNotNull("${temp()} ${desc()}".trim(), extras().firstOrNull(), if (Combo.show(x.c, "loc")) WeatherRepo.city(x.c) else null).joinToString("  ·  ")
+        tx(line, hx(28f) + 13f * u * min(x.isc, 1.25f) + 6 * u, vy(136f), 13f, sub, maxW = x.W - hx(60f))
+        logoAt(cv, x, fr(29f), vy(40f), 13f * u)
+    }
 }
