@@ -33,6 +33,7 @@ object GS {
     fun stars(c: Context) = Cfg.bool(c, "gsStars", true)
     fun logoBg(c: Context) = Cfg.int(c, "gsLogoBg", 0).coerceIn(0, 1)
     fun logoFile(c: Context) = File(c.filesDir, "gs_logo.png")
+    fun logoSize(c: Context) = Cfg.int(c, "gsLogoSize", 100).coerceIn(50, 170)
 
     private var logoCache: Bitmap? = null
     private var logoStamp = 0L
@@ -102,7 +103,8 @@ object GS {
         cv.drawPath(p, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = col })
     }
 
-    private fun logoAt(cv: Canvas, x: X, cx: Float, cy: Float, r: Float) {
+    private fun logoAt(cv: Canvas, x: X, cx: Float, cy: Float, r0: Float) {
+        val r = r0 * logoSize(x.c) / 100f
         val withBg = logoBg(x.c) == 0
         if (withBg) {
             cv.drawCircle(cx, cy + r * .08f, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(70, 0, 0, 0); maskFilter = BlurMaskFilter(r * .15f, BlurMaskFilter.Blur.NORMAL) })
@@ -140,7 +142,7 @@ object GS {
     }
     private fun fitP(p: Paint, t: String, maxW: Float): Paint { val m = p.measureText(t); if (m > maxW && m > 0) p.textSize *= maxW / m; return p }
     private fun clockP(x: X, size: Float, maxW: Float): Paint {
-        val p = Lock.clockPaintTf(x.c, x.clockTf, size, x.clock, Combo.Look(0, x.clock, x.clock, x.clock, false, 0))
+        val p = Lock.clockPaintTf(x.c, x.clockTf, size, x.clock, Combo.Look(0, x.clock, x.clock, x.clock, false, 0)).apply { textAlign = Paint.Align.LEFT }
         val m = Ink.measure(x.c, now("HH:mm"), p); if (m > maxW && m > 0) p.textSize *= maxW / m
         return p
     }
@@ -227,11 +229,11 @@ object GS {
         cv.drawText(desc, px + 32 * s, pyBase + 38 * sy, txt(x.textTf, 26 * s, x.sub))
         // saat
         val clockY = if (x.dark) 336 * sy else 368 * sy
-        val cp = clockP(x, 164 * s, W * .4f)
+        val cp = clockP(x, 164 * s, ((if (x.dark) 612 else 620) - (if (x.dark) 104 else 110) - 34) * sx)
         Ink.time(x.c, cv, now("HH:mm"), (if (x.dark) 104 else 110) * sx, clockY, cp)
         val dateY = clockY + 44 * sy
         calIcon(cv, 214 * sx, dateY, 26 * s, x.sub)
-        cv.drawText(now("d MMMM EEEE"), 258 * sx, dateY, txt(x.textTf, 28 * s, x.sub))
+        cv.drawText(now("d MMMM EEEE"), 258 * sx, dateY, fitP(txt(x.textTf, 28 * s, x.sub), now("d MMMM EEEE"), 330 * sx))
         // ayraç
         val divX = (if (x.dark) 612 else 620) * sx
         cv.drawLine(divX, clockY - 136 * sy, divX, clockY + 40 * sy, Paint().apply { color = if (x.dark) YEL else Color.rgb(220, 214, 216); strokeWidth = (if (x.dark) 3 else 2) * s })
@@ -248,7 +250,7 @@ object GS {
         // logo + yıldızlar
         val lx = W - 140 * sx; val ly = if (x.dark) 156 * sy else 186 * sy
         logoAt(cv, x, lx, ly, 64 * s)
-        if (stars(x.c)) starRow(cv, lx, ly - 92 * s, 12 * s, if (x.dark) YEL else Color.rgb(120, 6, 26))
+        if (stars(x.c)) starRow(cv, lx, ly - 64 * s * logoSize(x.c) / 100f - 28 * s, 12 * s, if (x.dark) YEL else Color.rgb(120, 6, 26))
         // tahmin
         val days = w?.days?.drop(1)?.take(3) ?: emptyList()
         if (!x.dark) {
@@ -297,7 +299,7 @@ object GS {
         pin(cv, L + 14 * s, 100 * s, 13 * s, x.loc, if (x.dark) Color.rgb(12, 12, 14) else Color.WHITE)
         if (Combo.show(x.c, "loc")) cv.drawText(WeatherRepo.city(x.c), L + 38 * s, 102 * s, fitP(txt(x.boldTf, 40 * s, x.loc), WeatherRepo.city(x.c), W * .5f))
         logoAt(cv, x, W - 112 * s, 130 * s, 58 * s)
-        if (stars(x.c)) starRow(cv, W - 112 * s, 52 * s, 9 * s, if (x.dark) YEL else Color.rgb(120, 6, 26))
+        if (stars(x.c)) starRow(cv, W - 112 * s, 130 * s - 58 * s * logoSize(x.c) / 100f - 20 * s, 9 * s, if (x.dark) YEL else Color.rgb(120, 6, 26))
         Ink.time(x.c, cv, now("HH:mm"), L, H * .68f, clockP(x, 132 * s, W - L * 2))
         val w = x.w
         if (w != null) ic(cv, x, w.code, w.isDay, L + 36 * s, H * .83f, 70 * s)
@@ -326,9 +328,9 @@ object GS {
         val L = 70 * sx
         pin(cv, L + 12 * s, 102 * s, 12 * s, x.loc, if (x.dark) Color.rgb(12, 12, 14) else Color.WHITE)
         val city = WeatherRepo.city(x.c)
-        if (Combo.show(x.c, "loc")) cv.drawText(city, L + 34 * s, 104 * s, fitP(txt(x.boldTf, 34 * s, x.loc), city, W * .2f))
-        cv.drawText(now("d MMMM EEEE"), L + 36 * s, 144 * s, fitP(txt(x.textTf, 24 * s, x.sub), now("d MMMM EEEE"), W * .2f))
-        Ink.time(x.c, cv, now("HH:mm"), W * .3f, 160 * s, clockP(x, 112 * s, W * .3f))
+        if (Combo.show(x.c, "loc")) cv.drawText(city, L + 34 * s, 104 * s, fitP(txt(x.boldTf, 34 * s, x.loc), city, W * .3f - L - 50 * s))
+        cv.drawText(now("d MMMM EEEE"), L + 36 * s, 144 * s, fitP(txt(x.textTf, 24 * s, x.sub), now("d MMMM EEEE"), W * .3f - L - 50 * s))
+        Ink.time(x.c, cv, now("HH:mm"), W * .32f, 160 * s, clockP(x, 112 * s, W * .27f))
         val w = x.w
         if (w != null) ic(cv, x, w.code, w.isDay, W * .62f, 118 * s, 70 * s)
         cv.drawText(if (w != null) "${w.temp}°" else "--°", W * .62f + 44 * s, 140 * s, txt(x.clockTf, 60 * s * Ink.tempScale(x.c), x.temp))

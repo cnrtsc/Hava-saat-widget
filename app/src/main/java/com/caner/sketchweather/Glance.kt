@@ -48,7 +48,7 @@ object Glance {
         if (op > 0) cv.drawRoundRect(r, 56 * s, 56 * s, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = bg; alpha = (op * 2.55f).toInt() })
         // üst satır: saat + başlık
         val pad = 34 * s
-        val cp = Lock.clockPaint(c, 46 * s, Ink.get(c, Ink.CLOCK) ?: ink, Combo.Look(0, ink, sub, acc, op < 45, 0))
+        val cp = Lock.clockPaint(c, 46 * s, Ink.get(c, Ink.CLOCK) ?: ink, Combo.Look(0, ink, sub, acc, op < 45, 0)).apply { textAlign = android.graphics.Paint.Align.LEFT }
         Ink.time(c, cv, now("HH:mm"), pad, pad + 40 * s, cp)
         cv.drawText(TITLES[kind(c)], W - pad, pad + 34 * s, p(x, 22 * s, sub, Paint.Align.RIGHT).apply { letterSpacing = .14f })
         val body = RectF(pad, pad + 70 * s, W - pad, H - pad)

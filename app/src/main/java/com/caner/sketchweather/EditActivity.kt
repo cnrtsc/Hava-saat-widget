@@ -103,31 +103,55 @@ class EditActivity : Activity() {
     }
     private fun chips(s: LinearLayout, names: Array<String>, cur: Int, pick: (Int) -> Unit) = s.addView(Ui.chips(this, names, cur) { pick(it); build() })
 
+    private var tab = 0
+    private var builtTab = -1
+    private var scroll: ScrollView? = null
+    private val TABS = arrayOf("Tasarım", "İçerik", "Yazı", "Renk", "İkon", "Zemin")
+
     private fun build() {
-        val outer = ScrollView(this).apply { setBackgroundColor(Ui.BG) }
-        root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(dp(16), dp(36), dp(16), dp(32)) }
-        outer.addView(root); setContentView(outer)
+        val prevY = if (builtTab == tab) scroll?.scrollY ?: 0 else 0
+        val page = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setBackgroundColor(Ui.BG); setPadding(dp(14), dp(28), dp(14), 0) }
+        setContentView(page)
         val cur = current()
-        root.addView(TextView(this).apply { text = cur?.label ?: "Widget"; textSize = 26f; setTextColor(Ui.FG) })
-        root.addView(TextView(this).apply { text = "Buradaki ayarlar yalnızca bu widget'ı değiştirir. Değişiklikler önizlemede hemen görünür."; setTextColor(Ui.MUTED); textSize = 13f })
+        page.addView(TextView(this).apply { text = cur?.label ?: "Widget"; textSize = 20f; setTextColor(Ui.FG) })
         preview = FrameLayout(this).apply {
             background = GradientDrawable(GradientDrawable.Orientation.TL_BR, intArrayOf(Color.rgb(96, 70, 58), Color.rgb(40, 48, 62), Color.rgb(28, 32, 42))).apply { cornerRadius = dp(20).toFloat() }
-            setPadding(dp(10), dp(14), dp(10), dp(14))
-            layoutParams = LinearLayout.LayoutParams(-1, dp(hdp + 28)).apply { topMargin = dp(12) }
+            setPadding(dp(8), dp(10), dp(8), dp(10))
+            layoutParams = LinearLayout.LayoutParams(-1, dp(minOf(hdp, 220) + 20)).apply { topMargin = dp(8) }
         }
-        root.addView(preview); refreshPreview()
-
+        page.addView(preview); refreshPreview()
+        // sekmeler: önizleme hep üstte kalır, altta seçili sekmenin ayarları kayar
+        page.addView(Ui.chips(this, TABS, tab) { tab = it; build() })
+        val sv = ScrollView(this)
+        root = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL; setPadding(0, 0, 0, dp(40)) }
+        sv.addView(root); page.addView(sv, LinearLayout.LayoutParams(-1, 0, 1f))
+        scroll = sv
         val cat = category(layout())
-        designSection(cur)
-        contentSection(cat)
-        locationSection()
-        sizeSection(cat)
-        backgroundSection(cat)
-        edgesSection()
-        textSection(cat)
-        colorSection(cat)
-        iconSection()
-        actions()
+        when (tab) {
+            0 -> { designSection(cur); actions() }
+            1 -> { contentSection(cat); locationSection() }
+            2 -> { textSection(cat); sizeSection(cat) }
+            3 -> colorSection(cat)
+            4 -> iconSection()
+            else -> { backgroundSection(cat); edgesSection() }
+        }
+        if (root.childCount == 0) root.addView(TextView(this).apply { text = "Bu tasarımda bu sekmede ayar yok."; setTextColor(Ui.MUTED); setPadding(0, dp(16), 0, 0) })
+        builtTab = tab
+        sv.post { sv.scrollTo(0, prevY) }
+    }
+
+    /** Gizle / geri getir (uzun basınca). */
+    private fun hideToggle(kind: String, key: String, name: String) {
+        val was = Hide.has(this, kind, key)
+        Hide.toggle(this, kind, key)
+        Toast.makeText(this, if (was) "$name geri geldi" else "$name gizlendi (uzun basarak geri getirebilirsin)", Toast.LENGTH_SHORT).show()
+        build()
+    }
+    private fun visible(kind: String, key: String) = Hide.showHidden(this) || !Hide.has(this, kind, key)
+    private fun hiddenToggleRow(s: LinearLayout) {
+        val n = Hide.all(this, Hide.DESIGN).size + Hide.all(this, Hide.FONT).size + Hide.all(this, Hide.ICON).size
+        if (n > 0) s.addView(Ui.check(this, "Gizlediklerimi de göster ($n)", Hide.showHidden(this)) { Hide.setShowHidden(this, it); build() })
+        else s.addView(TextView(this).apply { text = "İpucu: beğenmediğin bir seçeneğe uzun bas, gizlensin."; textSize = 12f; setTextColor(Ui.MUTED); setPadding(0, dp(6), 0, 0) })
     }
 
     /* ---------- 1. Tasarım ---------- */
@@ -137,8 +161,12 @@ class EditActivity : Activity() {
         val r = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         Registry.ALL.forEachIndexed { idx, e ->
             if (e.size != size) return@forEachIndexed
+            val dk = Hide.designKey(e)
+            if (e != cur && !visible(Hide.DESIGN, dk)) return@forEachIndexed
             r.addView(LinearLayout(this).apply {
                 orientation = LinearLayout.VERTICAL; setPadding(dp(5), dp(5), dp(5), dp(5))
+                if (Hide.has(this@EditActivity, Hide.DESIGN, dk)) alpha = .4f
+                setOnLongClickListener { hideToggle(Hide.DESIGN, dk, e.label); true }
                 if (e == cur) background = GradientDrawable().apply { setStroke(dp(2), Ui.ACCENT); cornerRadius = dp(12).toFloat() }
                 setOnClickListener { p.edit().putInt("ov_$wid", idx).apply(); sendBroadcast(Widgets.refreshIntent(this@EditActivity)); build() }
                 addView(ImageView(this@EditActivity).apply { setImageResource(e.preview); adjustViewBounds = true; layoutParams = LinearLayout.LayoutParams(dp(if (size == "s") 96 else 180), -2) })
@@ -146,6 +174,7 @@ class EditActivity : Activity() {
             })
         }
         s.addView(HorizontalScrollView(this).apply { addView(r) })
+        hiddenToggleRow(s)
     }
 
     /* ---------- 2. İçerik ---------- */
@@ -224,6 +253,7 @@ class EditActivity : Activity() {
                 })
                 row(s, "Logo görünümü", "Şeffaf arka planlı (PNG) logolar dairesiz de güzel durur.")
                 chips(s, GS.LOGO_BG_NAMES, read { GS.logoBg(this) }) { putI("gsLogoBg", it) }
+                s.addView(Ui.slider(this, { "Logo boyutu: %${50 + it * 120 / 100}" }, (read { GS.logoSize(this) } - 50) * 100 / 120) { putI("gsLogoSize", 50 + it * 120 / 100) })
                 s.addView(Ui.check(this, "Logonun üstünde 4 yıldız", read { GS.stars(this) }) { putB("gsStars", it) })
                 s.addView(Ui.check(this, "Konum", read { Combo.show(this, "loc") }) { putB("show_loc", it) })
             }
@@ -389,21 +419,23 @@ class EditActivity : Activity() {
             s.addView(TextView(this).apply { text = "Bu temanın yazı tipi ve renkleri tasarımın parçası; değiştirilemez."; setTextColor(Ui.MUTED); textSize = 12f })
             return
         }
-        row(s, "Saat yazı tipi")
+        row(s, "Rakam yazı tipi", "Saat ve derece rakamları. Uzun bas: gizle.")
         val curF = read { Style.font(this) }
         val r = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         Style.FONT_NAMES.forEachIndexed { i, n ->
-            r.addView(card(i == curF, { putI("font", i); build() }).apply {
+            if (i != curF && !visible(Hide.FONT, "$i")) return@forEachIndexed
+            r.addView(card(i == curF, { putI("font", i); build() }, { hideToggle(Hide.FONT, "$i", n) }, Hide.has(this, Hide.FONT, "$i")).apply {
                 addView(TextView(this@EditActivity).apply { text = "12:45"; textSize = 24f; setTextColor(Ui.FG); typeface = Style.clockTypeface(this@EditActivity, i) })
                 addView(TextView(this@EditActivity).apply { text = n; textSize = 11f; setTextColor(Ui.MUTED) })
             })
         }
         s.addView(HorizontalScrollView(this).apply { addView(r) })
-        row(s, "Diğer yazılar", "Konum, tarih, hava durumu gibi yazıların yazı tipi.")
+        row(s, "Yazı tipi", "Konum, tarih, hava durumu gibi yazılar.")
         val t = read { Style.textFontIdx(this) }
         val r2 = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         (listOf(-1) + Style.FONT_NAMES.indices).forEach { i ->
-            r2.addView(card(i == t, { putI("textFont", i); build() }).apply {
+            if (i >= 0 && i != t && !visible(Hide.FONT, "$i")) return@forEach
+            r2.addView(card(i == t, { putI("textFont", i); build() }, if (i >= 0) ({ hideToggle(Hide.FONT, "$i", Style.FONT_NAMES[i]) }) else null, i >= 0 && Hide.has(this, Hide.FONT, "$i")).apply {
                 addView(TextView(this@EditActivity).apply {
                     text = "Kadıköy"; textSize = 16f; setTextColor(Ui.FG)
                     typeface = Style.textTypeface(this@EditActivity, if (i < 0) curF else i).also { _ -> }
@@ -436,6 +468,7 @@ class EditActivity : Activity() {
         row(s, "Saat kalınlığı")
         chips(s, Ink.WEIGHT_NAMES, read { Ink.weight(this) }) { putI("clockWeight", it) }
         s.addView(Ui.slider(this, { "Harf aralığı: ${it / 2 - 10}" }, (read { Ink.spacing(this) } + 10) * 2) { putI("clockSpacing", it / 2 - 10) })
+        hiddenToggleRow(s)
     }
 
     /* ---------- Renkler ---------- */
@@ -488,7 +521,9 @@ class EditActivity : Activity() {
         })
     }
 
-    private fun card(selected: Boolean, onClick: () -> Unit) = LinearLayout(this).apply {
+    private fun card(selected: Boolean, onClick: () -> Unit, onLong: (() -> Unit)? = null, dim: Boolean = false) = LinearLayout(this).apply {
+        if (onLong != null) setOnLongClickListener { onLong(); true }
+        if (dim) alpha = .4f
         orientation = LinearLayout.VERTICAL; gravity = Gravity.CENTER_HORIZONTAL
         setPadding(dp(10), dp(8), dp(10), dp(8))
         background = GradientDrawable().apply { setColor(Color.rgb(46, 51, 62)); cornerRadius = dp(14).toFloat(); if (selected) setStroke(dp(2), Ui.ACCENT) }
@@ -509,7 +544,8 @@ class EditActivity : Activity() {
         row(s, "Şekil")
         val r = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
         Style.SHAPE_NAMES.forEachIndexed { i, n ->
-            r.addView(card(i == shape, { putI("iconShape", i); putI("iconStyle", style); build() }).apply {
+            if (i != shape && !visible(Hide.ICON, "$i")) return@forEachIndexed
+            r.addView(card(i == shape, { putI("iconShape", i); putI("iconStyle", style); build() }, { hideToggle(Hide.ICON, "$i", n) }, Hide.has(this, Hide.ICON, "$i")).apply {
                 addView(samples(i, style)); addView(TextView(this@EditActivity).apply { text = n; textSize = 11f; setTextColor(Ui.MUTED) })
             })
         }
@@ -524,6 +560,7 @@ class EditActivity : Activity() {
             }
             s.addView(HorizontalScrollView(this).apply { addView(r2) })
         } else s.addView(TextView(this).apply { text = "Bu şeklin kendi stili var; renkleri ve dokusu tasarımın parçası."; setTextColor(Ui.MUTED); textSize = 12f })
+        hiddenToggleRow(s)
     }
 
     /* ---------- 7. İşlemler ---------- */

@@ -241,14 +241,14 @@ object Anim {
         val date = SimpleDateFormat("EEEE, d MMMM", tr).format(Date())
         val tcol = Ink.get(c, Ink.TEMP) ?: ink
         if (!tall) {
-            val cp = Lock.clockPaint(c, 104 * s, ink, lk)
+            val cp = Lock.clockPaint(c, 104 * s, ink, lk).apply { textAlign = android.graphics.Paint.Align.LEFT }
             val mw = Ink.measure(c, time, cp); val maxW = Wf * .6f; if (mw > maxW) cp.textSize *= maxW / mw
             Ink.time(c, cv, time, pad, 170 * s, cp)
             cv.drawText(date, pad + 6 * s, 204 * s, tp(20 * s, sub))
             cv.drawText(tempS, Wf - pad, 236 * s, tp(64 * s * Ink.tempScale(c), tcol, Paint.Align.RIGHT).apply { typeface = Style.clockTypeface(c, Style.font(c)) })
             cv.drawText(desc, Wf - pad - 2 * s, 266 * s, tp(20 * s, sub, Paint.Align.RIGHT))
         } else {
-            val cp = Lock.clockPaint(c, 84 * s, ink, lk)
+            val cp = Lock.clockPaint(c, 84 * s, ink, lk).apply { textAlign = android.graphics.Paint.Align.LEFT }
             val mw = Ink.measure(c, time, cp); val maxW = Wf - pad * 2; if (mw > maxW) cp.textSize *= maxW / mw
             Ink.time(c, cv, time, pad, Hf * .5f, cp)
             cv.drawText(date, pad + 4 * s, Hf * .5f + 30 * s, tp(18 * s, sub).apply { val m = measureText(date); if (m > maxW) textSize *= maxW / m })

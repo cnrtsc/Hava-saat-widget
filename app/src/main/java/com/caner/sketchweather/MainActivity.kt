@@ -170,7 +170,19 @@ class MainActivity : Activity() {
                 contentDescription = if (on) "Favorilerden çıkar" else "Favorilere ekle"
                 setOnClickListener { toggleFav(e) }
             })
+            addView(TextView(this@MainActivity).apply {
+                val hid = Hide.has(this@MainActivity, Hide.DESIGN, Hide.designKey(e))
+                text = if (hid) "↺" else "✕"; textSize = 17f; setTextColor(Ui.MUTED)
+                setPadding(Ui.dp(this@MainActivity, 6), 0, Ui.dp(this@MainActivity, 2), 0)
+                contentDescription = if (hid) "Geri getir" else "Gizle"
+                setOnClickListener {
+                    Hide.toggle(this@MainActivity, Hide.DESIGN, Hide.designKey(e))
+                    Toast.makeText(this@MainActivity, if (hid) "${e.label} geri geldi" else "${e.label} gizlendi · \"Gizlediklerim\"den geri getirebilirsin", Toast.LENGTH_SHORT).show()
+                    build()
+                }
+            })
         })
+        if (Hide.has(this@MainActivity, Hide.DESIGN, Hide.designKey(e))) alpha = .45f
     }
 
     private fun addCard() {
@@ -182,12 +194,17 @@ class MainActivity : Activity() {
             f.addView(android.widget.HorizontalScrollView(this).apply { addView(row) })
             root.addView(f)
         }
-        val s = Ui.section(this, "Yeni widget ekle", "Önizlemeye dokun: ana ekrana eklensin. Yıldıza dokun ya da önizlemeye basılı tut: favorilere ekle.")
+        val s = Ui.section(this, "Yeni widget ekle", "Önizlemeye dokun: ana ekrana eklensin. ★ favori · ✕ beğenmediğin tasarımı gizle (widget listesinden de kalkar).")
+        val hiddenN = Hide.all(this, Hide.DESIGN).size
+        val showH = Hide.showHidden(this)
+        if (hiddenN > 0) s.addView(Ui.check(this, "Gizlediklerimi de göster ($hiddenN)", showH) { Hide.setShowHidden(this, it); build() })
         for ((size, title) in Registry.SIZE_TITLES) {
+            val list = Registry.ALL.filter { it.size == size && (showH || !Hide.has(this, Hide.DESIGN, Hide.designKey(it))) }
+                .sortedByDescending { favs().contains(it.cls.name) }
+            if (list.isEmpty()) continue
             s.addView(Ui.label(this, title))
             val row = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
-            Registry.ALL.filter { it.size == size }.sortedByDescending { favs().contains(it.cls.name) }
-                .forEach { row.addView(cell(it, if (size == "s") 110 else 210)) }
+            list.forEach { row.addView(cell(it, if (size == "s") 110 else 210)) }
             s.addView(android.widget.HorizontalScrollView(this).apply { addView(row) })
         }
         root.addView(s)

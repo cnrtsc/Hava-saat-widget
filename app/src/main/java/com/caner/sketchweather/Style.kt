@@ -9,25 +9,28 @@ object Style {
         "Space Grotesk", "DM Serif", "Josefin Sans", "Urbanist", "El yazısı",
         "Çift çizgi", "Neon çizgi", "Kabartma", "Mono", "Yuvarlak", "Inter",
         "Unbounded", "Syne", "Dar grotesk", "Fraunces", "Space Mono", "Righteous", "Archivo Black",
-        "Nokta (Doto)", "Big Shoulders", "JetBrains Mono", "Climate Crisis", "Gloock"
+        "Nokta (Doto)", "Big Shoulders", "JetBrains Mono", "Climate Crisis", "Gloock",
+        "Sora", "Lexend", "Jakarta", "DM Sans", "Anton", "Oswald", "Teko", "Orbitron", "Chakra Petch", "Barlow dar"
     )
     private val CLOCK_FONTS = intArrayOf(
         0, R.font.f_outfit_c, R.font.f_manrope_c, R.font.f_poppins_c, R.font.f_bebas_c,
         R.font.f_grotesk_c, R.font.f_serif_c, R.font.f_josefin_c, R.font.f_urbanist_c, R.font.f_hand_c,
         R.font.f_train_c, R.font.f_monoton_c, R.font.f_rampart_c, R.font.f_mono_c, R.font.f_quick_c, R.font.f_inter_c,
         R.font.f_unbounded_c, R.font.f_syne_c, R.font.f_bricolage_c, R.font.f_fraunces_c, R.font.f_spacemono_c, R.font.f_righteous_c, R.font.f_archivo_c,
-        R.font.f_doto_c, R.font.f_shoulders_c, R.font.f_jetbrains_c, R.font.f_climate_c, R.font.f_gloock_c
+        R.font.f_doto_c, R.font.f_shoulders_c, R.font.f_jetbrains_c, R.font.f_climate_c, R.font.f_gloock_c,
+        R.font.f_sora_c, R.font.f_lexend_c, R.font.f_jakarta_c, R.font.f_dmsans_c, R.font.f_anton_c, R.font.f_oswald_c, R.font.f_teko_c, R.font.f_orbitron_c, R.font.f_chakra_c, R.font.f_barlow_c
     )
     private val TEXT_FONTS = intArrayOf(
         0, R.font.f_outfit_t, R.font.f_manrope_t, R.font.f_poppins_t, R.font.f_bebas_t,
         R.font.f_grotesk_t, R.font.f_serif_t, R.font.f_josefin_t, R.font.f_urbanist_t, R.font.f_hand_t,
         R.font.f_outfit_t, R.font.f_outfit_t, R.font.f_outfit_t, R.font.f_mono_t, R.font.f_quick_t, R.font.f_inter_t,
         R.font.f_unbounded_t, R.font.f_syne_t, R.font.f_bricolage_t, R.font.f_fraunces_t, R.font.f_spacemono_t, R.font.f_syne_t, R.font.f_bricolage_t,
-        R.font.f_doto_t, R.font.f_shoulders_t, R.font.f_jetbrains_t, R.font.f_outfit_t, R.font.f_gloock_c
+        R.font.f_doto_t, R.font.f_shoulders_t, R.font.f_jetbrains_t, R.font.f_outfit_t, R.font.f_gloock_c,
+        R.font.f_sora_t, R.font.f_lexend_t, R.font.f_jakarta_t, R.font.f_dmsans_t, R.font.f_oswald_t, R.font.f_oswald_t, R.font.f_teko_t, R.font.f_chakra_t, R.font.f_chakra_t, R.font.f_barlow_t
     )
     val BG_NAMES = arrayOf("Koyu", "Açık", "Şeffaf", "Renkli (palet)")
     val BGS = intArrayOf(R.drawable.bg_dark, R.drawable.bg_light, R.drawable.bg_none, R.drawable.shape_round)
-    val SHAPE_NAMES = arrayOf("Klasik", "Geometrik", "Minimal", "Balon", "Blok", "Ufuk", "Nokta", "Bauhaus", "Retro 70'ler", "Çıkartma", "Organik", "Risograf", "Gerçekçi", "Pencere", "Manzara", "Soyut", "Yazı", "Nokta matris", "Damga", "Kil")
+    val SHAPE_NAMES = arrayOf("Klasik", "Geometrik", "Minimal", "Balon", "Blok", "Ufuk", "Nokta", "Bauhaus", "Retro 70'ler", "Çıkartma", "Organik", "Risograf", "Gerçekçi", "Pencere", "Manzara", "Soyut", "Yazı", "Nokta matris", "Damga", "Kil", "Yapı taşı", "Origami", "Fotogerçekçi", "Modern degrade", "Vintage", "Piksel")
     /** Eski kayıtlarda 7 = Gerçekçi idi; artık 12. Bir kez çevrilir. */
     fun migrate(c: Context) {
         val p = WeatherRepo.prefs(c)
