@@ -114,7 +114,7 @@ object RoundW {
         val W = (wdp.coerceIn(80, 400) * k).toInt()
         val H = (hdp.coerceIn(80, 400) * k).toInt()
         val b = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val lk = Combo.look(c, Palette.get(c))
         val d = min(W, H) - 8 * k
         val cx = W / 2f; val cy = H / 2f

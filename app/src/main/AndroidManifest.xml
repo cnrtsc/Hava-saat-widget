@@ -456,6 +456,30 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ref_bb" />
         </receiver>
+        <receiver android:name=".W_TahtaWs" android:exported="true" android:label="Kara tahta">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_tahta_ws" />
+        </receiver>
+        <receiver android:name=".W_TahtaWg" android:exported="true" android:label="Yeşil tahta">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_tahta_wg" />
+        </receiver>
+        <receiver android:name=".W_TahtaWk" android:exported="true" android:label="Kraft not">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_tahta_wk" />
+        </receiver>
+        <receiver android:name=".W_TahtaSs" android:exported="true" android:label="Kara tahta kare">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_tahta_ss" />
+        </receiver>
+        <receiver android:name=".W_TahtaSg" android:exported="true" android:label="Yeşil tahta kare">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_tahta_sg" />
+        </receiver>
+        <receiver android:name=".W_TahtaC" android:exported="true" android:label="Tahta şerit">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_tahta_c" />
+        </receiver>
         <receiver android:name=".W_Noktamatris" android:exported="true" android:label="Nokta matris">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_noktamatris" />

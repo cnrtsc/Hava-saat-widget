@@ -46,7 +46,7 @@ object Lock {
         val W = (wdp.coerceIn(120, 560) * k).toInt()
         val H = (hdp.coerceIn(40, 400) * k).toInt()
         val b = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val lk = Combo.look(c, Palette.get(c), 0)
         val tr = Locale("tr", "TR")
         val tf = Style.textTypeface(c, Style.font(c))

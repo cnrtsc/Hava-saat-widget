@@ -74,6 +74,7 @@ class EditActivity : Activity() {
         R.layout.w_asym_big, R.layout.w_asym_edit, R.layout.w_asym_vert, R.layout.w_asym_collage -> "asym"
         R.layout.w_card_zarf, R.layout.w_card_pola, R.layout.w_card_bilet, R.layout.w_card_takvimy, R.layout.w_card_akor, R.layout.w_card_etiket, R.layout.w_card_yigin -> "card"
         R.layout.w_anim -> "anim"
+        R.layout.w_tahta_ws, R.layout.w_tahta_wg, R.layout.w_tahta_wk, R.layout.w_tahta_ss, R.layout.w_tahta_sg, R.layout.w_tahta_c -> "chalk"
         R.layout.w_ref_pd, R.layout.w_ref_pl, R.layout.w_ref_pb, R.layout.w_ref_gd, R.layout.w_ref_gl, R.layout.w_ref_gb, R.layout.w_ref_bd, R.layout.w_ref_bl, R.layout.w_ref_bb -> "gs"
         R.layout.w_pro_sd, R.layout.w_pro_sl, R.layout.w_pro_md, R.layout.w_pro_ml, R.layout.w_pro_m3d, R.layout.w_pro_m3l, R.layout.w_pro_ld, R.layout.w_pro_ll, R.layout.w_pro_td, R.layout.w_pro_tl, R.layout.w_pro_g -> "gs"
         R.layout.w_gs4_hero, R.layout.w_gs4_diag, R.layout.w_gs4_ring, R.layout.w_gs4_cal, R.layout.w_gs4_arch, R.layout.w_gs4_stack, R.layout.w_gs4_ticket -> "gs"
@@ -270,6 +271,14 @@ class EditActivity : Activity() {
                 s.addView(Ui.check(this, "Yağış ihtimali", read { Combo.show(this, "rain") }) { putB("show_rain", it) })
                 s.addView(Ui.check(this, "3 günlük tahmin (büyük tasarımlarda)", read { Combo.show(this, "fc") }) { putB("show_fc", it) })
             }
+            "chalk" -> {
+                val s = section("İçerik", "Tahta tasarımlarında yazılar varsayılan olarak tebeşir dokulu; Yazı sekmesinden değiştirebilirsin.")
+                s.addView(Ui.check(this, "Saatin altındaki sarı-kırmızı tebeşir çizgisi", read { Cfg.int(this, "chalkLine", 0) == 0 }) { putI("chalkLine", if (it) 0 else 1) })
+                row(s, "Gösterilecekler")
+                val keys = arrayOf("loc", "date", "desc", "feels", "hl", "rain", "fc")
+                val names = arrayOf("Konum", "Tarih", "Hava durumu yazısı", "Hissedilen sıcaklık", "En yüksek / en düşük", "Yağış ihtimali", "3 günlük tahmin")
+                keys.forEachIndexed { i, k -> s.addView(Ui.check(this, names[i], read { Combo.show(this, k) }) { putB("show_$k", it) }) }
+            }
             "anim" -> {
                 val s = section("Animasyon", "Arka plan o anki havaya göre hareket eder. Saat ve yazılar dakikada bir yenilenir.")
                 s.addView(Ui.check(this, "Animasyon açık (kapalıysa sabit resim, pil dostu)", read { Anim.on(this) }) { putB("animOn", it) })
@@ -328,7 +337,7 @@ class EditActivity : Activity() {
     }
 
     /* ---------- 3. Arka plan ---------- */
-    private val BG_KINDS = arrayOf("Tasarımın kendi zemini", "Şeffaf", "Düz renk", "Degrade", "Havaya göre", "Gökyüzü resmi", "Kağıt dokusu")
+    private val BG_KINDS = arrayOf("Tasarımın kendi zemini", "Şeffaf", "Düz renk", "Degrade", "Havaya göre", "Gökyüzü resmi", "Kağıt dokusu", "Doku")
 
     private fun bgKind(cat: String): Int {
         val ubg = read { Decor.mode(this) }
@@ -374,6 +383,24 @@ class EditActivity : Activity() {
             else -> {
                 if (k == 2 || k == 3 || k == 6) { row(s, "Zemin rengi"); chips(s, Decor.SWATCH_NAMES, read { Decor.swatch(this) }) { putI("ubgColor", it) } }
                 if (k == 4) s.addView(TextView(this).apply { text = "Güneşte parlama, gece yıldızlar, yağmurda damlalar… zemin hava durumuna göre kendiliğinden değişir."; setTextColor(Ui.MUTED); textSize = 12f })
+                if (k == 7) {
+                    row(s, "Doku", "Açık dokularda yazı rengini Renk sekmesinden koyu seçebilirsin.")
+                    val cur = read { Decor.tex(this) }
+                    val r = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+                    Decor.TEX_NAMES.forEachIndexed { i, n ->
+                        r.addView(card(i == cur, { putI("ubgTex", i); build() }).apply {
+                            addView(ImageView(this@EditActivity).apply {
+                                setImageResource(Decor.texRes(i)); scaleType = ImageView.ScaleType.CENTER_CROP
+                                layoutParams = LinearLayout.LayoutParams(dp(76), dp(44))
+                            })
+                            addView(TextView(this@EditActivity).apply { text = n; textSize = 11f; setTextColor(Ui.MUTED) })
+                        })
+                    }
+                    s.addView(HorizontalScrollView(this).apply { addView(r) })
+                    row(s, "Ton")
+                    chips(s, Decor.TONE_NAMES, read { Decor.tone(this) }) { putI("ubgTone", it) }
+                    if (read { Decor.tone(this) } == 3) { row(s, "Ton rengi"); chips(s, Decor.SWATCH_NAMES, read { Decor.swatch(this) }) { putI("ubgColor", it) } }
+                }
                 s.addView(Ui.slider(this, { "Doluluk: %$it" }, read { Decor.op(this) }) { putI("ubgOp", it) })
             }
         }
@@ -484,7 +511,38 @@ class EditActivity : Activity() {
         row(s, "Saat kalınlığı")
         chips(s, Ink.WEIGHT_NAMES, read { Ink.weight(this) }) { putI("clockWeight", it) }
         s.addView(Ui.slider(this, { "Harf aralığı: ${it / 2 - 10}" }, (read { Ink.spacing(this) } + 10) * 2) { putI("clockSpacing", it / 2 - 10) })
+        row(s, "Saat ile dakika arası")
+        chips(s, Ink.SEP_NAMES, read { Ink.sep(this) }) { putI("clockSep", it) }
+        s.addView(Ui.check(this, "Saatin başındaki sıfırı gösterme (09:05 → 9:05)", read { Ink.noLead(this) }) { putB("noLead", it) })
+        texRow(s, "Rakam dokusu", "Saat ve büyük rakamlar. Tebeşir, eskitme ve grenli seçtiğin rengi korur; diğerleri kendi rengini getirir.", "clockTex", read { Tex.clockTex(this) }, "12:45", read { Style.clockTypeface(this, Style.font(this)) })
+        texRow(s, "Yazı dokusu", "Konum, tarih, derece gibi diğer yazılar.", "textTex", read { Tex.textTex(this) }, "Kadıköy", read { Style.textTypeface(this, Style.font(this)) })
+        if (read { Tex.clockTex(this) } > 0 || read { Tex.textTex(this) } > 0)
+            s.addView(Ui.slider(this, { "Doku ölçeği: %$it" }, read { Tex.scale(this) }) { putI("texScale", it.coerceAtLeast(40)) })
         hiddenToggleRow(s)
+    }
+
+    private fun texRow(s: LinearLayout, label: String, hint: String, key: String, cur: Int, sample: String, tf: android.graphics.Typeface) {
+        row(s, label, hint)
+        val r = LinearLayout(this).apply { orientation = LinearLayout.HORIZONTAL }
+        Tex.NAMES.forEachIndexed { i, n ->
+            r.addView(card(i == cur, { putI(key, i); build() }).apply {
+                addView(ImageView(this@EditActivity).apply {
+                    val b = android.graphics.Bitmap.createBitmap(dp(92), dp(40), android.graphics.Bitmap.Config.ARGB_8888)
+                    val cv = TCanvas(b)
+                    val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG).apply {
+                        typeface = tf; textSize = dp(if (sample.length > 5) 20 else 26).toFloat(); color = Color.WHITE; textAlign = android.graphics.Paint.Align.CENTER
+                    }
+                    Cfg.with(wid) { Tex.begin(this@EditActivity) }
+                    Tex.forPreview(i)
+                    Tex.clock(true)
+                    cv.drawText(sample, b.width / 2f, b.height * .74f, paint)
+                    Tex.clock(false)
+                    setImageBitmap(b)
+                })
+                addView(TextView(this@EditActivity).apply { text = n; textSize = 11f; setTextColor(Ui.MUTED) })
+            })
+        }
+        s.addView(HorizontalScrollView(this).apply { addView(r) })
     }
 
     /* ---------- Renkler ---------- */
@@ -576,12 +634,14 @@ class EditActivity : Activity() {
             }
             s.addView(HorizontalScrollView(this).apply { addView(r2) })
         } else s.addView(TextView(this).apply { text = "Bu şeklin kendi stili var; renkleri ve dokusu tasarımın parçası."; setTextColor(Ui.MUTED); textSize = 12f })
+        row(s, "İkon efekti", "Tek renk: yazı renginde boyar · Çerçeveli: vurgu renginde kontur.")
+        chips(s, Combo.ICON_FX_NAMES, read { Combo.iconFx(this) }) { putI("iconFx", it) }
         hiddenToggleRow(s)
     }
 
     /* ---------- 7. İşlemler ---------- */
     private val LOOK_KEYS = listOf("ubgShape", "ubg", "ubgColor", "ubgOp", "ubgRad", "ubgFrame", "ubgFrameCol", "font", "textFont", "textColor", "clockFx",
-        "iconShape", "iconStyle", "palette", "sClock", "sText", "sIcon", "locDetail", "tapWeather") + Ink.ALL_KEYS
+        "iconShape", "iconStyle", "palette", "sClock", "sText", "sIcon", "locDetail", "tapWeather", "ubgTex", "ubgTone") + Ink.ALL_KEYS
 
     private fun actions() {
         root.addView(Ui.card(this).apply {

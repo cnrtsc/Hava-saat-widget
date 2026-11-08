@@ -151,6 +151,12 @@ object Widgets {
         R.layout.w_ref_bd to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_ref_bl to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_ref_bb to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_tahta_ws to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_tahta_wg to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_tahta_wk to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_tahta_ss to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_tahta_sg to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_tahta_c to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_zarf to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_pola to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_bilet to Spec(30f, 30f, 11f, "EEE"),
@@ -175,6 +181,12 @@ object Widgets {
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
     )
     private val DIAL_LAYOUTS = setOf(
+        R.layout.w_tahta_c,
+        R.layout.w_tahta_sg,
+        R.layout.w_tahta_ss,
+        R.layout.w_tahta_wk,
+        R.layout.w_tahta_wg,
+        R.layout.w_tahta_ws,
         R.layout.w_ref_bb,
         R.layout.w_ref_bl,
         R.layout.w_ref_bd,
@@ -390,7 +402,7 @@ object Widgets {
         val w = ceil(tw + pad * 2).toInt().coerceAtLeast(1)
         val h = ceil(fm.descent - fm.ascent + pad * 2).toInt().coerceAtLeast(1)
         val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-        if (clock) Ink.time(c, Canvas(bmp), text, pad, pad - fm.ascent, paint) else Canvas(bmp).drawText(text, pad, pad - fm.ascent, paint)
+        if (clock) Ink.time(c, TCanvas(bmp), text, pad, pad - fm.ascent, paint) else TCanvas(bmp).drawText(text, pad, pad - fm.ascent, paint)
         bmp.density = dm.densityDpi
         return bmp
     }
@@ -408,7 +420,7 @@ object Widgets {
     private fun dialDay(pal: Pal, w: Weather?): Bitmap {
         val n = 600
         val b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
         p.color = pal.dark
         cv.drawCircle(n / 2f, n / 2f, n / 2f - 4, p)
@@ -435,7 +447,7 @@ object Widgets {
     private fun dialGauge(pal: Pal, w: Weather?): Bitmap {
         val n = 600
         val b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val p = Paint(Paint.ANTI_ALIAS_FLAG)
         p.color = pal.container
         cv.drawCircle(n / 2f, n / 2f, n / 2f - 4, p)
@@ -487,7 +499,7 @@ object Widgets {
     private fun analog(c: Context, pal: Pal, w: Weather?, tf: Typeface, withWeather: Boolean): Bitmap {
         val n = 600
         val b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val cx = n / 2f
         face(pal, n, cv, true)
         val cal = java.util.Calendar.getInstance()
@@ -524,7 +536,7 @@ object Widgets {
     private fun roundWeather(c: Context, pal: Pal, w: Weather?, tf: Typeface): Bitmap {
         val n = 600
         val b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val cx = n / 2f
         face(pal, n, cv, false)
         val hum = (w?.humidity ?: 0).coerceIn(0, 100)
@@ -549,7 +561,7 @@ object Widgets {
     private fun roundSun(c: Context, pal: Pal, w: Weather?, tf: Typeface): Bitmap {
         val n = 600
         val b = Bitmap.createBitmap(n, n, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val cx = n / 2f
         face(pal, n, cv, false)
         val cal = java.util.Calendar.getInstance()
@@ -763,6 +775,12 @@ object Widgets {
             R.layout.w_ref_bd -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_PAINT_D)))
             R.layout.w_ref_bl -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_PAINT_L)))
             R.layout.w_ref_bb -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_PAINT_B)))
+            R.layout.w_tahta_ws -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Chalk.render(c, w, wdp, hdp, Chalk.SLATE, Chalk.WIDE)))
+            R.layout.w_tahta_wg -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Chalk.render(c, w, wdp, hdp, Chalk.GREEN, Chalk.WIDE)))
+            R.layout.w_tahta_wk -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Chalk.render(c, w, wdp, hdp, Chalk.KRAFT, Chalk.WIDE)))
+            R.layout.w_tahta_ss -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Chalk.render(c, w, wdp, hdp, Chalk.SLATE, Chalk.SQUARE)))
+            R.layout.w_tahta_sg -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Chalk.render(c, w, wdp, hdp, Chalk.GREEN, Chalk.SQUARE)))
+            R.layout.w_tahta_c -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Chalk.render(c, w, wdp, hdp, Chalk.SLATE, Chalk.STRIP)))
             R.layout.w_card_zarf -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.ZARF)))
             R.layout.w_card_pola -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.POLA)))
             R.layout.w_card_bilet -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.BILET)))

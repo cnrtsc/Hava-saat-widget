@@ -55,6 +55,12 @@ class W_Cumle : BaseWidget()
 class W_Pil : BaseWidget()
 class W_Takvim : BaseWidget()
 class W_Kilitince : BaseWidget()
+class W_TahtaWs : BaseWidget()
+class W_TahtaWg : BaseWidget()
+class W_TahtaWk : BaseWidget()
+class W_TahtaSs : BaseWidget()
+class W_TahtaSg : BaseWidget()
+class W_TahtaC : BaseWidget()
 class W_RefPd : BaseWidget()
 class W_RefPl : BaseWidget()
 class W_RefPb : BaseWidget()
@@ -225,6 +231,12 @@ object Registry {
         Entry(W_RefBd::class.java, "Boya koyu", R.layout.w_ref_bd, "w", R.drawable.prev_ref_bd),
         Entry(W_RefBl::class.java, "Boya açık", R.layout.w_ref_bl, "w", R.drawable.prev_ref_bl),
         Entry(W_RefBb::class.java, "Boya bordo", R.layout.w_ref_bb, "w", R.drawable.prev_ref_bb),
+        Entry(W_TahtaWs::class.java, "Kara tahta", R.layout.w_tahta_ws, "w", R.drawable.prev_tahta_ws),
+        Entry(W_TahtaWg::class.java, "Yeşil tahta", R.layout.w_tahta_wg, "w", R.drawable.prev_tahta_wg),
+        Entry(W_TahtaWk::class.java, "Kraft not", R.layout.w_tahta_wk, "w", R.drawable.prev_tahta_wk),
+        Entry(W_TahtaSs::class.java, "Kara tahta kare", R.layout.w_tahta_ss, "s", R.drawable.prev_tahta_ss),
+        Entry(W_TahtaSg::class.java, "Yeşil tahta kare", R.layout.w_tahta_sg, "s", R.drawable.prev_tahta_sg),
+        Entry(W_TahtaC::class.java, "Tahta şerit", R.layout.w_tahta_c, "c", R.drawable.prev_tahta_c),
         Entry(W_CZarf::class.java, "Zarf", R.layout.w_card_zarf, "w", R.drawable.prev_czarf),
         Entry(W_CPola::class.java, "Polaroid", R.layout.w_card_pola, "w", R.drawable.prev_cpola),
         Entry(W_CBilet::class.java, "Bilet", R.layout.w_card_bilet, "w", R.drawable.prev_cbilet),

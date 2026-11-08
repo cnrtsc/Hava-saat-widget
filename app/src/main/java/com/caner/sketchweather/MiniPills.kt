@@ -109,7 +109,7 @@ object MiniPills {
         val W = (wdp.coerceIn(80, 560) * k).toInt()
         val H = (hdp.coerceIn(24, 300) * k).toInt()
         val b = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val op = Style.opacity(c) / 100f
         val ink = Style.textColor(c) ?: Color.WHITE
         val lk = Combo.Look(Color.TRANSPARENT, ink, ink, ink, op < .3f, 0)

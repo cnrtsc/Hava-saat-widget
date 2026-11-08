@@ -103,7 +103,7 @@ object Anim {
 
     fun frame(sc: Scene, i: Int, W: Int, H: Int): Bitmap {
         val b = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val Wf = W.toFloat(); val Hf = H.toFloat(); val s = Hf / 300f   // önizlemedeki ölçeğe göre
         val t = i / N.toFloat()
         val rng = Rnd(7)
@@ -212,7 +212,7 @@ object Anim {
         val k = 2.5f
         val W = (wdp.coerceIn(80, 560) * k).toInt(); val H = (hdp.coerceIn(60, 420) * k).toInt()
         val b = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val Wf = W.toFloat(); val Hf = H.toFloat(); val s = Hf / 300f
         val lightBg = sc.kind == SNOW || sc.kind == FOG
         Ink.setBg(if (lightBg) Color.rgb(220, 226, 236) else SKY[sc.kind][0])

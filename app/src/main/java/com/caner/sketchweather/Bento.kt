@@ -43,7 +43,7 @@ object Bento {
         val W = (wdp.coerceIn(100, 560) * k).toInt()
         val H = (hdp.coerceIn(80, 400) * k).toInt()
         val b = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val pal = Palette.get(c)
         val op = Style.opacity(c) / 100f
         val g = 6 * k

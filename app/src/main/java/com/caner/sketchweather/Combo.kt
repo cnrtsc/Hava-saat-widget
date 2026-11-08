@@ -72,11 +72,39 @@ object Combo {
     fun text(tf: Typeface, size: Float, color: Int, lk: Look, align: Paint.Align = Paint.Align.CENTER) =
         paint(color, lk).apply { typeface = tf; textSize = size * textMul; textAlign = align }
 
+    val ICON_FX_NAMES = arrayOf("Normal", "Tek renk", "Gölgeli", "Parlayan", "Siyah-beyaz", "Soluk", "Çerçeveli")
+    fun iconFx(c: Context) = Cfg.int(c, "iconFx", 0).coerceIn(0, ICON_FX_NAMES.size - 1)
+
     fun icon(c: Context, cv: Canvas, res: Int, cx: Float, cy: Float, size0: Float) {
         val size = size0 * Style.iconScale(c)
         try {
             val b = BitmapFactory.decodeResource(c.resources, res) ?: return
-            cv.drawBitmap(b, null, RectF(cx - size / 2, cy - size / 2, cx + size / 2, cy + size / 2), Paint(Paint.FILTER_BITMAP_FLAG))
+            val dst = RectF(cx - size / 2, cy - size / 2, cx + size / 2, cy + size / 2)
+            val p = Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG)
+            val fx = iconFx(c)
+            val tint = Ink.get(c, Ink.TEXT) ?: Style.textColor(c) ?: Color.WHITE
+            if (fx == 2 || fx == 3 || fx == 6) {
+                val a = b.extractAlpha()
+                val sp = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+                when (fx) {
+                    2 -> { sp.color = 0x8C000000.toInt(); sp.maskFilter = android.graphics.BlurMaskFilter(size * .06f, android.graphics.BlurMaskFilter.Blur.NORMAL)
+                        cv.drawBitmap(a, null, RectF(dst).apply { offset(size * .03f, size * .06f) }, sp) }
+                    3 -> { sp.color = Ink.get(c, Ink.ACC) ?: 0xFFFFE6A0.toInt(); sp.alpha = 170
+                        sp.maskFilter = android.graphics.BlurMaskFilter(size * .12f, android.graphics.BlurMaskFilter.Blur.NORMAL)
+                        cv.drawBitmap(a, null, dst, sp) }
+                    else -> { sp.color = Ink.get(c, Ink.ACC) ?: tint
+                        val o = size * .035f
+                        for ((dx, dy) in listOf(-o to 0f, o to 0f, 0f to -o, 0f to o, -o to -o, o to o, -o to o, o to -o))
+                            cv.drawBitmap(a, null, RectF(dst).apply { offset(dx, dy) }, sp) }
+                }
+                a.recycle()
+            }
+            when (fx) {
+                1 -> p.colorFilter = android.graphics.PorterDuffColorFilter(tint, android.graphics.PorterDuff.Mode.SRC_IN)
+                4 -> p.colorFilter = android.graphics.ColorMatrixColorFilter(android.graphics.ColorMatrix().apply { setSaturation(0f) })
+                5 -> p.alpha = 140
+            }
+            cv.drawBitmap(b, null, dst, p)
         } catch (e: Exception) { }
     }
 
@@ -305,7 +333,7 @@ object Combo {
         val W = (wdp.coerceIn(80, 560) * k).toInt()
         val H = (hdp.coerceIn(60, 400) * k).toInt()
         val b = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val lk = look(c, Palette.get(c))
         val pad = 6 * k
         if (mode == 0) {

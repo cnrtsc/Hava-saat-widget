@@ -69,7 +69,7 @@ object GS {
         val k = 2.5f
         val Wi = (wdp.coerceIn(80, 560) * k).toInt(); val Hi = (hdp.coerceIn(40, 420) * k).toInt()
         val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val dark = style == BLACK
         val bg = if (dark) Color.rgb(14, 14, 16) else Color.WHITE
         Ink.setBg(bg)
@@ -354,7 +354,7 @@ object GS {
         val k = 2.5f
         val Wi = (wdp.coerceIn(80, 560) * k).toInt(); val Hi = (hdp.coerceIn(40, 420) * k).toInt()
         val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val dark = kind in DARK_KINDS
         Ink.setBg(when (kind) { CLEAR -> null; GRAD -> Color.rgb(160, 16, 42); else -> if (dark) Color.rgb(14, 14, 16) else Color.WHITE })
         val ink = Ink.get(c, Ink.TEXT) ?: if (dark) Color.WHITE else Color.rgb(28, 22, 26)
@@ -569,7 +569,7 @@ object GS {
         val k = 2.5f
         val Wi = (wdp.coerceIn(60, 560) * k).toInt(); val Hi = (hdp.coerceIn(40, 560) * k).toInt()
         val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val light = kind in E_LIGHT
         val bgCol = if (light) IVORY else NIGHT
         Ink.setBg(bgCol)
@@ -702,7 +702,7 @@ object GS {
         val k = 2.5f
         val Wi = (wdp.coerceIn(60, 560) * k).toInt(); val Hi = (hdp.coerceIn(40, 560) * k).toInt()
         val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val light = kind in F_LIGHT
         Ink.setBg(if (light) IVORY else NIGHT)
         val ink = Ink.get(c, Ink.TEXT) ?: if (light) Color.rgb(30, 24, 28) else Color.rgb(245, 245, 245)
@@ -877,7 +877,7 @@ object GS {
         val k = 2.5f
         val Wi = (wdp.coerceIn(60, 560) * k).toInt(); val Hi = (hdp.coerceIn(40, 560) * k).toInt()
         val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val light = kind in P_LIGHT
         val glance = kind == P_GLANCE
         val bgCol = if (light) Color.WHITE else Color.rgb(20, 20, 22)
@@ -1090,7 +1090,7 @@ object GS {
         val k = 2.5f
         val Wi = (wdp.coerceIn(80, 560) * k).toInt(); val Hi = (hdp.coerceIn(60, 420) * k).toInt()
         val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val theme = (kind - 80) % 3          // 0 koyu, 1 açık, 2 bordo
         val family = (kind - 80) / 3         // 0 panel, 1 altın, 2 boya
         val light = theme == 1

@@ -59,7 +59,7 @@ object Asym {
         val Wi = (wdp.coerceIn(80, 560) * k).toInt()
         val Hi = (hdp.coerceIn(60, 420) * k).toInt()
         val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val W = Wi.toFloat(); val H = Hi.toFloat()
         val op = bgOpacity(c) / 100f
         val ink = Style.textColor(c) ?: Color.WHITE

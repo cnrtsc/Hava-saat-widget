@@ -16,7 +16,18 @@ import kotlin.math.min
 
 /** Her widget'a uygulanabilen ortak görünüm katmanı: ek zemin, köşe, çerçeve. */
 object Decor {
-    val BG_NAMES = arrayOf("Tasarımın kendi zemini", "Düz renk", "Degrade", "Havaya göre (detaylı)", "Gökyüzü resmi", "Kağıt dokusu")
+    val BG_NAMES = arrayOf("Tasarımın kendi zemini", "Düz renk", "Degrade", "Havaya göre (detaylı)", "Gökyüzü resmi", "Kağıt dokusu", "Doku")
+    val TEX_NAMES = arrayOf("Kara tahta", "Yeşil tahta", "Beton", "Kraft kağıt", "Ahşap", "Beyaz mermer", "Siyah mermer", "Keten", "Karbon", "Deri",
+        "Yağlı boya koyu", "Yağlı boya açık", "Yağlı boya bordo", "Duman koyu", "Duman açık", "Duman bordo")
+    private val TEX = intArrayOf(R.drawable.bg_slate, R.drawable.bg_green, R.drawable.bg_concrete, R.drawable.bg_kraft, R.drawable.bg_wood,
+        R.drawable.bg_marble, R.drawable.bg_marble_k, R.drawable.bg_linen, R.drawable.bg_carbon, R.drawable.bg_leather,
+        R.drawable.tex_paint_dark, R.drawable.tex_paint_light, R.drawable.tex_paint_bordo, R.drawable.tex_smoke_dark, R.drawable.tex_smoke_light, R.drawable.tex_smoke_bordo)
+    /** Açık dokular: yazılar koyu olmalı. */
+    val TEX_LIGHT = setOf(2, 3, 5, 7, 11, 14)
+    val TONE_NAMES = arrayOf("Doğal", "Koyulaştır", "Açıklaştır", "Renk tonu")
+    fun tex(c: Context) = Cfg.int(c, "ubgTex", 0).coerceIn(0, TEX.size - 1)
+    fun tone(c: Context) = Cfg.int(c, "ubgTone", 0).coerceIn(0, TONE_NAMES.size - 1)
+    fun texRes(i: Int) = TEX[i.coerceIn(0, TEX.size - 1)]
     val SWATCH_NAMES = arrayOf("Gece", "Lacivert", "Mor", "Orman", "Kahve", "Bordo", "Grafit", "Siyah")
     private val SWATCH = intArrayOf(0xFF1E222B.toInt(), 0xFF22345A.toInt(), 0xFF3A2C5C.toInt(), 0xFF1D4038.toInt(),
         0xFF4A3426.toInt(), 0xFF5A1F2E.toInt(), 0xFF3A3F48.toInt(), 0xFF000000.toInt())
@@ -121,10 +132,27 @@ object Decor {
             }
             3 -> weather(cv, r, w)
             4 -> sky(c, cv, r, w)
+            6 -> texture(c, cv, r)
             else -> {
                 cv.drawRect(r, Paint().apply { color = base })
                 Origami.meshOn(cv, r, 31, 5, 1.2f)
             }
+        }
+    }
+
+    private var texCache: Pair<Int, Bitmap>? = null
+    private fun texture(c: Context, cv: Canvas, r: RectF) {
+        val id = TEX[tex(c)]
+        val b = texCache?.takeIf { it.first == id }?.second ?: try {
+            BitmapFactory.decodeResource(c.resources, id, BitmapFactory.Options().apply { inScaled = false }).also { texCache = id to it }
+        } catch (e: Exception) { null } ?: return
+        val sc = maxOf(r.width() / b.width, r.height() / b.height)
+        val dw = b.width * sc; val dh = b.height * sc
+        cv.drawBitmap(b, null, RectF(r.centerX() - dw / 2, r.centerY() - dh / 2, r.centerX() + dw / 2, r.centerY() + dh / 2), Paint(Paint.FILTER_BITMAP_FLAG))
+        when (tone(c)) {
+            1 -> cv.drawRect(r, Paint().apply { color = 0x66000000 })
+            2 -> cv.drawRect(r, Paint().apply { color = 0x66FFFFFF })
+            3 -> cv.drawRect(r, Paint().apply { color = SWATCH[swatch(c)]; alpha = 120 })
         }
     }
 

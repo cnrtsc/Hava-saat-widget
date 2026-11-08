@@ -57,7 +57,7 @@ object Cards {
         val k = 2.5f
         val Wi = (wdp.coerceIn(80, 560) * k).toInt(); val Hi = (hdp.coerceIn(60, 420) * k).toInt()
         val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val pi = paperIdx(c)
         val paper = when (pi) { 0 -> DEF_PAPER[kind]; 8 -> Palette.get(c).container; else -> PAPERS[pi] }
         Ink.setBg(paper)

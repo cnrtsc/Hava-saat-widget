@@ -34,7 +34,7 @@ object Glance {
         val k = 2.5f
         val Wi = (wdp.coerceIn(60, 560) * k).toInt(); val Hi = (hdp.coerceIn(60, 420) * k).toInt()
         val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val pal = Palette.get(c)
         val W = Wi.toFloat(); val H = Hi.toFloat(); val s = min(W, H) / 400f
         val op = Style.opacity(c)

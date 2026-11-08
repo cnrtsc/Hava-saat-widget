@@ -21,7 +21,7 @@ object Extra {
     private fun canvas(wdp: Int, hdp: Int): Pair<Bitmap, Canvas> {
         val k = 2.5f
         val b = Bitmap.createBitmap((wdp.coerceIn(120, 560) * k).toInt(), (hdp.coerceIn(40, 400) * k).toInt(), Bitmap.Config.ARGB_8888)
-        return Pair(b, Canvas(b))
+        return Pair(b, TCanvas(b))
     }
 
     private fun card(c: Context, cv: Canvas, W: Float, H: Float, lk: Combo.Look, r: Float) {

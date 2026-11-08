@@ -94,6 +94,9 @@ object IconTable {
         intArrayOf(R.drawable.i_pa_sun, R.drawable.i_pa_moon, R.drawable.i_pa_partly, R.drawable.i_pa_partly_night, R.drawable.i_pa_cloud, R.drawable.i_pa_fog, R.drawable.i_pa_drizzle, R.drawable.i_pa_rain, R.drawable.i_pa_snow, R.drawable.i_pa_storm),
         intArrayOf(R.drawable.i_ob_sun, R.drawable.i_ob_moon, R.drawable.i_ob_partly, R.drawable.i_ob_partly_night, R.drawable.i_ob_cloud, R.drawable.i_ob_fog, R.drawable.i_ob_drizzle, R.drawable.i_ob_rain, R.drawable.i_ob_snow, R.drawable.i_ob_storm),
         intArrayOf(R.drawable.i_gl_sun, R.drawable.i_gl_moon, R.drawable.i_gl_partly, R.drawable.i_gl_partly_night, R.drawable.i_gl_cloud, R.drawable.i_gl_fog, R.drawable.i_gl_drizzle, R.drawable.i_gl_rain, R.drawable.i_gl_snow, R.drawable.i_gl_storm),
-        intArrayOf(R.drawable.i_ik_sun, R.drawable.i_ik_moon, R.drawable.i_ik_partly, R.drawable.i_ik_partly_night, R.drawable.i_ik_cloud, R.drawable.i_ik_fog, R.drawable.i_ik_drizzle, R.drawable.i_ik_rain, R.drawable.i_ik_snow, R.drawable.i_ik_storm)
+        intArrayOf(R.drawable.i_ik_sun, R.drawable.i_ik_moon, R.drawable.i_ik_partly, R.drawable.i_ik_partly_night, R.drawable.i_ik_cloud, R.drawable.i_ik_fog, R.drawable.i_ik_drizzle, R.drawable.i_ik_rain, R.drawable.i_ik_snow, R.drawable.i_ik_storm),
+        intArrayOf(R.drawable.i_tc_sun, R.drawable.i_tc_moon, R.drawable.i_tc_partly, R.drawable.i_tc_partly_night, R.drawable.i_tc_cloud, R.drawable.i_tc_fog, R.drawable.i_tc_drizzle, R.drawable.i_tc_rain, R.drawable.i_tc_snow, R.drawable.i_tc_storm),
+        intArrayOf(R.drawable.i_tv_sun, R.drawable.i_tv_moon, R.drawable.i_tv_partly, R.drawable.i_tv_partly_night, R.drawable.i_tv_cloud, R.drawable.i_tv_fog, R.drawable.i_tv_drizzle, R.drawable.i_tv_rain, R.drawable.i_tv_snow, R.drawable.i_tv_storm),
+        intArrayOf(R.drawable.i_tk_sun, R.drawable.i_tk_moon, R.drawable.i_tk_partly, R.drawable.i_tk_partly_night, R.drawable.i_tk_cloud, R.drawable.i_tk_fog, R.drawable.i_tk_drizzle, R.drawable.i_tk_rain, R.drawable.i_tk_snow, R.drawable.i_tk_storm)
     )
 }

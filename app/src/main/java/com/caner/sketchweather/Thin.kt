@@ -46,7 +46,7 @@ object Thin {
         val W = (wdp.coerceIn(160, 560) * k).toInt()
         val H = (hdp.coerceIn(40, 200) * k).toInt()
         val b = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val Wf = W.toFloat(); val Hf = H.toFloat()
         val op = Style.opacity(c) / 100f
         val ink = Style.textColor(c) ?: Color.WHITE

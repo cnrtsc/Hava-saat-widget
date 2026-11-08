@@ -21,7 +21,7 @@ object Ink {
     val KEYS = arrayOf(CLOCK, MIN, TEXT, SUB, TEMP, LOC, ACC)
     val KEY_NAMES = arrayOf("Saat", "Dakika", "Yazılar", "İkincil yazılar (tarih vb.)", "Sıcaklık", "Konum", "Vurgu")
     val ALL_KEYS = listOf(CLOCK, MIN, TEXT, SUB, TEMP, LOC, ACC, CLOCK2, "clockGrad", "clockStyle", "clockWeight", "clockSpacing",
-        "shadowK", "autoContrast", "todColor", "sTemp")
+        "shadowK", "autoContrast", "todColor", "sTemp", "clockTex", "textTex", "texScale", "clockSep", "noLead", "iconFx")
 
     val STYLE_NAMES = arrayOf("Normal", "Dakika ayrı renk", "İnce ayraç", "Yazıyla")
     val WEIGHT_NAMES = arrayOf("Tasarımdaki", "Kalın", "Daha kalın", "En kalın")
@@ -47,6 +47,10 @@ object Ink {
     fun shadow(c: Context) = Cfg.int(c, "shadowK", 0).coerceIn(0, SHADOW_NAMES.size - 1)
     fun autoContrast(c: Context) = Cfg.bool(c, "autoContrast", true)
     fun todOn(c: Context) = Cfg.bool(c, "todColor", false)
+    val SEP_NAMES = arrayOf(":", "·", "•", "boşluk", "|", ".")
+    private val SEPS = arrayOf(":", "·", "•", " ", "|", ".")
+    fun sep(c: Context) = Cfg.int(c, "clockSep", 0).coerceIn(0, SEPS.size - 1)
+    fun noLead(c: Context) = Cfg.bool(c, "noLead", false)
     fun tempScale(c: Context) = Cfg.int(c, "sTemp", 100).coerceIn(60, 150) / 100f
 
     /** Saate göre renk: sabah şeftali, öğle güneş sarısı, akşam mercan, gece mavi. */
@@ -97,7 +101,7 @@ object Ink {
     /* ---------- gölge ---------- */
     private val shTL = ThreadLocal<Int>()
     /** Her widget çiziminden önce çağrılır. */
-    fun begin(c: Context) { bgTL.set(null); shTL.set(shadow(c)) }
+    fun begin(c: Context) { bgTL.set(null); shTL.set(shadow(c)); Tex.begin(c) }
     /** Kullanıcı gölge düzeyi seçtiyse boyaya uygular (tasarımın gölgesini ezer). */
     fun shadowOverride(p: Paint) {
         val k = shTL.get() ?: 0; if (k == 0) return
@@ -135,8 +139,10 @@ object Ink {
      */
     private class Lay(val p: Paint, val parts: List<Pair<String, Int>>, val gap: Float, val total: Float, val minCol: Int?, val st: Int)
 
-    private fun lay(c: Context, s: String, p0: Paint): Lay {
+    private fun lay(c: Context, s0: String, p0: Paint): Lay {
         val st = style(c)
+        val s = if (noLead(c) && s0.length >= 4 && s0[0] == '0' && s0[2] == ':') s0.substring(1) else s0
+        val sp = SEPS[sep(c)]
         val p = Paint(p0)
         val minCol = get(c, MIN) ?: if (st == 1) (get(c, ACC) ?: Palette.get(c).accentLight) else null
         val split = s.contains(':') && (st == 1 || st == 2 || minCol != null)
@@ -144,8 +150,8 @@ object Ink {
         val full = p.measureText(s)
         if (st == 3) { val w = p.measureText(text); if (w > full * 1.6f) p.textSize *= full * 1.6f / w }
         val parts: List<Pair<String, Int>> = if (split && st != 3) {
-            listOf(s.substringBefore(':') to 0, (if (st == 2) "" else ":") to 1, s.substringAfter(':') to 2)
-        } else listOf(text to 0)
+            listOf(s.substringBefore(':') to 0, (if (st == 2) "" else sp) to 1, s.substringAfter(':') to 2)
+        } else listOf((if (st == 3) text else text.replace(":", sp)) to 0)
         val gap = if (st == 2 && split) p.textSize * .22f else 0f
         val total = parts.sumOf { p.measureText(it.first).toDouble() }.toFloat() + gap
         return Lay(p, parts, gap, total, minCol, st)
@@ -166,7 +172,8 @@ object Ink {
             val c1 = p.color; val c2 = get(c, CLOCK2) ?: (get(c, ACC) ?: Palette.get(c).accentLight)
             p.shader = LinearGradient(0f, y - p.textSize * .78f, 0f, y, c1, c2, Shader.TileMode.CLAMP)
         }
-        for ((t, kind) in L.parts) {
+        Tex.clock(true)
+        try { for ((t, kind) in L.parts) {
             if (kind == 1 && L.st == 2) {
                 val lp = Paint(p).apply { shader = null; style = Paint.Style.STROKE; strokeWidth = p.textSize * .03f; alpha = (Color.alpha(p.color) * .55f).toInt() }
                 val cx = left + L.gap / 2
@@ -178,7 +185,7 @@ object Ink {
             if (kind == 1) q.alpha = (Color.alpha(p.color) * .6f).toInt()
             cv.drawText(t, left, y, q)
             left += q.measureText(t)
-        }
+        } } finally { Tex.clock(false) }
     }
 
     /* ---------- hazır paletler ---------- */

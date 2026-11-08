@@ -124,4 +124,10 @@
     <string name="desc_ref_bd">Boya koyu · 4x2</string>
     <string name="desc_ref_bl">Boya açık · 4x2</string>
     <string name="desc_ref_bb">Boya bordo · 4x2</string>
+    <string name="desc_tahta_ws">Kara tahta · 4x2</string>
+    <string name="desc_tahta_wg">Yeşil tahta · 4x2</string>
+    <string name="desc_tahta_wk">Kraft not · 4x2</string>
+    <string name="desc_tahta_ss">Kara tahta kare · 2x2</string>
+    <string name="desc_tahta_sg">Yeşil tahta kare · 2x2</string>
+    <string name="desc_tahta_c">Tahta şerit · 4x1</string>
 </resources>

@@ -54,7 +54,7 @@ object Themes {
         val W = (wdp.coerceIn(100, 560) * k).toInt()
         val H = (hdp.coerceIn(80, 400) * k).toInt()
         val b = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val op = Style.opacity(c) / 100f
         tsc = Style.textScale(c)
         val Wf = W.toFloat(); val Hf = H.toFloat()

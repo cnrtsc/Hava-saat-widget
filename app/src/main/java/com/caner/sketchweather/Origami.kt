@@ -138,7 +138,7 @@ object Origami {
         val W = (wdp.coerceIn(80, 560) * k).toInt()
         val H = (hdp.coerceIn(40, 400) * k).toInt()
         val b = Bitmap.createBitmap(W, H, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(b)
+        val cv = TCanvas(b)
         val Wf = W.toFloat(); val Hf = H.toFloat()
         val t = tone(c, w)
         // elle yapılmış kağıtlar: tüm alanı kaplayan parça, üstüne yazılar
