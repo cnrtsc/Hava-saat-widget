@@ -420,6 +420,42 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_pro_g" />
         </receiver>
+        <receiver android:name=".W_RefPd" android:exported="true" android:label="Panel koyu">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ref_pd" />
+        </receiver>
+        <receiver android:name=".W_RefPl" android:exported="true" android:label="Panel açık">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ref_pl" />
+        </receiver>
+        <receiver android:name=".W_RefPb" android:exported="true" android:label="Panel bordo">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ref_pb" />
+        </receiver>
+        <receiver android:name=".W_RefGd" android:exported="true" android:label="Altın çizgi koyu">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ref_gd" />
+        </receiver>
+        <receiver android:name=".W_RefGl" android:exported="true" android:label="Altın çizgi açık">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ref_gl" />
+        </receiver>
+        <receiver android:name=".W_RefGb" android:exported="true" android:label="Altın çizgi bordo">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ref_gb" />
+        </receiver>
+        <receiver android:name=".W_RefBd" android:exported="true" android:label="Boya koyu">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ref_bd" />
+        </receiver>
+        <receiver android:name=".W_RefBl" android:exported="true" android:label="Boya açık">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ref_bl" />
+        </receiver>
+        <receiver android:name=".W_RefBb" android:exported="true" android:label="Boya bordo">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_ref_bb" />
+        </receiver>
         <receiver android:name=".W_Noktamatris" android:exported="true" android:label="Nokta matris">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_noktamatris" />

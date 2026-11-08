@@ -92,6 +92,8 @@ object IconTable {
         intArrayOf(R.drawable.i_y_sun, R.drawable.i_y_moon, R.drawable.i_y_partly, R.drawable.i_y_partly_night, R.drawable.i_y_cloud, R.drawable.i_y_fog, R.drawable.i_y_drizzle, R.drawable.i_y_rain, R.drawable.i_y_snow, R.drawable.i_y_storm),
         intArrayOf(R.drawable.i_z_sun, R.drawable.i_z_moon, R.drawable.i_z_partly, R.drawable.i_z_partly_night, R.drawable.i_z_cloud, R.drawable.i_z_fog, R.drawable.i_z_drizzle, R.drawable.i_z_rain, R.drawable.i_z_snow, R.drawable.i_z_storm),
         intArrayOf(R.drawable.i_pa_sun, R.drawable.i_pa_moon, R.drawable.i_pa_partly, R.drawable.i_pa_partly_night, R.drawable.i_pa_cloud, R.drawable.i_pa_fog, R.drawable.i_pa_drizzle, R.drawable.i_pa_rain, R.drawable.i_pa_snow, R.drawable.i_pa_storm),
-        intArrayOf(R.drawable.i_ob_sun, R.drawable.i_ob_moon, R.drawable.i_ob_partly, R.drawable.i_ob_partly_night, R.drawable.i_ob_cloud, R.drawable.i_ob_fog, R.drawable.i_ob_drizzle, R.drawable.i_ob_rain, R.drawable.i_ob_snow, R.drawable.i_ob_storm)
+        intArrayOf(R.drawable.i_ob_sun, R.drawable.i_ob_moon, R.drawable.i_ob_partly, R.drawable.i_ob_partly_night, R.drawable.i_ob_cloud, R.drawable.i_ob_fog, R.drawable.i_ob_drizzle, R.drawable.i_ob_rain, R.drawable.i_ob_snow, R.drawable.i_ob_storm),
+        intArrayOf(R.drawable.i_gl_sun, R.drawable.i_gl_moon, R.drawable.i_gl_partly, R.drawable.i_gl_partly_night, R.drawable.i_gl_cloud, R.drawable.i_gl_fog, R.drawable.i_gl_drizzle, R.drawable.i_gl_rain, R.drawable.i_gl_snow, R.drawable.i_gl_storm),
+        intArrayOf(R.drawable.i_ik_sun, R.drawable.i_ik_moon, R.drawable.i_ik_partly, R.drawable.i_ik_partly_night, R.drawable.i_ik_cloud, R.drawable.i_ik_fog, R.drawable.i_ik_drizzle, R.drawable.i_ik_rain, R.drawable.i_ik_snow, R.drawable.i_ik_storm)
     )
 }

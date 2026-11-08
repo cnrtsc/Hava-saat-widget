@@ -55,6 +55,15 @@ class W_Cumle : BaseWidget()
 class W_Pil : BaseWidget()
 class W_Takvim : BaseWidget()
 class W_Kilitince : BaseWidget()
+class W_RefPd : BaseWidget()
+class W_RefPl : BaseWidget()
+class W_RefPb : BaseWidget()
+class W_RefGd : BaseWidget()
+class W_RefGl : BaseWidget()
+class W_RefGb : BaseWidget()
+class W_RefBd : BaseWidget()
+class W_RefBl : BaseWidget()
+class W_RefBb : BaseWidget()
 class W_ProSd : BaseWidget()
 class W_ProSl : BaseWidget()
 class W_ProMd : BaseWidget()
@@ -207,6 +216,15 @@ object Registry {
         Entry(W_ProTd::class.java, "Pro ince koyu", R.layout.w_pro_td, "c", R.drawable.prev_pro_td),
         Entry(W_ProTl::class.java, "Pro ince açık", R.layout.w_pro_tl, "c", R.drawable.prev_pro_tl),
         Entry(W_ProG::class.java, "Pro bir bakışta", R.layout.w_pro_g, "w", R.drawable.prev_pro_g),
+        Entry(W_RefPd::class.java, "Panel koyu", R.layout.w_ref_pd, "w", R.drawable.prev_ref_pd),
+        Entry(W_RefPl::class.java, "Panel açık", R.layout.w_ref_pl, "w", R.drawable.prev_ref_pl),
+        Entry(W_RefPb::class.java, "Panel bordo", R.layout.w_ref_pb, "w", R.drawable.prev_ref_pb),
+        Entry(W_RefGd::class.java, "Altın çizgi koyu", R.layout.w_ref_gd, "w", R.drawable.prev_ref_gd),
+        Entry(W_RefGl::class.java, "Altın çizgi açık", R.layout.w_ref_gl, "w", R.drawable.prev_ref_gl),
+        Entry(W_RefGb::class.java, "Altın çizgi bordo", R.layout.w_ref_gb, "w", R.drawable.prev_ref_gb),
+        Entry(W_RefBd::class.java, "Boya koyu", R.layout.w_ref_bd, "w", R.drawable.prev_ref_bd),
+        Entry(W_RefBl::class.java, "Boya açık", R.layout.w_ref_bl, "w", R.drawable.prev_ref_bl),
+        Entry(W_RefBb::class.java, "Boya bordo", R.layout.w_ref_bb, "w", R.drawable.prev_ref_bb),
         Entry(W_CZarf::class.java, "Zarf", R.layout.w_card_zarf, "w", R.drawable.prev_czarf),
         Entry(W_CPola::class.java, "Polaroid", R.layout.w_card_pola, "w", R.drawable.prev_cpola),
         Entry(W_CBilet::class.java, "Bilet", R.layout.w_card_bilet, "w", R.drawable.prev_cbilet),

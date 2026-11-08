@@ -142,6 +142,15 @@ object Widgets {
         R.layout.w_pro_td to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_pro_tl to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_pro_g to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_ref_pd to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_ref_pl to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_ref_pb to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_ref_gd to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_ref_gl to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_ref_gb to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_ref_bd to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_ref_bl to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_ref_bb to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_zarf to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_pola to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_bilet to Spec(30f, 30f, 11f, "EEE"),
@@ -166,6 +175,15 @@ object Widgets {
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
     )
     private val DIAL_LAYOUTS = setOf(
+        R.layout.w_ref_bb,
+        R.layout.w_ref_bl,
+        R.layout.w_ref_bd,
+        R.layout.w_ref_gb,
+        R.layout.w_ref_gl,
+        R.layout.w_ref_gd,
+        R.layout.w_ref_pb,
+        R.layout.w_ref_pl,
+        R.layout.w_ref_pd,
         R.layout.w_pro_g,
         R.layout.w_pro_tl,
         R.layout.w_pro_td,
@@ -736,6 +754,15 @@ object Widgets {
             R.layout.w_pro_td -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render5(c, w, wdp, hdp, GS.P_STRIP_D)))
             R.layout.w_pro_tl -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render5(c, w, wdp, hdp, GS.P_STRIP_L)))
             R.layout.w_pro_g -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render5(c, w, wdp, hdp, GS.P_GLANCE)))
+            R.layout.w_ref_pd -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_PANEL_D)))
+            R.layout.w_ref_pl -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_PANEL_L)))
+            R.layout.w_ref_pb -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_PANEL_B)))
+            R.layout.w_ref_gd -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_GOLD_D)))
+            R.layout.w_ref_gl -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_GOLD_L)))
+            R.layout.w_ref_gb -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_GOLD_B)))
+            R.layout.w_ref_bd -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_PAINT_D)))
+            R.layout.w_ref_bl -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_PAINT_L)))
+            R.layout.w_ref_bb -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, GS.render6(c, w, wdp, hdp, GS.R_PAINT_B)))
             R.layout.w_card_zarf -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.ZARF)))
             R.layout.w_card_pola -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.POLA)))
             R.layout.w_card_bilet -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.BILET)))

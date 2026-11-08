@@ -1067,4 +1067,198 @@ object GS {
         tx(line, hx(28f) + 13f * u * min(x.isc, 1.25f) + 6 * u, vy(136f), 13f, sub, maxW = x.W - hx(60f))
         logoAt(cv, x, fr(29f), vy(40f), 13f * u)
     }
+    /* ================= Örnek serisi (v29): Panel, Altın çizgi, Boya — koyu / açık / bordo ================= */
+    const val R_PANEL_D = 80; const val R_PANEL_L = 81; const val R_PANEL_B = 82
+    const val R_GOLD_D = 83; const val R_GOLD_L = 84; const val R_GOLD_B = 85
+    const val R_PAINT_D = 86; const val R_PAINT_L = 87; const val R_PAINT_B = 88
+    private const val SH_REAL = 22; private const val SH_GOLD = 27; private const val SH_INK = 28
+
+    private var bmpCache = HashMap<Int, Bitmap>()
+    private fun res(c: Context, id: Int): Bitmap = bmpCache.getOrPut(id) {
+        BitmapFactory.decodeResource(c.resources, id, BitmapFactory.Options().apply { inScaled = false })
+    }
+    /** Dokuyu kartı dolduracak şekilde (center-crop) çizer. */
+    private fun cover(cv: Canvas, b: Bitmap, dst: RectF, alpha: Int) {
+        val sc = max(dst.width() / b.width, dst.height() / b.height)
+        val sw = dst.width() / sc; val sh = dst.height() / sc
+        val sx = (b.width - sw) / 2; val sy = (b.height - sh) / 2
+        cv.drawBitmap(b, android.graphics.Rect(sx.toInt(), sy.toInt(), (sx + sw).toInt(), (sy + sh).toInt()), dst, Paint(Paint.FILTER_BITMAP_FLAG).apply { this.alpha = alpha })
+    }
+    private fun iconFor(c: Context, defShape: Int, code: Int, day: Boolean) = Style.iconPref(c, defShape, 0, code, day)
+
+    fun render6(c: Context, w: Weather?, wdp: Int, hdp: Int, kind: Int): Bitmap {
+        val k = 2.5f
+        val Wi = (wdp.coerceIn(80, 560) * k).toInt(); val Hi = (hdp.coerceIn(60, 420) * k).toInt()
+        val b = Bitmap.createBitmap(Wi, Hi, Bitmap.Config.ARGB_8888)
+        val cv = Canvas(b)
+        val theme = (kind - 80) % 3          // 0 koyu, 1 açık, 2 bordo
+        val family = (kind - 80) / 3         // 0 panel, 1 altın, 2 boya
+        val light = theme == 1
+        val bgCol = when (theme) { 1 -> Color.rgb(250, 248, 244); 2 -> Color.rgb(110, 8, 30); else -> Color.rgb(16, 16, 18) }
+        Ink.setBg(bgCol)
+        val ink = Ink.get(c, Ink.TEXT) ?: if (light) Color.rgb(26, 22, 26) else Color.WHITE
+        val sub = Ink.get(c, Ink.SUB) ?: when (theme) { 1 -> Color.rgb(118, 112, 116); 2 -> Color.rgb(255, 200, 208); else -> Color.rgb(160, 160, 168) }
+        val hair = when (theme) { 1 -> Color.rgb(226, 222, 218); 2 -> Color.rgb(150, 40, 64); else -> Color.rgb(56, 56, 62) }
+        val id = Cfg.current(); val pr = WeatherRepo.prefs(c)
+        val hasFont = id != null && pr.contains(Cfg.wkey(id, "font"))
+        val thin = Typeface.create(c.resources.getFont(R.font.f_outfit_c), Typeface.NORMAL)
+        val outB = Typeface.create(c.resources.getFont(R.font.f_outfitb_c), Typeface.NORMAL)
+        val cond = Typeface.create(c.resources.getFont(R.font.f_barlowsb_c), Typeface.NORMAL)
+        val condB = Typeface.create(c.resources.getFont(R.font.f_barlowb_c), Typeface.NORMAL)
+        val anton = Typeface.create(c.resources.getFont(R.font.f_anton_c), Typeface.NORMAL)
+        val clockTf = if (hasFont) Style.clockTypeface(c, Style.font(c)) else when (family) { 0 -> thin; 1 -> cond; else -> condB }
+        val textTf = if (hasFont || (id != null && pr.contains(Cfg.wkey(id, "textFont")))) Style.textTypeface(c, Style.font(c)) else if (family == 0) Style.textTypeface(c, 1) else cond
+        val x = X(c, w, Wi.toFloat(), Hi.toFloat(), !light, ink, sub, Ink.get(c, Ink.CLOCK) ?: ink, Ink.get(c, Ink.TEMP) ?: ink, Ink.get(c, Ink.LOC) ?: ink,
+            clockTf, boldFor(c, if (family == 0) outB else condB), textTf)
+        begin(c)
+        val W = x.W; val H = x.H
+        val sx = W / 360f; val sy = H / 190f; val u = min(sx, sy)
+        val card = RectF(0f, 0f, W, H)
+        val rad = 22 * u
+        val clip = Path().apply { addRoundRect(card, rad, rad, Path.Direction.CW) }
+        // zemin
+        if (x.op > .02f) {
+            cv.save(); cv.clipPath(clip)
+            if (family == 0) cv.drawColor(Color.argb((x.op * 255).toInt(), Color.red(bgCol), Color.green(bgCol), Color.blue(bgCol)))
+            else {
+                val tex = when (family) { 1 -> intArrayOf(R.drawable.tex_smoke_dark, R.drawable.tex_smoke_light, R.drawable.tex_smoke_bordo); else -> intArrayOf(R.drawable.tex_paint_dark, R.drawable.tex_paint_light, R.drawable.tex_paint_bordo) }[theme]
+                cover(cv, res(c, tex), card, (x.op * 255).toInt())
+                if (family == 2) { // okunurluk perdesi
+                    val pc = if (light) Color.rgb(250, 246, 238) else Color.BLACK
+                    cv.drawRect(card, Paint().apply { shader = LinearGradient(0f, 0f, W * .55f, 0f, Color.argb(((if (light) 150 else 110) * x.op).toInt(), Color.red(pc), Color.green(pc), Color.blue(pc)), Color.argb(0, Color.red(pc), Color.green(pc), Color.blue(pc)), Shader.TileMode.CLAMP) })
+                }
+            }
+            cv.restore()
+        }
+        if (family == 2 && !light) lowOp = true   // boya zemininde yazılara gölge
+        val city = WeatherRepo.city(c); val showLoc = Combo.show(c, "loc")
+        val tStr = if (w != null) "${w.temp}°" else "--°"
+        val desc = descShort(x); val time = now("HH:mm")
+        fun T(t: String, xx: Float, yy: Float, tf: Typeface, size: Float, col: Int, al: Paint.Align = Paint.Align.LEFT, maxW: Float = 0f) {
+            if (t.isEmpty()) return
+            val p = txt(tf, size * u, col, al); if (maxW > 0) fitP(p, t, maxW); cv.drawText(t, xx, yy, p)
+        }
+        fun clockAt(xx: Float, base: Float, size: Float, maxW: Float, al: Paint.Align) {
+            val p = Lock.clockPaintTf(c, x.clockTf, size * u, x.clock, Combo.Look(0, x.clock, x.clock, x.clock, false, 0)).apply { textAlign = al }
+            val m = Ink.measure(c, time, p); if (m > maxW && m > 0) p.textSize *= maxW / m
+            if (lowOp) p.setShadowLayer(p.textSize * .05f, 0f, p.textSize * .03f, 0x99000000.toInt())
+            Ink.time(c, cv, time, xx, base, p)
+        }
+        /** İkon kutusu (dp); büyütme kutunun en fazla %25 dışına taşar. */
+        fun iconAt(res: Int, cx: Float, cy: Float, boxDp: Float) {
+            val box = boxDp * u; val drawn = min(box * x.isc, box * 1.25f)
+            Combo.icon(c, cv, res, cx, cy, drawn / x.isc)
+        }
+        val days = w?.days?.drop(1)?.take(3) ?: emptyList()
+        val showFc = Combo.show(c, "fc")
+        when (family) {
+            0 -> { // PANEL
+                if (lineStyle(c) != 4) { cv.save(); cv.clipPath(clip); cv.drawRect(0f, 0f, W * .48f, 4 * u, Paint().apply { color = P_RED }); cv.drawRect(W * .48f, 0f, W, 4 * u, Paint().apply { color = P_YEL }); cv.restore() }
+                // sol: ek bilgiler
+                val rows = ArrayList<Triple<Int, String, String>>()
+                if (Combo.show(c, "feels") && w?.feels != null) rows.add(Triple(0, "Hissedilen", "${w.feels}°"))
+                if (w?.humidity != null) rows.add(Triple(2, "Nem", "%${w.humidity}"))
+                if (Combo.show(c, "rain") && w?.rainChance != null) rows.add(Triple(3, "Yağmur", "%${w.rainChance}"))
+                if (w?.wind != null) rows.add(Triple(1, "Rüzgâr", "${w.wind} km/sa"))
+                val colL = 104 * sx
+                rows.take(4).forEachIndexed { i, (g, lab, v) ->
+                    val y = (24 + i * 33) * sy
+                    panelGlyph(cv, g, 22 * sx, y + 6 * sy, u, ink)
+                    T(lab, 38 * sx, y + 2 * sy, x.textTf, 9.5f, sub, maxW = colL - 40 * sx)
+                    T(v, 38 * sx, y + 17 * sy, x.boldTf, 14f, ink, maxW = colL - 40 * sx)
+                    if (i < min(rows.size, 4) - 1) cv.drawRect(14 * sx, y + 25 * sy, colL, y + 25 * sy + max(1f, .6f * u), Paint().apply { color = hair })
+                }
+                cv.drawRect(114 * sx, 18 * sy, 114 * sx + max(1f, .6f * u), 150 * sy, Paint().apply { color = hair })
+                cv.drawRect(246 * sx, 18 * sy, 246 * sx + max(1f, .6f * u), 150 * sy, Paint().apply { color = hair })
+                // orta
+                val cx = 180 * sx; val midW = 124 * sx
+                if (showLoc) T(city, cx, 30 * sy, x.boldTf, 17f, x.loc, Paint.Align.CENTER, midW)
+                T(dt(x, "d MMMM EEEE"), cx, 45 * sy, x.textTf, 10.5f, sub, Paint.Align.CENTER, midW)
+                if (w != null) iconAt(iconFor(c, SH_REAL, w.code, w.isDay), cx, 82 * sy, min(66f, 54f * sy / u))
+                clockAt(cx, 142 * sy, 40f, midW, Paint.Align.CENTER)
+                // sağ
+                val rx = 342 * sx; val rW = 90 * sx
+                val tp = txt(x.clockTf, 44 * u * Ink.tempScale(c), x.temp, Paint.Align.RIGHT); fitP(tp, tStr, rW); cv.drawText(tStr, rx, 56 * sy, tp)
+                T(desc, rx, 74 * sy, x.textTf, 11.5f, sub, Paint.Align.RIGHT, rW)
+                if (showFc && days.isNotEmpty()) {
+                    cv.drawRect(256 * sx, 84 * sy, 346 * sx, 84 * sy + max(1f, .6f * u), Paint().apply { color = hair })
+                    days.forEachIndexed { i, d ->
+                        val y = (104 + i * 21) * sy
+                        T(dayName(d), 258 * sx, y + 4 * sy, x.boldTf, 11.5f, ink, maxW = 28 * sx)
+                        iconAt(iconFor(c, SH_REAL, d.code, true), 296 * sx, y, 18f)
+                        T("${d.max}° / ${d.min}°", rx, y + 4 * sy, x.textTf, 11f, sub, Paint.Align.RIGHT, 40 * sx)
+                    }
+                }
+                if (lineStyle(c) != 4) {
+                    val ly = 171 * sy; val lr = 13 * u * logoSize(c) / 100f
+                    cv.drawRect(16 * sx, ly, cx - lr - 6 * u, ly + 1.5f * u, Paint().apply { color = P_RED })
+                    cv.drawRect(cx + lr + 6 * u, ly, 344 * sx, ly + 1.5f * u, Paint().apply { color = P_YEL })
+                }
+                logoAt(cv, x, cx, 171 * sy, 13 * u)
+            }
+            1 -> { // ALTIN ÇİZGİ
+                val shp = if (light) SH_INK else SH_GOLD
+                val leftW = 118 * sx
+                if (showLoc) T(city.uppercase(tr), 22 * sx, 50 * sy, x.boldTf, 28f, x.loc, maxW = leftW)
+                T(desc.uppercase(tr), 23 * sx, 64 * sy, x.textTf, 9.5f, sub, maxW = leftW)
+                clockAt(20 * sx, 118 * sy, 52f, leftW + 10 * sx, Paint.Align.LEFT)
+                T(dt(x, "d MMMM yyyy, EEEE"), 22 * sx, 138 * sy, x.textTf, 12.5f, ink, maxW = leftW + 10 * sx)
+                // orta: ikon kutusu + derece (çakışmaz)
+                val ib = 58f; val icx = 160 * sx
+                if (w != null) iconAt(iconFor(c, shp, w.code, w.isDay), icx, 86 * sy, ib)
+                val tX = icx + ib * u * min(x.isc, 1.25f) / 2 + 4 * u
+                val rightCol = if (showFc && days.isNotEmpty()) 262 * sx else 344 * sx
+                val tp = txt(x.clockTf, 52 * u * Ink.tempScale(c), x.temp); fitP(tp, tStr, rightCol - tX - 6 * u); cv.drawText(tStr, tX, 104 * sy, tp)
+                T(desc, (icx + rightCol) / 2 - 10 * sx, 128 * sy, x.textTf, 13f, ink, Paint.Align.CENTER, rightCol - 140 * sx)
+                if (showFc) days.forEachIndexed { i, d ->
+                    val y = (46 + i * 28) * sy
+                    T(dayName(d), 270 * sx, y + 6 * sy, x.textTf, 15f, ink, maxW = 30 * sx)
+                    iconAt(iconFor(c, shp, d.code, true), 307 * sx, y, 22f)
+                    T("${d.max}°", 344 * sx, y + 6 * sy, x.textTf, 15f, ink, Paint.Align.RIGHT, 28 * sx)
+                }
+                val gold = if (light) Color.rgb(190, 140, 50) else Color.rgb(214, 168, 72)
+                val lx = W - 30 * sx; val lr = 13 * u * logoSize(c) / 100f
+                if (lineStyle(c) != 4) {
+                    cv.drawRect(0f, 156 * sy, lx - lr - 4 * u, 156 * sy + 1.5f * u, Paint().apply { color = gold })
+                    cv.drawRect(0f, 160 * sy, lx - lr - 4 * u, 160 * sy + 1.5f * u, Paint().apply { color = P_RED })
+                    cv.drawRect(lx + lr + 4 * u, 156 * sy, W, 156 * sy + 1.5f * u, Paint().apply { color = gold })
+                    cv.drawRect(lx + lr + 4 * u, 160 * sy, W, 160 * sy + 1.5f * u, Paint().apply { color = P_RED })
+                }
+                logoAt(cv, x, lx, 158 * sy, 13 * u)
+            }
+            else -> { // BOYA
+                val leftW = 128 * sx
+                if (showLoc) T(city.uppercase(tr), 16 * sx, 46 * sy, if (fakeBoldTf != null) x.boldTf else anton, 30f, x.loc, maxW = leftW)
+                clockAt(14 * sx, 100 * sy, 58f, leftW + 6 * sx, Paint.Align.LEFT)
+                T(dt(x, "d MMMM yyyy, EEEE"), 18 * sx, 124 * sy, x.textTf, 13f, ink, maxW = leftW + 10 * sx)
+                // altın fırça: derece + ikon sığacak kadar
+                val tp = txt(x.clockTf, 34 * u * Ink.tempScale(c), Ink.get(c, Ink.TEMP) ?: Color.rgb(30, 22, 22)).apply { clearShadowLayer() }
+                fitP(tp, tStr, 70 * sx)
+                val tw = tp.measureText(tStr); val ib = 34 * u * min(x.isc, 1.25f)
+                val bw = tw + ib + 40 * u; val bx = 148 * sx; val by = 58 * sy; val bh = 48 * sy
+                if (x.op > .02f) cv.drawBitmap(res(c, R.drawable.brush_gold), null, RectF(bx, by, bx + bw + 20 * u, by + bh), Paint(Paint.FILTER_BITMAP_FLAG))
+                cv.drawText(tStr, bx + 14 * u, 92 * sy, tp)
+                if (w != null) iconAt(iconFor(c, SH_INK, w.code, w.isDay), bx + 14 * u + tw + 10 * u + ib / 2, 80 * sy, 34f)
+                T(desc, bx + (bw + 20 * u) / 2, 126 * sy, x.textTf, 13f, ink, Paint.Align.CENTER, 130 * sx)
+                if (showFc) days.forEachIndexed { i, d ->
+                    val y = (44 + i * 26) * sy
+                    T(dayName(d), 292 * sx, y, x.textTf, 17f, ink, maxW = 34 * sx)
+                    T("${d.max}°", 346 * sx, y, x.textTf, 17f, ink, Paint.Align.RIGHT, 30 * sx)
+                }
+                if (lineStyle(c) != 4 && x.op > .02f) { cv.save(); cv.clipPath(clip); cv.drawBitmap(res(c, R.drawable.brush_flag), null, RectF(150 * sx, 110 * sy, 380 * sx, 218 * sy), Paint(Paint.FILTER_BITMAP_FLAG)); cv.restore() }
+                logoAt(cv, x, 330 * sx, 152 * sy, 16 * u)
+            }
+        }
+        return b
+    }
+
+    private fun panelGlyph(cv: Canvas, g: Int, x: Float, y: Float, u: Float, col: Int) {
+        val p = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = col; style = Paint.Style.STROKE; strokeWidth = 1.6f * u; strokeCap = Paint.Cap.ROUND }
+        when (g) {
+            0 -> { cv.drawRoundRect(RectF(x - 2.5f * u, y - 9 * u, x + 2.5f * u, y + 3 * u), 2.5f * u, 2.5f * u, p); cv.drawCircle(x, y + 6 * u, 5 * u, p) }
+            1 -> { cv.drawLine(x - 9 * u, y - 5 * u, x + 5 * u, y - 5 * u, p); cv.drawLine(x - 9 * u, y, x + 9 * u, y, p); cv.drawLine(x - 9 * u, y + 5 * u, x + 2 * u, y + 5 * u, p) }
+            2 -> cv.drawPath(Path().apply { moveTo(x, y - 9 * u); quadTo(x + 7 * u, y, x + 6 * u, y + 3 * u); quadTo(x, y + 11 * u, x - 6 * u, y + 3 * u); quadTo(x - 7 * u, y, x, y - 9 * u); close() }, p)
+            else -> { cv.drawArc(RectF(x - 9 * u, y - 9 * u, x + 9 * u, y + 9 * u), 180f, 180f, false, p); cv.drawLine(x, y, x, y + 9 * u, p) }
+        }
+    }
 }

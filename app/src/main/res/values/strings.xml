@@ -115,4 +115,13 @@
     <string name="desc_pro_td">Pro ince koyu · 4x1</string>
     <string name="desc_pro_tl">Pro ince açık · 4x1</string>
     <string name="desc_pro_g">Pro bir bakışta · 4x2</string>
+    <string name="desc_ref_pd">Panel koyu · 4x2</string>
+    <string name="desc_ref_pl">Panel açık · 4x2</string>
+    <string name="desc_ref_pb">Panel bordo · 4x2</string>
+    <string name="desc_ref_gd">Altın çizgi koyu · 4x2</string>
+    <string name="desc_ref_gl">Altın çizgi açık · 4x2</string>
+    <string name="desc_ref_gb">Altın çizgi bordo · 4x2</string>
+    <string name="desc_ref_bd">Boya koyu · 4x2</string>
+    <string name="desc_ref_bl">Boya açık · 4x2</string>
+    <string name="desc_ref_bb">Boya bordo · 4x2</string>
 </resources>
