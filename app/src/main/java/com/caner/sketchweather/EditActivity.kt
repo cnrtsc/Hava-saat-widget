@@ -95,7 +95,11 @@ class EditActivity : Activity() {
         try {
             val rv = Widgets.preview(this, wid, wdp, hdp) ?: return
             val v = rv.apply(this, preview)
-            preview.addView(v, FrameLayout.LayoutParams(dp(wdp), dp(hdp)).apply { gravity = Gravity.CENTER })
+            // Önizleme kutuya sığmazsa kenarları kesilmesin: oranı koruyarak küçült.
+            val availW = resources.displayMetrics.widthPixels - dp(56)
+            val availH = dp(minOf(hdp, 220))
+            val f = minOf(1f, availW / dp(wdp).toFloat(), availH / dp(hdp).toFloat())
+            preview.addView(v, FrameLayout.LayoutParams((dp(wdp) * f).toInt(), (dp(hdp) * f).toInt()).apply { gravity = Gravity.CENTER })
         } catch (e: Exception) {
             preview.addView(TextView(this).apply { text = "Önizleme gösterilemedi"; setTextColor(Ui.MUTED) })
         }

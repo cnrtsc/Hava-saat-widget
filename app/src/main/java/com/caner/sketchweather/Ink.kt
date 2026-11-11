@@ -36,7 +36,9 @@ object Ink {
     /** Kullanıcının seçtiği renk (okunurluk düzeltmesiyle) ya da null. */
     fun get(c: Context, key: String): Int? {
         val v = raw(c, key) ?: (if (key == CLOCK) tod(c) else null) ?: return null
-        return if (autoContrast(c)) legible(v, bg(c)) else v
+        // Otomatik okunurluk sadece tasarımın kendi zemini belirginken: zemin saydamsa kullanıcının seçtiği renk aynen kalır.
+        val own = bgTL.get() ?: return v
+        return if (autoContrast(c) && Style.opacity(c) >= 50) legible(v, own) else v
     }
     fun or(c: Context, key: String, def: Int): Int = get(c, key) ?: def
 
