@@ -480,6 +480,58 @@
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_tahta_c" />
         </receiver>
+        <receiver android:name=".W_HvKolon" android:exported="true" android:label="Kolon">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_kolon" />
+        </receiver>
+        <receiver android:name=".W_HvUfuk" android:exported="true" android:label="Ufuk">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_ufuk" />
+        </receiver>
+        <receiver android:name=".W_HvKose" android:exported="true" android:label="Köşe">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_kose" />
+        </receiver>
+        <receiver android:name=".W_HvCerceve" android:exported="true" android:label="Çerçeve">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_cerceve" />
+        </receiver>
+        <receiver android:name=".W_HvIkili" android:exported="true" android:label="İkili">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_ikili" />
+        </receiver>
+        <receiver android:name=".W_HvAkordiyon" android:exported="true" android:label="Akordiyon">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_akordiyon" />
+        </receiver>
+        <receiver android:name=".W_HvKatlanir" android:exported="true" android:label="Katlanır">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_katlanir" />
+        </receiver>
+        <receiver android:name=".W_HvHap" android:exported="true" android:label="Hap">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_hap" />
+        </receiver>
+        <receiver android:name=".W_HvKare" android:exported="true" android:label="Kare saat">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_kare" />
+        </receiver>
+        <receiver android:name=".W_HvDikey" android:exported="true" android:label="Dikey">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_dikey" />
+        </receiver>
+        <receiver android:name=".W_HvSerit" android:exported="true" android:label="Şerit">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_serit" />
+        </receiver>
+        <receiver android:name=".W_HvInceuzun" android:exported="true" android:label="İnce uzun">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_inceuzun" />
+        </receiver>
+        <receiver android:name=".W_HvPano" android:exported="true" android:label="Pano">
+            <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_hv_pano" />
+        </receiver>
         <receiver android:name=".W_Noktamatris" android:exported="true" android:label="Nokta matris">
             <intent-filter><action android:name="android.appwidget.action.APPWIDGET_UPDATE" /></intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/info_noktamatris" />

@@ -53,7 +53,7 @@ object Ink {
     private val SEPS = arrayOf(":", "·", "•", " ", "|", ".")
     fun sep(c: Context) = Cfg.int(c, "clockSep", 0).coerceIn(0, SEPS.size - 1)
     fun noLead(c: Context) = Cfg.bool(c, "noLead", false)
-    fun tempScale(c: Context) = Cfg.int(c, "sTemp", 100).coerceIn(60, 150) / 100f
+    fun tempScale(c: Context) = Cfg.int(c, "sTemp", 100).coerceIn(50, 200) / 100f
 
     /** Saate göre renk: sabah şeftali, öğle güneş sarısı, akşam mercan, gece mavi. */
     fun tod(c: Context): Int? {

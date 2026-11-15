@@ -29,8 +29,8 @@ object WeatherRepo {
     fun prefs(c: Context): SharedPreferences =
         c.getSharedPreferences("sketch_weather", Context.MODE_PRIVATE)
 
-    val DETAIL_NAMES = arrayOf("Mahalle / semt", "İlçe", "Şehir", "Sokak")
-    fun detail(c: Context) = Cfg.int(c, "locDetail", 0).coerceIn(0, 3)
+    val DETAIL_NAMES = arrayOf("Mahalle / semt", "İlçe", "Şehir", "Sokak", "Mahalle, İlçe")
+    fun detail(c: Context) = Cfg.int(c, "locDetail", 0).coerceIn(0, 4)
     /** "Acıbadem Mahallesi" -> "Acıbadem" */
     private val SUFFIX = Regex("\\s+(Mahallesi|Mahalle|Mah\\.?|Mh\\.?)$", RegexOption.IGNORE_CASE)
     fun short(name: String): String = name.replace(SUFFIX, "").trim().ifEmpty { name }
@@ -42,6 +42,7 @@ object WeatherRepo {
             1 -> part(c, "locDist") ?: part(c, "locCity") ?: base
             2 -> part(c, "locCity") ?: base
             3 -> part(c, "locStreet") ?: part(c, "locSub") ?: base
+            4 -> listOfNotNull(part(c, "locSub"), part(c, "locDist")).distinct().joinToString(", ").ifEmpty { base }
             else -> part(c, "locSub") ?: base
         }
     }
@@ -51,6 +52,7 @@ object WeatherRepo {
             1 -> part(c, "locCity")
             2 -> null
             3 -> part(c, "locSub") ?: part(c, "locDist")
+            4 -> part(c, "locCity")
             else -> part(c, "locDist") ?: prefs(c).getString("city2", null)?.let { short(it) }
         } ?: ""
         return if (v == city(c)) "" else v

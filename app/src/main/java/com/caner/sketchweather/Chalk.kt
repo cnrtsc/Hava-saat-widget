@@ -113,7 +113,7 @@ object Chalk {
     /** Derece: rakamlar saat yazı tipiyle, ° işareti yazı tipiyle (el yazısı fontlarda ° bozuk görünebiliyor). */
     private fun temp(x: Ctx, w: Weather?, tX: Float, base: Float, size: Float, maxW: Float) {
         val num = if (w != null) "${w.temp}" else "--"
-        val tp = clockPaint(x, size * Ink.tempScale(x.c), maxW * .8f, num, Paint.Align.LEFT).apply { color = Ink.get(x.c, Ink.TEMP) ?: color }
+        val tp = clockPaint(x, size * Ink.tempScale(x.c) / Style.clockScale(x.c), maxW * .8f, num, Paint.Align.LEFT).apply { color = Ink.get(x.c, Ink.TEMP) ?: color }
         x.cv.drawText(num, tX, base, tp)
         val dp = p(x, x.textTf, 1f, tp.color).apply { textSize = tp.textSize * .62f }
         x.cv.drawText("°", tX + tp.measureText(num) + tp.textSize * .04f, base - tp.textSize * .28f, dp)

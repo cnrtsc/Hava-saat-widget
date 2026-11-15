@@ -74,6 +74,7 @@ class EditActivity : Activity() {
         R.layout.w_asym_big, R.layout.w_asym_edit, R.layout.w_asym_vert, R.layout.w_asym_collage -> "asym"
         R.layout.w_card_zarf, R.layout.w_card_pola, R.layout.w_card_bilet, R.layout.w_card_takvimy, R.layout.w_card_akor, R.layout.w_card_etiket, R.layout.w_card_yigin -> "card"
         R.layout.w_anim -> "anim"
+        R.layout.w_hv_kolon, R.layout.w_hv_ufuk, R.layout.w_hv_kose, R.layout.w_hv_cerceve, R.layout.w_hv_ikili, R.layout.w_hv_akordiyon, R.layout.w_hv_katlanir, R.layout.w_hv_hap, R.layout.w_hv_kare, R.layout.w_hv_dikey, R.layout.w_hv_serit, R.layout.w_hv_inceuzun, R.layout.w_hv_pano -> "gs"
         R.layout.w_tahta_ws, R.layout.w_tahta_wg, R.layout.w_tahta_wk, R.layout.w_tahta_ss, R.layout.w_tahta_sg, R.layout.w_tahta_c -> "chalk"
         R.layout.w_ref_pd, R.layout.w_ref_pl, R.layout.w_ref_pb, R.layout.w_ref_gd, R.layout.w_ref_gl, R.layout.w_ref_gb, R.layout.w_ref_bd, R.layout.w_ref_bl, R.layout.w_ref_bb -> "gs"
         R.layout.w_pro_sd, R.layout.w_pro_sl, R.layout.w_pro_md, R.layout.w_pro_ml, R.layout.w_pro_m3d, R.layout.w_pro_m3l, R.layout.w_pro_ld, R.layout.w_pro_ll, R.layout.w_pro_td, R.layout.w_pro_tl, R.layout.w_pro_g -> "gs"
@@ -330,12 +331,11 @@ class EditActivity : Activity() {
 
     /* ---------- Boyutlar ---------- */
     private fun sizeSection(cat: String) {
-        val s = section("Boyutlar", "Widget içindeki saatin, yazıların (konum dahil) ve hava ikonunun büyüklüğü. %100 tasarımın kendi boyutu.")
+        val s = section("Boyutlar", "Saat, yazılar (konum dahil), hava ikonu ve derece ayrı ayrı büyür. %100 tasarımın kendi boyutu.")
         s.addView(Ui.slider(this, { "Saat boyutu: %${60 + it * 90 / 100}" }, (intOf("sClock", 100) - 60) * 100 / 90) { putI("sClock", 60 + it * 90 / 100) })
         s.addView(Ui.slider(this, { "Konum ve yazı boyutu: %${60 + it * 90 / 100}" }, (intOf("sText", 100) - 60) * 100 / 90) { putI("sText", 60 + it * 90 / 100) })
         s.addView(Ui.slider(this, { "İkon boyutu: %${60 + it * 90 / 100}" }, (intOf("sIcon", 100) - 60) * 100 / 90) { putI("sIcon", 60 + it * 90 / 100) })
-        if (cat == "card" || cat == "asym" || cat == "origami")
-            s.addView(Ui.slider(this, { "Sıcaklık boyutu: %${60 + it * 90 / 100}" }, (intOf("sTemp", 100) - 60) * 100 / 90) { putI("sTemp", 60 + it * 90 / 100) })
+        s.addView(Ui.slider(this, { "Derece boyutu (saatten bağımsız): %${50 + it * 150 / 100}" }, (intOf("sTemp", 100) - 50) * 100 / 150) { putI("sTemp", 50 + it * 150 / 100) })
         if (cat == "standard" || cat == "palette")
             s.addView(TextView(this).apply { text = "Bu tasarımda ikon boyutu sabittir; saat ve yazı boyutu uygulanır."; setTextColor(Ui.MUTED); textSize = 12f })
     }
@@ -645,7 +645,7 @@ class EditActivity : Activity() {
 
     /* ---------- 7. İşlemler ---------- */
     private val LOOK_KEYS = listOf("ubgShape", "ubg", "ubgColor", "ubgOp", "ubgRad", "ubgFrame", "ubgFrameCol", "font", "textFont", "textColor", "clockFx",
-        "iconShape", "iconStyle", "palette", "sClock", "sText", "sIcon", "locDetail", "tapWeather", "ubgTex", "ubgTone") + Ink.ALL_KEYS
+        "iconShape", "iconStyle", "palette", "sClock", "sText", "sIcon", "sTemp", "locDetail", "tapWeather", "ubgTex", "ubgTone") + Ink.ALL_KEYS
 
     private fun actions() {
         root.addView(Ui.card(this).apply {

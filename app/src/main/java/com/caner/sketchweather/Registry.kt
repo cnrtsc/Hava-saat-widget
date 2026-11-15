@@ -55,6 +55,19 @@ class W_Cumle : BaseWidget()
 class W_Pil : BaseWidget()
 class W_Takvim : BaseWidget()
 class W_Kilitince : BaseWidget()
+class W_HvKolon : BaseWidget()
+class W_HvUfuk : BaseWidget()
+class W_HvKose : BaseWidget()
+class W_HvCerceve : BaseWidget()
+class W_HvIkili : BaseWidget()
+class W_HvAkordiyon : BaseWidget()
+class W_HvKatlanir : BaseWidget()
+class W_HvHap : BaseWidget()
+class W_HvKare : BaseWidget()
+class W_HvDikey : BaseWidget()
+class W_HvSerit : BaseWidget()
+class W_HvInceuzun : BaseWidget()
+class W_HvPano : BaseWidget()
 class W_TahtaWs : BaseWidget()
 class W_TahtaWg : BaseWidget()
 class W_TahtaWk : BaseWidget()
@@ -237,6 +250,19 @@ object Registry {
         Entry(W_TahtaSs::class.java, "Kara tahta kare", R.layout.w_tahta_ss, "s", R.drawable.prev_tahta_ss),
         Entry(W_TahtaSg::class.java, "Yeşil tahta kare", R.layout.w_tahta_sg, "s", R.drawable.prev_tahta_sg),
         Entry(W_TahtaC::class.java, "Tahta şerit", R.layout.w_tahta_c, "c", R.drawable.prev_tahta_c),
+        Entry(W_HvKolon::class.java, "Kolon", R.layout.w_hv_kolon, "w", R.drawable.prev_hv_kolon),
+        Entry(W_HvUfuk::class.java, "Ufuk", R.layout.w_hv_ufuk, "w", R.drawable.prev_hv_ufuk),
+        Entry(W_HvKose::class.java, "Köşe", R.layout.w_hv_kose, "w", R.drawable.prev_hv_kose),
+        Entry(W_HvCerceve::class.java, "Çerçeve", R.layout.w_hv_cerceve, "w", R.drawable.prev_hv_cerceve),
+        Entry(W_HvIkili::class.java, "İkili", R.layout.w_hv_ikili, "w", R.drawable.prev_hv_ikili),
+        Entry(W_HvAkordiyon::class.java, "Akordiyon", R.layout.w_hv_akordiyon, "w", R.drawable.prev_hv_akordiyon),
+        Entry(W_HvKatlanir::class.java, "Katlanır", R.layout.w_hv_katlanir, "w", R.drawable.prev_hv_katlanir),
+        Entry(W_HvHap::class.java, "Hap", R.layout.w_hv_hap, "w", R.drawable.prev_hv_hap),
+        Entry(W_HvKare::class.java, "Kare saat", R.layout.w_hv_kare, "s", R.drawable.prev_hv_kare),
+        Entry(W_HvDikey::class.java, "Dikey", R.layout.w_hv_dikey, "d", R.drawable.prev_hv_dikey),
+        Entry(W_HvSerit::class.java, "Şerit", R.layout.w_hv_serit, "c", R.drawable.prev_hv_serit),
+        Entry(W_HvInceuzun::class.java, "İnce uzun", R.layout.w_hv_inceuzun, "c", R.drawable.prev_hv_inceuzun),
+        Entry(W_HvPano::class.java, "Pano", R.layout.w_hv_pano, "x", R.drawable.prev_hv_pano),
         Entry(W_CZarf::class.java, "Zarf", R.layout.w_card_zarf, "w", R.drawable.prev_czarf),
         Entry(W_CPola::class.java, "Polaroid", R.layout.w_card_pola, "w", R.drawable.prev_cpola),
         Entry(W_CBilet::class.java, "Bilet", R.layout.w_card_bilet, "w", R.drawable.prev_cbilet),

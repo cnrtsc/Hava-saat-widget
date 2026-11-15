@@ -130,4 +130,17 @@
     <string name="desc_tahta_ss">Kara tahta kare · 2x2</string>
     <string name="desc_tahta_sg">Yeşil tahta kare · 2x2</string>
     <string name="desc_tahta_c">Tahta şerit · 4x1</string>
+    <string name="desc_hv_kolon">Kolon · 4x2</string>
+    <string name="desc_hv_ufuk">Ufuk · 4x2</string>
+    <string name="desc_hv_kose">Köşe · 4x2</string>
+    <string name="desc_hv_cerceve">Çerçeve · 4x2</string>
+    <string name="desc_hv_ikili">İkili · 4x2</string>
+    <string name="desc_hv_akordiyon">Akordiyon · 4x2</string>
+    <string name="desc_hv_katlanir">Katlanır · 4x2</string>
+    <string name="desc_hv_hap">Hap · 4x2</string>
+    <string name="desc_hv_kare">Kare saat · 2x2</string>
+    <string name="desc_hv_dikey">Dikey · 2x3</string>
+    <string name="desc_hv_serit">Şerit · 4x1</string>
+    <string name="desc_hv_inceuzun">İnce uzun · 4x1</string>
+    <string name="desc_hv_pano">Pano · 4x4</string>
 </resources>

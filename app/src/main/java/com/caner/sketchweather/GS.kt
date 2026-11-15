@@ -122,14 +122,15 @@ object GS {
         cv.drawPath(p, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = col })
     }
 
-    private fun logoAt(cv: Canvas, x: X, cx: Float, cy: Float, r0: Float) {
-        val r = r0 * logoSize(x.c) / 100f
-        val withBg = logoBg(x.c) == 0
+    private fun logoAt(cv: Canvas, x: X, cx: Float, cy: Float, r0: Float) = drawLogo(x.c, cv, cx, cy, r0)
+    fun drawLogo(c: Context, cv: Canvas, cx: Float, cy: Float, r0: Float) {
+        val r = r0 * logoSize(c) / 100f
+        val withBg = logoBg(c) == 0
         if (withBg) {
             cv.drawCircle(cx, cy + r * .08f, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.argb(70, 0, 0, 0); maskFilter = BlurMaskFilter(r * .15f, BlurMaskFilter.Blur.NORMAL) })
             cv.drawCircle(cx, cy, r, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = Color.WHITE })
         }
-        val lg = logo(x.c)
+        val lg = logo(c)
         val inner = if (withBg) r * .8f else r
         if (lg != null) {
             val sc = min(inner * 2 / lg.width, inner * 2 / lg.height)
@@ -252,7 +253,7 @@ object GS {
         if (w != null) ic(cv, x, w.code, w.isDay, divX + 43 * sx + iE / 2, iconY, 98 * s)
         val tStr = if (w != null) "${w.temp}°" else "--°"
         val tX = divX + 43 * sx + iE + 20 * sx
-        cv.drawText(tStr, tX, iconY + 26 * sy, fitP(txt(x.clockTf, 76 * s * Ink.tempScale(x.c), x.temp), tStr, W - 230 * sx - tX))
+        cv.drawText(tStr, tX, iconY + 26 * sy, fitP(txt(x.clockTf, 76 * s * Ink.tempScale(x.c) / Combo.textMul, x.temp), tStr, W - 230 * sx - tX))
         val today = w?.days?.firstOrNull()
         if (today != null) cv.drawText("Y ${today.max}°   D ${today.min}°", tX + 4 * sx, iconY + 66 * sy, fitP(txt(x.textTf, 26 * s, x.sub), "Y ${today.max}°   D ${today.min}°", W - 230 * sx - tX))
         stats(cv, x, divX + 44 * sx, dateY, 26 * s, if (x.dark) Color.rgb(220, 220, 226) else Color.rgb(70, 64, 70),
@@ -312,7 +313,7 @@ object GS {
         val w = x.w
         val iE = 70 * s * x.isc
         if (w != null) ic(cv, x, w.code, w.isDay, L + iE / 2, H * .83f, 70 * s)
-        val tp = txt(x.clockTf, 54 * s * Ink.tempScale(x.c), x.temp)
+        val tp = txt(x.clockTf, 54 * s * Ink.tempScale(x.c) / Combo.textMul, x.temp)
         val tStr = if (w != null) "${w.temp}°" else "--°"
         val tX0 = L + iE + 10 * s
         cv.drawText(tStr, tX0, H * .87f, tp)
@@ -395,7 +396,7 @@ object GS {
         val eff = iconS * x.isc   // ikon büyütülünce derece de sağa kayar, üst üste binmez
         if (w != null) ic(cv, x, w.code, w.isDay, l + eff / 2, cy, iconS)
         val t = if (w != null) "${w.temp}°" else "--°"
-        val tp = fitP(txt(x.clockTf, tSize * Ink.tempScale(x.c), col), t, max(maxW - eff * 1.05f, tSize))
+        val tp = fitP(txt(x.clockTf, tSize * Ink.tempScale(x.c) / Combo.textMul, col), t, max(maxW - eff * 1.05f, tSize))
         cv.drawText(t, l + eff * 1.05f, cy + tp.textSize * .36f, tp)
         return eff * 1.05f + tp.measureText(t)
     }
@@ -600,7 +601,7 @@ object GS {
                 eIcon(cv, x, W - p - s * .1f, p + s * .08f, s * .2f)
                 eClock(cv, x, time, W / 2, H * .59f, s * .27f, W - p * 2, Paint.Align.CENTER, clockCol)
                 rule(cv, x, p, W - p, H * .665f, s * .008f, .5f)
-                val tp = fitP(txt(x.clockTf, s * .1f * Ink.tempScale(c), x.temp).apply { typeface = bold }, tStr, W * .3f)
+                val tp = fitP(txt(x.clockTf, s * .1f * Ink.tempScale(c) / Combo.textMul, x.temp).apply { typeface = bold }, tStr, W * .3f)
                 cv.drawText(tStr, p, H * .83f, tp)
                 val dx = p + tp.measureText(tStr) + s * .04f
                 cv.drawText(desc, dx, H * .83f, fitP(txt(x.textTf, s * .046f, sub), desc, W * .5f - dx))
@@ -621,7 +622,7 @@ object GS {
                 }
                 logoAt(cv, x, cx, cy - s * .236f, s * .064f)
                 eClock(cv, x, time, cx, cy + s * .075f, s * .21f, rr * 1.5f, Paint.Align.CENTER, clockCol)
-                val tp = txt(x.clockTf, s * .082f * Ink.tempScale(c), x.temp).apply { typeface = bold }
+                val tp = txt(x.clockTf, s * .082f * Ink.tempScale(c) / Combo.textMul, x.temp).apply { typeface = bold }
                 val ib = s * .135f; val rowW = ib + s * .02f + tp.measureText(tStr)
                 eIcon(cv, x, cx - rowW / 2 + ib / 2, cy + s * .21f, ib)
                 cv.drawText(tStr, cx - rowW / 2 + ib + s * .02f, cy + s * .21f + tp.textSize * .36f, tp)
@@ -647,7 +648,7 @@ object GS {
                 rule(cv, x, W * .21f, W * .79f, H * .774f, s * .008f, .25f)
                 val ib = s * .2f
                 eIcon(cv, x, W * .34f, H * .876f, ib)
-                val tp = fitP(txt(x.clockTf, s * .1f * Ink.tempScale(c), x.temp).apply { typeface = bold }, tStr, W * .3f)
+                val tp = fitP(txt(x.clockTf, s * .1f * Ink.tempScale(c) / Combo.textMul, x.temp).apply { typeface = bold }, tStr, W * .3f)
                 cv.drawText(tStr, W * .34f + ib * .62f, H * .876f + tp.textSize * .36f, tp)
             }
             E_EDIT_D, E_EDIT_L -> {
@@ -660,7 +661,7 @@ object GS {
                 val ib = 190 * u
                 eIcon(cv, x, 860 * sx, 316 * sy, ib)
                 val tx = 860 * sx + ib * .56f
-                val tp = fitP(txt(x.clockTf, 96 * u * Ink.tempScale(c), x.temp).apply { typeface = bold }, tStr, W - 80 * sx - tx)
+                val tp = fitP(txt(x.clockTf, 96 * u * Ink.tempScale(c) / Combo.textMul, x.temp).apply { typeface = bold }, tStr, W - 80 * sx - tx)
                 cv.drawText(tStr, tx, 350 * sy, tp)
                 cv.drawText(desc, tx + 4 * sx, 392 * sy, fitP(txt(x.textTf, 26 * u, sub), desc, W - 80 * sx - tx))
                 hairline(cv, 80 * sx, 445 * sy, W - 80 * sx, 445 * sy, hl, 2 * u)
@@ -684,7 +685,7 @@ object GS {
                 cv.drawText(dt(x, "EEE d MMMM"), 464 * sx, 160 * sy, fitP(txt(x.textTf, 26 * u, ink), dt(x, "EEE d MMMM"), 300 * sx))
                 val ib = 104 * u
                 eIcon(cv, x, 860 * sx, H / 2, ib)
-                cv.drawText(tStr, 860 * sx + ib * .58f, H / 2 + 52 * u * .36f, fitP(txt(x.clockTf, 52 * u * Ink.tempScale(c), x.temp).apply { typeface = bold }, tStr, 150 * sx))
+                cv.drawText(tStr, 860 * sx + ib * .58f, H / 2 + 52 * u * .36f, fitP(txt(x.clockTf, 52 * u * Ink.tempScale(c) / Combo.textMul, x.temp).apply { typeface = bold }, tStr, 150 * sx))
                 if (lineStyle(c) != 4) {
                     cv.drawRect(W - 220 * sx, 86 * sy, W - 215 * sx, 158 * sy, Paint().apply { color = GOLD })
                     cv.drawRect(W - 213 * sx, 86 * sy, W - 208 * sx, 158 * sy, Paint().apply { color = CRIM })
@@ -721,7 +722,7 @@ object GS {
         val desc = descShort(x); val time = now("HH:mm")
         val crimG = { l: Float, t: Float, r: Float, btm: Float -> Paint(Paint.ANTI_ALIAS_FLAG).apply { shader = LinearGradient(l, t, l, btm, Color.rgb(170, 22, 52), Color.rgb(120, 10, 34), Shader.TileMode.CLAMP); alpha = (x.op * 255).toInt() } }
         fun solid(col: Int) = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = col; alpha = (x.op * 255).toInt() }
-        fun tempP(size: Float, col: Int = x.temp) = txt(x.clockTf, size * Ink.tempScale(c), col).apply { typeface = bold }
+        fun tempP(size: Float, col: Int = x.temp) = txt(x.clockTf, size * Ink.tempScale(c) / Combo.textMul, col).apply { typeface = bold }
         when (kind) {
             F_HERO -> {
                 val sx = W / 1280f; val sy = H / 560f; val u = min(sx, sy)
@@ -971,7 +972,7 @@ object GS {
         tx(dateStr(), hx(16f), vy(113f), 12f, sub, maxW = x.W - hx(32f))
         val w = x.w
         if (w != null) icon(w.code, w.isDay, hx(33f), vy(139f), 36f)
-        val tp = fitP(txt(bold(x), 24f * u * Ink.tempScale(x.c), x.temp), temp(), hx(60f))
+        val tp = fitP(txt(bold(x), 24f * u * Ink.tempScale(x.c) / Combo.textMul, x.temp), temp(), hx(60f))
         cv.drawText(temp(), hx(33f) + 18f * u * min(x.isc, 1.25f) + 4 * u, vy(150f), tp)
         val ex = extras().filter { !it.startsWith("Y ") }.take(2)
         ex.forEachIndexed { i, t -> tx(t, fr(16f), vy(140f + i * 16f), 11f, sub, al = Paint.Align.RIGHT, maxW = hx(64f)) }
@@ -986,7 +987,7 @@ object GS {
         tx(dateStr(), hx(16f), vy(132f), 13f, sub, maxW = leftW - hx(20f))
         val w = x.w
         val rx = fr(16f)
-        val tp = fitP(txt(bold(x), 40f * u * Ink.tempScale(x.c), x.temp, Paint.Align.RIGHT), temp(), hx(90f))
+        val tp = fitP(txt(bold(x), 40f * u * Ink.tempScale(x.c) / Combo.textMul, x.temp, Paint.Align.RIGHT), temp(), hx(90f))
         cv.drawText(temp(), rx, vy(96f), tp)
         val tW = tp.measureText(temp())
         if (w != null) icon(w.code, w.isDay, rx - tW - 10 * u - 32f * u * min(x.isc, 1.25f), vy(82f), 64f)
@@ -1016,7 +1017,7 @@ object GS {
         cv.drawRoundRect(box, 16 * u, 16 * u, Paint(Paint.ANTI_ALIAS_FLAG).apply { color = chip; alpha = (x.op * 255).toInt().coerceAtLeast(40) })
         val w = x.w
         if (w != null) icon(w.code, w.isDay, hx(54f), vy(201f), 58f)
-        val tp = fitP(txt(bold(x), 40f * u * Ink.tempScale(x.c), x.temp), temp(), hx(70f))
+        val tp = fitP(txt(bold(x), 40f * u * Ink.tempScale(x.c) / Combo.textMul, x.temp), temp(), hx(70f))
         val tX = hx(54f) + 29f * u * min(x.isc, 1.25f) + 8 * u
         cv.drawText(temp(), tX, vy(214f), tp)
         val ix = max(hx(160f), tX + tp.measureText(temp()) + 14 * u)
@@ -1047,7 +1048,7 @@ object GS {
         val w = x.w
         if (w != null) icon(w.code, w.isDay, hx(152f), vy(40f), 36f)
         val tX = hx(152f) + 18f * u * min(x.isc, 1.25f) + 4 * u
-        val tp = fitP(txt(bold(x), 22f * u * Ink.tempScale(x.c), x.temp), temp(), hx(40f)); cv.drawText(temp(), tX, vy(48f), tp)
+        val tp = fitP(txt(bold(x), 22f * u * Ink.tempScale(x.c) / Combo.textMul, x.temp), temp(), hx(40f)); cv.drawText(temp(), tX, vy(48f), tp)
         val lx = max(hx(214f), tX + tp.measureText(temp()) + 12 * u)
         val maxW = fr(44f) - lx
         if (Combo.show(x.c, "loc")) tx(WeatherRepo.city(x.c), lx, vy(36f), 13f, x.loc, true, maxW = maxW)
@@ -1178,7 +1179,7 @@ object GS {
                 clockAt(cx, 142 * sy, 40f, midW, Paint.Align.CENTER)
                 // sağ
                 val rx = 342 * sx; val rW = 90 * sx
-                val tp = txt(x.clockTf, 44 * u * Ink.tempScale(c), x.temp, Paint.Align.RIGHT); fitP(tp, tStr, rW); cv.drawText(tStr, rx, 56 * sy, tp)
+                val tp = txt(x.clockTf, 44 * u * Ink.tempScale(c) / Combo.textMul, x.temp, Paint.Align.RIGHT); fitP(tp, tStr, rW); cv.drawText(tStr, rx, 56 * sy, tp)
                 T(desc, rx, 74 * sy, x.textTf, 11.5f, sub, Paint.Align.RIGHT, rW)
                 if (showFc && days.isNotEmpty()) {
                     cv.drawRect(256 * sx, 84 * sy, 346 * sx, 84 * sy + max(1f, .6f * u), Paint().apply { color = hair })
@@ -1208,7 +1209,7 @@ object GS {
                 if (w != null) iconAt(iconFor(c, shp, w.code, w.isDay), icx, 86 * sy, ib)
                 val tX = icx + ib * u * min(x.isc, 1.25f) / 2 + 4 * u
                 val rightCol = if (showFc && days.isNotEmpty()) 262 * sx else 344 * sx
-                val tp = txt(x.clockTf, 52 * u * Ink.tempScale(c), x.temp); fitP(tp, tStr, rightCol - tX - 6 * u); cv.drawText(tStr, tX, 104 * sy, tp)
+                val tp = txt(x.clockTf, 52 * u * Ink.tempScale(c) / Combo.textMul, x.temp); fitP(tp, tStr, rightCol - tX - 6 * u); cv.drawText(tStr, tX, 104 * sy, tp)
                 T(desc, (icx + rightCol) / 2 - 10 * sx, 128 * sy, x.textTf, 13f, ink, Paint.Align.CENTER, rightCol - 140 * sx)
                 if (showFc) days.forEachIndexed { i, d ->
                     val y = (46 + i * 28) * sy
@@ -1232,7 +1233,7 @@ object GS {
                 clockAt(14 * sx, 100 * sy, 58f, leftW + 6 * sx, Paint.Align.LEFT)
                 T(dt(x, "d MMMM yyyy, EEEE"), 18 * sx, 124 * sy, x.textTf, 13f, ink, maxW = leftW + 10 * sx)
                 // altın fırça: derece + ikon sığacak kadar
-                val tp = txt(x.clockTf, 34 * u * Ink.tempScale(c), Ink.get(c, Ink.TEMP) ?: Color.rgb(30, 22, 22)).apply { clearShadowLayer() }
+                val tp = txt(x.clockTf, 34 * u * Ink.tempScale(c) / Combo.textMul, Ink.get(c, Ink.TEMP) ?: Color.rgb(30, 22, 22)).apply { clearShadowLayer() }
                 fitP(tp, tStr, 70 * sx)
                 val tw = tp.measureText(tStr); val ib = 34 * u * min(x.isc, 1.25f)
                 val bw = tw + ib + 40 * u; val bx = 148 * sx; val by = 58 * sy; val bh = 48 * sy

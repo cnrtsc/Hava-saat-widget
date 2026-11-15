@@ -157,6 +157,19 @@ object Widgets {
         R.layout.w_tahta_ss to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_tahta_sg to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_tahta_c to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_kolon to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_ufuk to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_kose to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_cerceve to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_ikili to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_akordiyon to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_katlanir to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_hap to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_kare to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_dikey to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_serit to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_inceuzun to Spec(30f, 30f, 11f, "EEE"),
+        R.layout.w_hv_pano to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_zarf to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_pola to Spec(30f, 30f, 11f, "EEE"),
         R.layout.w_card_bilet to Spec(30f, 30f, 11f, "EEE"),
@@ -181,6 +194,19 @@ object Widgets {
         R.layout.w_compact3 to Spec(30f, 18f, 11f, "EEE")
     )
     private val DIAL_LAYOUTS = setOf(
+        R.layout.w_hv_pano,
+        R.layout.w_hv_inceuzun,
+        R.layout.w_hv_serit,
+        R.layout.w_hv_dikey,
+        R.layout.w_hv_kare,
+        R.layout.w_hv_hap,
+        R.layout.w_hv_katlanir,
+        R.layout.w_hv_akordiyon,
+        R.layout.w_hv_ikili,
+        R.layout.w_hv_cerceve,
+        R.layout.w_hv_kose,
+        R.layout.w_hv_ufuk,
+        R.layout.w_hv_kolon,
         R.layout.w_tahta_c,
         R.layout.w_tahta_sg,
         R.layout.w_tahta_ss,
@@ -781,6 +807,19 @@ object Widgets {
             R.layout.w_tahta_ss -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Chalk.render(c, w, wdp, hdp, Chalk.SLATE, Chalk.SQUARE)))
             R.layout.w_tahta_sg -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Chalk.render(c, w, wdp, hdp, Chalk.GREEN, Chalk.SQUARE)))
             R.layout.w_tahta_c -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Chalk.render(c, w, wdp, hdp, Chalk.SLATE, Chalk.STRIP)))
+            R.layout.w_hv_kolon -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.KOLON)))
+            R.layout.w_hv_ufuk -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.UFUK)))
+            R.layout.w_hv_kose -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.KOSE)))
+            R.layout.w_hv_cerceve -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.CERCEVE)))
+            R.layout.w_hv_ikili -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.IKILI)))
+            R.layout.w_hv_akordiyon -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.AKORDIYON)))
+            R.layout.w_hv_katlanir -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.KATLANIR)))
+            R.layout.w_hv_hap -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.HAP)))
+            R.layout.w_hv_kare -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.KARE)))
+            R.layout.w_hv_dikey -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.DIKEY)))
+            R.layout.w_hv_serit -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.SERIT)))
+            R.layout.w_hv_inceuzun -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.INCE)))
+            R.layout.w_hv_pano -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Hava.render(c, w, wdp, hdp, Hava.PANO)))
             R.layout.w_card_zarf -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.ZARF)))
             R.layout.w_card_pola -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.POLA)))
             R.layout.w_card_bilet -> v.setImageViewBitmap(R.id.dial, Decor.decorate(c, w, Cards.render(c, w, wdp, hdp, Cards.BILET)))
@@ -838,7 +877,7 @@ object Widgets {
         v.setImageViewBitmap(R.id.clock_h, textBitmap(c, hh, clockTf, spec.clock * csc, hourCol, shadow, fx, clock = true))
         v.setImageViewBitmap(R.id.clock_m, textBitmap(c, mm, clockTf, spec.clock * csc, minCol, shadow, fx, clock = true))
         v.setImageViewBitmap(R.id.date, textBitmap(c, dateStr, dateTf, spec.date * tsc, dateCol, shadow))
-        v.setImageViewBitmap(R.id.now_temp, textBitmap(c, tempStr, tempTf, spec.temp * tsc, tempCol, shadow))
+        v.setImageViewBitmap(R.id.now_temp, textBitmap(c, tempStr, tempTf, spec.temp * Ink.tempScale(c), tempCol, shadow))
         if (handFont) v.setImageViewBitmap(R.id.feels_img, textBitmap(c, "hissedilen $feelsStr", cTf, 16f, feelsCol, false))
         else v.setImageViewBitmap(R.id.feels_img, textBitmap(c, feelsStr, clockTf, 22f, feelsCol, false))
 
